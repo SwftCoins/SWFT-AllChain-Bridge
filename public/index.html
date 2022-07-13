@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,user-scalable=no"
+    />
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
+    <title>SWFT AllChain Bridge</title>
+    <!-- <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/vant@2.12/lib/index.css"
+    /> -->
+    <!-- 引入样式 -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"
+    />
+    <style type="text/css">
+      #Loading {
+        width: 100vw;
+        height: 100vh;
+        background-color: #fcfcfd;
+      }
+      #Loading .loading-img {
+        top: 50%;
+        left: 50%;
+        position: absolute;
+        -webkit-transform: translateY(-50%) translateX(-50%);
+        transform: translateY(-50%) translateX(-50%);
+        z-index: 100;
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript>
+      <strong
+        >We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
+        properly without JavaScript enabled. Please enable it to
+        continue.</strong
+      >
+    </noscript>
+    <div id="Loading">
+      <div class="loading-img">
+        <img
+          src="./static/img/SWFTloding.gif"
+          style="width: 253px; height: 112px"
+          alt=""
+        />
+      </div>
+    </div>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script> -->
+    <!-- 引入组件库 -->
+    <!-- <script src="https://unpkg.com/element-ui/lib/index.js"></script> -->
+    <script src="https://unpkg.com/xrpl@2.0.0/build/xrpl-latest-min.js"></script>
+  </body>
+</html>

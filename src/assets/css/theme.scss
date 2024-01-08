@@ -80,56 +80,94 @@ $M1VERSE: #680d8f;
 $M1VERSEDeep: #982fc5;
 $XRDC: #4863a0;
 $XRDCDeep: #0078ff;
-$CRI: #062A41;
-$CRIDeep: #00588F;
+$CRI: #062a41;
+$CRIDeep: #00588f;
+$ARIVA: #739574;
+$ARIVADeep: #3c7c3d;
+$ALL2GET: #4931ff;
+$ALL2GETDeep: #1700c6;
+$CALORIE: #5459ff;
+$CALORIEDeep: #23269c;
+$RODO: #56bdff;
+$RODODeep: #019cff;
+$JYD: #edb540;
+$JYDDeep: #bc7700;
+$ShibaNFT: #e47d21;
+$ShibaNFTDeep: #d24f1e;
+$MiningTW: #e47d21;
+$MiningTWDeep: #d24f1e;
+$TWZR: #121212;
+$TWZRDeep: #b40008;
+$SquidGrow: #000000;
+$SquidGrowDeep: #fd481a;
+$BXR: #277ffa;
+$BXRDeep: #0064f1;
+$BURN: #6219be;
+$BURNDeep: #8135ff;
+$DYP: #312f69;
+$DYPDeep: #221352;
+$VIRAL: #AE40EB;
+$VIRALDeep: #8A23C2;
 
 .themeBg {
   background: $default !important;
 }
+
 .themeDeep {
   background: $defaultDeep !important;
 }
+
 .widget {
   .themeBg {
     background: $default !important;
   }
+
   .themeDeep {
     background: $defaultDeep !important;
   }
 }
+
 .BabyBNB {
   .themeBg {
     background: $babyBnb !important;
   }
+
   .themeDeep {
     background: $babyBnbDeep !important;
   }
+
   .logo {
     img {
       width: 145px !important;
     }
   }
 }
+
 .SEPHI {
   .themeBg {
     background: $SEPHI !important;
   }
+
   .themeDeep {
     background: $SEPHIDeep !important;
   }
+
   .logo {
     img {
       width: 120px !important;
     }
   }
 }
+
 .GAMEX {
   .themeBg {
     background: $GAMEX !important;
   }
+
   .themeDeep {
     background: $GAMEXDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
@@ -137,13 +175,16 @@ $CRIDeep: #00588F;
     }
   }
 }
+
 .SAVE {
   .themeBg {
     background: $SAVE !important;
   }
+
   .themeDeep {
     background: $SAVEDeep !important;
   }
+
   .logo {
     img {
       margin-top: 5px;
@@ -151,13 +192,16 @@ $CRIDeep: #00588F;
     }
   }
 }
+
 .PRCY {
   .themeBg {
     background: $PRCY !important;
   }
+
   .themeDeep {
     background: $PRCYDeep !important;
   }
+
   .logo {
     img {
       margin-top: 5px;
@@ -165,13 +209,16 @@ $CRIDeep: #00588F;
     }
   }
 }
+
 .GemProtocol {
   .themeBg {
     background: $GemProtocol !important;
   }
+
   .themeDeep {
     background: $GemProtocolDeep !important;
   }
+
   .logo {
     img {
       margin-top: 5px;
@@ -179,13 +226,16 @@ $CRIDeep: #00588F;
     }
   }
 }
+
 .SALV {
   .themeBg {
     background: $SALV !important;
   }
+
   .themeDeep {
     background: $SALVDeep !important;
   }
+
   .logo {
     img {
       margin-top: 15px;
@@ -193,91 +243,112 @@ $CRIDeep: #00588F;
     }
   }
 }
+
 .Bet {
   .themeBg {
     background: $Bet !important;
   }
+
   .themeDeep {
     background: $BetDeep !important;
   }
+
   .logo {
     img {
       width: 50px !important;
     }
   }
 }
+
 .KOM {
   .themeBg {
     background: $KOM !important;
   }
+
   .themeDeep {
     background: $KOMDeep !important;
   }
+
   .logo {
     img {
       width: 38px !important;
     }
   }
 }
+
 .BIMP {
   .themeBg {
     background: $BIMP !important;
   }
+
   .themeDeep {
     background: $BIMPDeep !important;
   }
+
   .logo {
     img {
       width: 50px !important;
     }
   }
 }
+
 .Shibcake {
   .themeBg {
     background: $Shibcake !important;
   }
+
   .themeDeep {
     background: $ShibcakeDeep !important;
   }
+
   .logo {
     img {
       width: 50px !important;
     }
   }
 }
+
 .BPUNKS {
   .themeBg {
     background: $BPUNKS !important;
   }
+
   .themeDeep {
     background: $BPUNKSDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .VCC {
   .themeBg {
     background: $VCC !important;
   }
+
   .themeDeep {
     background: $VCCDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .SWEET {
   .themeBg {
     background: $SWEET !important;
   }
+
   .themeDeep {
     background: $SWEETDeep !important;
   }
+
   .logo {
     img {
       width: 78px !important;
@@ -285,307 +356,378 @@ $CRIDeep: #00588F;
     }
   }
 }
+
 .TXS {
   .themeBg {
     background: $TXS !important;
   }
+
   .themeDeep {
     background: $TXSDeep !important;
   }
+
   .logo {
     img {
       width: 40px !important;
     }
   }
 }
+
 .THC {
   .themeBg {
     background: $THC !important;
   }
+
   .themeDeep {
     background: $THCDeep !important;
   }
+
   .logo {
     img {
       width: 40px !important;
     }
   }
 }
+
 .FabWelt {
   .themeBg {
     background: $FabWelt !important;
   }
+
   .themeDeep {
     background: $FabWeltDeep !important;
   }
+
   .logo {
     img {
       width: 40px !important;
     }
   }
 }
+
 .HN {
   .themeBg {
     background: $HN !important;
   }
+
   .themeDeep {
     background: $HNDeep !important;
   }
+
   .logo {
     img {
       width: 40px !important;
     }
   }
 }
+
 .XRDOGE {
   .themeBg {
     background: $XRDOGE !important;
   }
+
   .themeDeep {
     background: $XRDOGEDeep !important;
   }
+
   .logo {
     img {
       width: 40px !important;
     }
   }
 }
+
 .MXRB {
   .themeBg {
     background: $MXRB !important;
   }
+
   .themeDeep {
     background: $MXRBDeep !important;
   }
+
   .logo {
     img {
       width: 40px !important;
     }
   }
 }
+
 .PGIRL {
   .themeBg {
     background: $PGIRL !important;
   }
+
   .themeDeep {
     background: $PGIRLDeep !important;
   }
+
   .logo {
     img {
       width: 40px !important;
     }
   }
 }
+
 .XSP {
   .themeBg {
     background: $XSP !important;
   }
+
   .themeDeep {
     background: $XSPDeep !important;
   }
 }
+
 .SOS {
   .themeBg {
     background: $SOS !important;
   }
+
   .themeDeep {
     background: $SOSDeep !important;
   }
+
   .logo {
     img {
       width: 40px !important;
     }
   }
 }
+
 .XSD {
   .themeBg {
     background: $XSD !important;
   }
+
   .themeDeep {
     background: $XSDDeep !important;
   }
+
   .logo {
     img {
       width: 40px !important;
     }
   }
 }
+
 .GZX {
   .themeBg {
     background: $GZX !important;
   }
+
   .themeDeep {
     background: $GZXDeep !important;
   }
+
   .logo {
     img {
       width: 40px !important;
     }
   }
 }
+
 .XRSHIB {
   .themeBg {
     background: $XRSHIB !important;
   }
+
   .themeDeep {
     background: $XRSHIBDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .SUPA {
   .themeBg {
     background: $SUPA !important;
   }
+
   .themeDeep {
     background: $SUPADeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .XRSWAN {
   .themeBg {
     background: $XRSWAN !important;
   }
+
   .themeDeep {
     background: $XRSWANDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .CODECOIN {
   .themeBg {
     background: $CODECOIN !important;
   }
+
   .themeDeep {
     background: $CODECOINDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .PRNT {
   .themeBg {
     background: $PRNT !important;
   }
+
   .themeDeep {
     background: $PRNTDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .MRM {
   .themeBg {
     background: $MRM !important;
   }
+
   .themeDeep {
     background: $MRMDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .INL {
   .themeBg {
     background: $INL !important;
   }
+
   .themeDeep {
     background: $INLDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .SHIBAINUX {
   .themeBg {
     background: $SHIBAINUX !important;
   }
+
   .themeDeep {
     background: $SHIBAINUXDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .HODL {
   .themeBg {
     background: $HODL !important;
   }
+
   .themeDeep {
     background: $HODLDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .BRAVE {
   .themeBg {
     background: $BRAVE !important;
   }
+
   .themeDeep {
     background: $BRAVEDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .bridgers {
   .themeBg {
     background: $default !important;
   }
+
   .themeDeep {
     background: $defaultDeep !important;
   }
+
   .logo {
     img {
       width: 100px !important;
     }
   }
 }
+
 .PRAISE {
   .themeBg {
     background: $PRAISE !important;
   }
+
   .themeDeep {
     background: $PRAISEDeep !important;
   }
+
   .logo {
     img {
       margin-top: 20px;
     }
   }
 }
+
 .PRIMO {
   .themeBg {
     background: $PRIMO !important;
   }
+
   .themeDeep {
     background: $PRIMODeep !important;
   }
+
   .logo {
     img {
       width: 40px !important;
@@ -593,13 +735,16 @@ $CRIDeep: #00588F;
     }
   }
 }
+
 .BLKZ {
   .themeBg {
     background: $BLKZ !important;
   }
+
   .themeDeep {
     background: $BLKZDeep !important;
   }
+
   .logo {
     img {
       width: 40px !important;
@@ -607,13 +752,16 @@ $CRIDeep: #00588F;
     }
   }
 }
+
 .M1VERSE {
   .themeBg {
     background: $M1VERSE !important;
   }
+
   .themeDeep {
     background: $M1VERSEDeep !important;
   }
+
   .logo {
     img {
       width: 52px !important;
@@ -621,13 +769,16 @@ $CRIDeep: #00588F;
     }
   }
 }
+
 .XRDC {
   .themeBg {
     background: $XRDC !important;
   }
+
   .themeDeep {
     background: $XRDCDeep !important;
   }
+
   .logo {
     img {
       width: 52px !important;
@@ -635,16 +786,258 @@ $CRIDeep: #00588F;
     }
   }
 }
+
 .CRI {
   .themeBg {
     background: $CRI !important;
   }
+
   .themeDeep {
     background: $CRIDeep !important;
   }
+
   .logo {
     img {
       width: 3rem !important;
+    }
+  }
+}
+
+.ARIVA {
+  .themeBg {
+    background: $ARIVA !important;
+  }
+
+  .themeDeep {
+    background: $ARIVADeep !important;
+  }
+
+  .logo {
+    img {
+      width: 52px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.ALL2GET {
+  .themeBg {
+    background: $ALL2GET !important;
+  }
+
+  .themeDeep {
+    background: $ALL2GETDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 52px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.CALORIE {
+  .themeBg {
+    background: $CALORIE !important;
+  }
+
+  .themeDeep {
+    background: $CALORIEDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 52px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.RODO {
+  .themeBg {
+    background: $RODO !important;
+  }
+
+  .themeDeep {
+    background: $RODODeep !important;
+  }
+
+  .logo {
+    img {
+      width: 52px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.JYD {
+  .themeBg {
+    background: $JYD !important;
+  }
+
+  .themeDeep {
+    background: $JYDDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 52px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.ShibaNFT {
+  .themeBg {
+    background: $ShibaNFT !important;
+  }
+
+  .themeDeep {
+    background: $ShibaNFTDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 52px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.miningtw {
+  .themeBg {
+    background: $MiningTW !important;
+  }
+
+  .themeDeep {
+    background: $MiningTWDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 70px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.TWZR {
+  .themeBg {
+    background: $TWZR !important;
+  }
+
+  .themeDeep {
+    background: $TWZRDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 40px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.SquidGrow {
+  .themeBg {
+    background: $SquidGrow !important;
+  }
+
+  .themeDeep {
+    background: $SquidGrowDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 40px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.BXR {
+  .themeBg {
+    background: $BXR !important;
+  }
+
+  .themeDeep {
+    background: $BXRDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 42px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.PEPEM {
+  .themeBg {
+    background: $default !important;
+  }
+
+  .themeDeep {
+    background: $defaultDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 42px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.burndex {
+  .themeBg {
+    background: $BURN !important;
+  }
+
+  .themeDeep {
+    background: $BURNDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 130px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.DYP {
+  .themeBg {
+    background: $DYP !important;
+  }
+
+  .themeDeep {
+    background: $DYPDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 40px !important;
+      margin-top: 11px;
+    }
+  }
+}
+
+.VIRAL {
+  .themeBg {
+    background: $VIRAL !important;
+  }
+
+  .themeDeep {
+    background: $VIRALDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 40px !important;
+      margin-top: 11px;
+      border-radius: 20px;
     }
   }
 }

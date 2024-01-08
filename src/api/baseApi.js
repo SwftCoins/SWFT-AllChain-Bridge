@@ -6,10 +6,11 @@ let development = process.env.NODE_ENV === 'development'
 if (!development) {
   api = 'https://transfer.swft.pro'
 }
-const pathApi = 'https://api.paths.finance'
-const testApi = 'https://www.swftc.info/gt'
+const pathApi = 'https://api-swap.paths.finance'
+const newSwftApi = 'https://www.swftc.info/gt'
 const sSwapApi = 'https://sswap.swft.pro'
-const bridgersApi= 'https://sswap.swft.pro'
+const swftApi = 'https://transfer.swft.pro'
+
 // 增加axios拦截
 axios.interceptors.response.use(
   (suc) => {
@@ -39,7 +40,7 @@ class BaseApi {
     // responseType = responseType || 'application/json';
     if (method.toLowerCase() === 'get') {
       let params = ''
-      Object.keys(data).forEach(function(key) {
+      Object.keys(data).forEach(function (key) {
         if (data[key]) {
           let value = data[key]
           params += key + '=' + value + '&'
@@ -66,6 +67,7 @@ class BaseApi {
   newBaseRequestData() {
     //从浏览器地址取出sourceFlag
     let sourceFlag = localStorage.getItem('sourceFlag')
+    let utmSource = localStorage.getItem('utm_source')
     let equipmentNo
     if (sessionStorage.getItem('equipmentNo')) {
       equipmentNo = sessionStorage.getItem('equipmentNo')
@@ -79,13 +81,13 @@ class BaseApi {
     // if (store.state.chainId == '0' || store.state.walletTRON !== null) {
     //   address = store.state.walletTRON
     // } else
-    if (store.state.chainId == '000' && store.state.walletPolkadot !== null) {
-      address = store.state.walletPolkadot.addrSS58
-    } else if (
-      store.state.chainId == '222' &&
+    if (
+      (store.state.chainId == '000' ||
+        store.state.chainId == '222' ||
+        store.state.chainId == '333') &&
       store.state.walletPolkadot !== null
     ) {
-      address = store.state.walletPolkadot.addrSS58CRU
+      address = store.state.walletPolkadot.addrSS58
     } else if (store.state.chainId == '0' && store.state.walletTRON !== null) {
       address = store.state.walletTRON
     } else {
@@ -110,6 +112,7 @@ class BaseApi {
       sessionUuid: '',
       orderId: '',
       sourceFlag: sourceFlag,
+      utmSource: utmSource,
     }
     return data
   }
@@ -186,116 +189,168 @@ class BaseApi {
     return str
   }
 
-  // 一下为请求列表-----------------------------------------------------------
-  // 获取coin列表
   queryCoinList() {
     return this.createRpcToken(
-      testApi + '/swap/v1/queryCoinList',
+      newSwftApi + '/swap/v1/queryCoinList',
       this.newBaseRequestData(),
       '',
       'path',
     )
   }
-  
-  // 获取coin兑换基本信息 
+
   getBaseInfo(data) {
     const obj = {
       ...this.newBaseRequestData(),
       ...data,
     }
     return this.createRpcToken(
-      testApi + '/swap/v1/queryBaseInfo',
+      newSwftApi + '/swap/v1/queryBaseInfo',
       obj,
       '',
       'path',
     )
   }
-  // 获取交易记录
+  // 免gas兑换
+  noGasSwap(data) {
+    return this.createRpcToken(
+      newSwftApi + '/swap/v1/noGasSwap',
+      data,
+      'post',
+      'swft',
+    )
+  }
+  queryChainByCode(data) {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
+    return this.createRpcToken(
+      newSwftApi + '/swap/v1/queryChainByCode',
+      obj,
+      '',
+      'path',
+    )
+  }
   queryAllTrade(data) {
     const obj = {
       ...this.newBaseRequestData(),
       ...data,
     }
     return this.createRpcToken(
-      testApi + '/swap/v1/queryAllTrade',
-      // '/api/v2/queryAllTrade',
+      newSwftApi + '/swap/v1/queryAllTrade',
       obj,
       '',
       'path',
     )
   }
-  // 账户兑换接口
   accountExchange(data) {
     const obj = {
       ...this.newBaseRequestData(),
       ...data,
     }
     return this.createRpcToken(
-      testApi + '/swap/v1/accountExchange',
+      newSwftApi + '/swap/v1/accountExchange',
       obj,
       '',
       'path',
     )
   }
-  //修改哈希接口
+  // 失败保存记录
+  failureExchange(data) {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
+    return this.createRpcToken(
+      swftApi + '/api/v3/failureExchange',
+      obj,
+      'post',
+      'path',
+    )
+  }
   modifyTxId(data) {
     const obj = {
       ...this.newBaseRequestData(),
       ...data,
     }
-    return this.createRpcToken(testApi + '/swap/v1/modifyTxId', obj, '', 'path')
+    return this.createRpcToken(
+      newSwftApi + '/swap/v1/modifyTxId',
+      obj,
+      '',
+      'path',
+    )
   }
 
-  //  兑换记录
   queryOrderState(data) {
     const obj = {
       ...this.newBaseRequestData(),
       ...data,
     }
     return this.createRpcToken(
-      testApi + '/swap/v1/queryOrderState',
-      // '/api/v2/queryOrderState',
+      newSwftApi + '/swap/v1/queryOrderState',
       obj,
       '',
       'path',
     )
   }
-  // 矿工费查询接口
+
   chainFeeList(data) {
     const obj = {
       ...this.newBaseRequestData(),
       ...data,
     }
     return this.createRpcToken(
-      testApi + '/swap/v1/queryChainFeeList',
+      newSwftApi + '/swap/v1/queryChainFeeList',
       obj,
       '',
       'path',
     )
   }
-  multiQuote(data) {
+  //  手续费五折的广告是否展示
+  swftFeeAdvertising(data) {
     const obj = {
       ...this.newBaseRequestData(),
       ...data,
     }
-    return this.createRpcToken(pathApi + '/api/multiQuote', obj, 'get', 'path')
+    return this.createRpcToken('/api/v3/init', obj)
   }
-  // 获取NFT
-  getAssetsInfo(data) {
+  // 弹窗图控制接口
+  widgetNotification(data) {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
     return this.createRpcToken(
-      pathApi + '/api/getAssetsInfo',
-      data,
-      'get',
-      'path',
+      swftApi + '/pictureControl/widgetNotification',
+      obj,
+      'post',
+      'swft',
     )
   }
-  // 获取NFT
-  getRaribleData(data) {
+  // banner图控制接口
+  widgetBannerImg(data) {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
     return this.createRpcToken(
-      pathApi + '/api/getRaribleData',
-      data,
-      'get',
-      'path',
+      swftApi + '/pictureControl/widgetBannerImg',
+      obj,
+      'post',
+      'swft',
+    )
+  }
+  //获取rpc 接口
+  publicNode(data) {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
+    return this.createRpcToken(
+      swftApi + '/public/node/publicNode',
+      obj,
+      'post',
+      'swft',
     )
   }
   // Path兑换
@@ -306,7 +361,7 @@ class BaseApi {
     }
     return this.createRpcToken(pathApi + '/api/commonSwap', obj, 'post', 'path')
   }
-  //生成NFT兑换记录
+  //生成兑换记录
   addTransData(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -326,7 +381,7 @@ class BaseApi {
   //插入path 交易兑换记录接口
   uploadPathRecord(data) {
     return this.createRpcToken(
-      'https://transfer.swft.pro/bridge/uploadRecord',
+      swftApi + '/bridge/uploadRecord',
       data,
       '',
       'path',
@@ -335,7 +390,7 @@ class BaseApi {
   //登录XUMM 钱包
   payload(data) {
     return this.createRpcToken(
-      'https://pro-network.swftc.be/gt/swap/v1/payload',
+      newSwftApi + '/swap/v1/payload',
       data,
       '',
       'path',
@@ -347,7 +402,7 @@ class BaseApi {
       uuid: identifier,
     }
     return this.createRpcToken(
-      'https://pro-network.swftc.be/gt/swap/v1/queryWalletAddress',
+      newSwftApi + '/swap/v1/queryWalletAddress',
       data,
       '',
       'path',
@@ -384,34 +439,18 @@ class BaseApi {
       'path',
     )
   }
-  //bridgers2 询价
-  getBridgers2TradeData(data) {
-    const obj = {
-      ...this.newBaseRequestData(),
-      ...data,
-    }
-    return this.createRpcToken(
-      bridgersApi + '/gt/swap/bridgers2/quote',
-      obj,
-      'post',
-      'path',
-    )
-  }
   //bridgers1 发起兑换
   sSwapswap(data) {
     const obj = {
       ...this.newBaseRequestData(),
       ...data,
     }
-    return this.createRpcToken(sSwapApi + '/api/sswap/swap', obj, 'post', 'path')
-  }
-  //bridgers2 发起兑换
-  Bridgers2swap(data) {
-    const obj = {
-      ...this.newBaseRequestData(),
-      ...data,
-    }
-    return this.createRpcToken(bridgersApi + '/gt/swap/bridgers2/swap', obj, 'post', 'path')
+    return this.createRpcToken(
+      sSwapApi + '/api/sswap/swap',
+      obj,
+      'post',
+      'path',
+    )
   }
   //更新bridgers1 交易哈希
   updateDataAndStatus(data) {
@@ -421,19 +460,6 @@ class BaseApi {
     }
     return this.createRpcToken(
       sSwapApi + '/api/exchangeRecord/updateDataAndStatus',
-      obj,
-      'post',
-      'path',
-    )
-  }
-  //更新bridgers2 交易哈希
-  updatebridgers2DataAndStatus(data) {
-    const obj = {
-      ...this.newBaseRequestData(),
-      ...data,
-    }
-    return this.createRpcToken(
-      bridgersApi + '/gt/swap/bridgers2/updateDataAndStatus',
       obj,
       'post',
       'path',
@@ -452,19 +478,6 @@ class BaseApi {
       'path',
     )
   }
-  //获取 bridgers2 交易记录
-  getbridgers2TransData(data) {
-    const obj = {
-      ...this.newBaseRequestData(),
-      ...data,
-    }
-    return this.createRpcToken(
-      bridgersApi + '/gt/swap/bridgers2/getTransData',
-      obj,
-      'post',
-      'path',
-    )
-  }
   //查询bridgers1交易记录详情
   getTransDataById(data) {
     return this.createRpcToken(
@@ -474,114 +487,187 @@ class BaseApi {
       'path',
     )
   }
-    //查询bridgers2交易记录详情
-    getbridgers2TransDataById(data) {
-      return this.createRpcToken(
-        bridgersApi + '/gt/swap/bridgers2/getTransDataById',
-        data,
-        'post',
-        'path',
-      )
-    }
-  //linkNFT 接口
-  //linkNFT 获取主题跟收藏
-  getNFTTypeList(data) {
-    const obj = {
-      ...this.newBaseRequestData(),
-      ...data,
-    }
-    return this.createRpcToken(
-      testApi + '/swap/path/v1/getBaseInfo',
-      obj,
-      '',
-      'path',
-    )
-  }
-  //linkNFT 获取详情NFT
-  getNFTListDetail(data) {
-    const obj = {
-      ...this.newBaseRequestData(),
-      ...data,
-    }
-    return this.createRpcToken(
-      testApi + '/swap/path/v1/getLists',
-      obj,
-      '',
-      'path',
-    )
-  }
-  //linkNFT 查询拥有的NFT
-  getOwnedAssets(data) {
-    const obj = {
-      ...this.newBaseRequestData(),
-      ...data,
-    }
-    return this.createRpcToken(
-      testApi + '/swap/path/v1/getOwnedAssets',
-      obj,
-      '',
-      'path',
-    )
-  }
+
+
   quote(data) {
     const obj = {
       ...this.newBaseRequestData(),
       ...data,
     }
-    return this.createRpcToken(testApi + '/swap/path/v1/quote', obj, '', 'path')
-  }
-  //linkNFT NFT下单
-  getNFTExchange(data) {
-    const obj = {
-      ...this.newBaseRequestData(),
-      ...data,
-    }
     return this.createRpcToken(
-      testApi + '/swap/path/v1/placeOrder',
+      newSwftApi + '/swap/path/v1/quote',
       obj,
       '',
       'path',
     )
   }
-  //linkNFT NFT订单详情信息
-  queryOrderStateNFT(data) {
+
+  //获取币种列表顺序 接口
+  queryChainByConfig(data) {
     const obj = {
       ...this.newBaseRequestData(),
       ...data,
     }
     return this.createRpcToken(
-      testApi + '/swap/path/v1/queryOrderState',
+      newSwftApi + '/swap/v1/queryChainByConfig',
       obj,
-      '',
+      'post',
       'path',
     )
   }
-  // linknft 交易记录
-  queryAllNftTrade(data) {
+  // spaceId域名获取地址
+  accountapiSpaceId(data) {
     const obj = {
       ...this.newBaseRequestData(),
       ...data,
     }
     return this.createRpcToken(
-      testApi + '/swap/path/v1/queryAllNftTrade',
+      swftApi + '/accountapi/spaceId',
       obj,
-      '',
-      'path',
+      'post',
+      'swft',
     )
   }
-  // linknft 交易记录
-  modifyDepositTxId(data) {
+  mpcbot(data) {
     const obj = {
       ...this.newBaseRequestData(),
       ...data,
     }
     return this.createRpcToken(
-      testApi + '/swap/path/v1/modifyDepositTxId',
+      'https://www.swftc.info/ai/mpcbot',
       obj,
-      '',
-      'path',
+      'post',
+      'swft',
     )
   }
+  // fio域名获取地址
+  transapiFioAddress(data) {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
+    return this.createRpcToken(
+      swftApi + '/transapi/fioAddress',
+      obj,
+      'post',
+      'swft',
+    )
+  }
+  // 获取brc-20 代币余额
+  queryBRC20(data) {
+    return this.createRpcToken(
+      newSwftApi + '/swap/v1/queryBRC20',
+      data,
+      'post',
+      'swft',
+    )
+  }
+  // 查询收益列表
+  queryRewardList = async (data) => {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
+    return this.createRpcToken(
+      sSwapApi + '/swap/staking/queryRewardList',
+      obj,
+      'post',
+      'swft',
+    )
+  };
+
+  // 查询项目
+  queryProjectList = async (data) => {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
+    return this.createRpcToken(
+      newSwftApi + '/swap/staking/queryProjectList',
+      obj,
+      'post',
+      'swft',
+    )
+  };
+
+  // 查询我的持仓
+  queryPositionList = async (data) => {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
+    return this.createRpcToken(
+      newSwftApi + '/swap/staking/queryPositionList',
+      obj,
+      'post',
+      'swft',
+    )
+  };
+
+  // 提取本金
+  withdrawFund = async (data) => {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
+    return this.createRpcToken(
+      newSwftApi + '/swap/staking/withdrawFund',
+      obj,
+      'post',
+      'swft',
+    )
+  };
+
+  // 提取收益
+  transferRevenue = async (data) => {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
+    return this.createRpcToken(
+      newSwftApi + '/swap/staking/transferRevenue',
+      obj,
+      'post',
+      'swft',
+    )
+  };
+
+  // 上传订单
+  addOrder = async (data) => {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
+    return this.createRpcToken(
+      newSwftApi + '/swap/staking/addOrder',
+      obj,
+      'post',
+      'swft',
+    )
+  };
+
+  // 质押接口
+  pledge = async (data) => {
+    const obj = {
+      ...this.newBaseRequestData(),
+      ...data,
+    }
+    return this.createRpcToken(
+      newSwftApi + '/swap/staking/pledge',
+      obj,
+      'post',
+      'swft',
+    )
+  };
+  // 获取tron 链详情
+  getTronInfo = async (data) => {
+    return this.createRpcToken(
+      'https://apilist.tronscanapi.com/api/accountv2',
+      data,
+      'get',
+      'swft',
+    )
+  };
 }
 const baseApi = new BaseApi()
 export default baseApi

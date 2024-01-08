@@ -1,6 +1,5 @@
 import store from '../store/index'
 const metaMaskConnecthandle = ($scope, name) => {
-  console.log($scope, name, window.onto)
   if (!window.onto) {
     return Notify({
       color: '#ad0000',

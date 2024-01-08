@@ -3,7 +3,7 @@
     <Dialog :width="isPC ? '500px' : '90%'" ref="dialogAcct">
       <span class="titleWallet">{{ $t('connectWallet') }}</span>
       <div v-for="(item, index) in listAcct.addrSS58" :key="index">
-        <div class="AcctP" @click="checkedAddr(index)">
+        <div class="AcctP" @click="checkedAddr(index, objPolkdot)">
           <span class="headStyle"></span>
           <span class="addrSpan"
             >{{ cutAddress(item.address) }} ({{ item.meta.name }})</span
@@ -16,21 +16,13 @@
 
 <script>
 import Dialog from './dialog'
-import { stringToHex, stringToU8a, u8aToHex } from '@polkadot/util'
-const { decodeAddress, signatureVerify } = require('@polkadot/util-crypto')
-import {
-  web3Accounts,
-  web3Enable,
-  web3FromAddress,
-  web3ListRpcProviders,
-  web3UseRpcProvider,
-  web3FromSource,
-} from '@polkadot/extension-dapp'
 import { Notify } from 'vant'
 export default {
   components: { Dialog },
   data() {
-    return {}
+    return {
+      objPolkdot: null,
+    }
   },
   props: {
     listAcct: { type: Object, default: null },
@@ -48,6 +40,7 @@ export default {
     },
     openAcctDialog(val) {
       const _this = this
+      this.objPolkdot = val
       if (_this.listAcct.addrSS58.length == 1) {
         _this.checkedAddr(0, val)
       } else {
@@ -55,6 +48,17 @@ export default {
       }
     },
     async checkedAddr(index, objPolkdot) {
+      const { stringToHex, stringToU8a, u8aToHex } = await import(
+        '@polkadot/util'
+      )
+      const {
+        web3Accounts,
+        web3Enable,
+        web3FromAddress,
+        web3ListRpcProviders,
+        web3UseRpcProvider,
+        web3FromSource,
+      } = await import('@polkadot/extension-dapp')
       // `account` 是 InjectedAccountWithMeta 类型
       //选择某一个账户
 
@@ -63,6 +67,7 @@ export default {
         addr: _this.listAcct.addr[index].address,
         addrSS58: _this.listAcct.addrSS58[index].address,
         addrSS58CRU: _this.listAcct.addrSS58CRU[index].address,
+        addrSS58DBC: _this.listAcct.addrSS58DBC[index].address,
         nameAcct: _this.listAcct.addrSS58[index].meta.name,
         source: _this.listAcct.addrSS58[index].meta.source,
         name: 'DOT',
@@ -96,11 +101,12 @@ export default {
             if (objPolkdot.network === 'CRU') {
               _this.$store.commit('setChainId', '222')
               localStorage.setItem('connectorId', 'CRU')
-              _this.$bus.emit('checkPolkadot', 'CRU')
+            } else if (objPolkdot.network === 'DBC') {
+              _this.$store.commit('setChainId', '333')
+              localStorage.setItem('connectorId', 'DBC')
             } else {
               _this.$store.commit('setChainId', '000')
               localStorage.setItem('connectorId', 'DOT')
-              _this.$bus.emit('checkPolkadot', 'DOT')
             }
 
             _this.$store.commit('setWalletConnectType', 'Polkadot')
@@ -113,25 +119,9 @@ export default {
               message: _this.$t('polkadotSignFail'),
             })
           }
-          console.log(e)
         }
       }
 
-      //验证签名是否正确
-      // const isValidSignature = (signedMessage, signature, address) => {
-      //   const publicKey = decodeAddress(address)
-      //   const hexPublicKey = u8aToHex(publicKey)
-
-      //   return signatureVerify(signedMessage, signature, hexPublicKey).isValid
-      // }
-
-      // const isValid = isValidSignature(
-      //   'message to sign',
-      //   injector.signer.signature,
-      //   addr,
-      // )
-
-      // console.log(isValid)
     },
   },
   // 生命周期 - 创建完成（可以访问当前this实例）

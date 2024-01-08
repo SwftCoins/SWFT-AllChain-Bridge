@@ -6,6 +6,13 @@
       @close="dialogClose"
     >
       <div class="centerDiv" v-if="data">
+        <div class="free-gas" v-if="data.noGas">
+          <div class="free-text">
+            <img class="sd" src="../assets/img/sd1.svg" alt="" />
+            <span> {{ $t('usenogas') }}</span>
+          </div>
+          <div class="free-icon" @click.stop="windowOpen">></div>
+        </div>
         <div class="imgDiv">
           <img
             v-if="
@@ -25,8 +32,8 @@
             src="@/assets/img/exchangeSuccess.png"
             alt=""
           />
-          <img v-else src="@/assets/img/swapConfirm.png" alt="" />
-          <div
+          <img v-else src="@/assets/img/swapConfirm.gif" alt="" />
+          <!-- <div
             class="status"
             :style="{
               color: data.orderdetailStatus
@@ -39,6 +46,207 @@
                 ? data.orderdetailStatus[0]
                 : $t('wait_deposit_send')
             }}
+          </div> -->
+        </div>
+        <div class="stepsBox" v-if="data.orderdetailStatus">
+          <div class="steps">
+            <div class="yuan">
+              <div class="itemBox">
+                <div
+                  class="itemyuan"
+                  v-if="
+                    data.orderdetailStatus[2] > 1 ||
+                    (data.orderdetailStatus[2] == 1 &&
+                      data.orderdetailStatus[3] == true)
+                  "
+                >
+                  <img src="../assets/img/success.svg" alt="" />
+                </div>
+                <div
+                  class="itemyuan blue"
+                  v-else-if="
+                    data.orderdetailStatus[2] == 1 &&
+                    data.orderdetailStatus[3] == false
+                  "
+                >
+                  <img class="failImg" src="../assets/img/fail.svg" alt="" />
+                </div>
+                <div
+                  class="itemyuan"
+                  v-else-if="
+                    data.orderdetailStatus[2] == 1 &&
+                    data.orderdetailStatus[3] == 'loading'
+                  "
+                >
+                  <div class="step loading">
+                    <!-- <img class="loading-animation" src="../assets/img/progresing.svg" alt=""> -->
+                    <div class="loading-animation"></div>
+                  </div>
+                </div>
+                <div class="itemyuan grey" v-else></div>
+                <div
+                  class="orderStatus"
+                  :class="data.orderdetailStatus[2] >= 1 ? 'black' : 'greytext'"
+                >
+                  <div
+                    v-if="
+                      data.orderdetailStatus[2] == 1 && data.orderdetailStatus
+                    "
+                  >
+                    {{ data.orderdetailStatus[0] }}
+                  </div>
+                  <div v-else>{{ $t('Deposit') }}</div>
+                </div>
+              </div>
+              <div class="itemBox">
+                <div
+                  class="itemyuan"
+                  v-if="
+                    data.orderdetailStatus[2] > 2 ||
+                    (data.orderdetailStatus[2] == 2 &&
+                      data.orderdetailStatus[3] == true)
+                  "
+                >
+                  <img src="../assets/img/success.svg" alt="" />
+                </div>
+                <div
+                  class="itemyuan blue"
+                  v-else-if="
+                    data.orderdetailStatus[2] == 2 &&
+                    data.orderdetailStatus[3] == false
+                  "
+                >
+                  <img class="failImg" src="../assets/img/fail.svg" alt="" />
+                </div>
+                <div
+                  class="itemyuan"
+                  v-else-if="
+                    data.orderdetailStatus[2] == 2 &&
+                    data.orderdetailStatus[3] == 'loading'
+                  "
+                >
+                  <div class="step loading">
+                    <!-- <img class="loading-animation" src="../assets/img/progresing.svg" alt=""> -->
+                    <div class="loading-animation"></div>
+                  </div>
+                </div>
+                <div class="itemyuan grey" v-else></div>
+                <div
+                  class="orderStatus"
+                  :class="data.orderdetailStatus[2] >= 2 ? 'black' : 'greytext'"
+                >
+                  <div
+                    v-if="
+                      data.orderdetailStatus[2] == 2 && data.orderdetailStatus
+                    "
+                  >
+                    {{ data.orderdetailStatus[0] }}
+                  </div>
+                  <div v-else>{{ $t('Exchange') }}</div>
+                </div>
+              </div>
+              <div class="itemBox">
+                <div
+                  class="itemyuan"
+                  v-if="
+                    data.orderdetailStatus[2] > 3 ||
+                    (data.orderdetailStatus[2] == 3 &&
+                      data.orderdetailStatus[3] == true)
+                  "
+                >
+                  <img src="../assets/img/success.svg" alt="" />
+                </div>
+                <div
+                  class="itemyuan blue"
+                  v-else-if="
+                    data.orderdetailStatus[2] == 3 &&
+                    data.orderdetailStatus[3] == false
+                  "
+                >
+                  <img class="failImg" src="../assets/img/fail.svg" alt="" />
+                </div>
+                <div
+                  class="itemyuan"
+                  v-else-if="
+                    data.orderdetailStatus[2] == 3 &&
+                    data.orderdetailStatus[3] == 'loading'
+                  "
+                >
+                  <div class="step loading">
+                    <!-- <img class="loading-animation" src="../assets/img/progresing.svg" alt=""> -->
+                    <div class="loading-animation"></div>
+                  </div>
+                </div>
+                <div class="itemyuan grey" v-else></div>
+                <div
+                  class="orderStatus"
+                  :class="data.orderdetailStatus[2] >= 3 ? 'black' : 'greytext'"
+                >
+                  <div
+                    v-if="
+                      data.orderdetailStatus[2] == 3 && data.orderdetailStatus
+                    "
+                  >
+                    {{ data.orderdetailStatus[0] }}
+                  </div>
+                  <div v-else>{{ $t('Send') }}</div>
+                </div>
+              </div>
+              <div class="itemBox">
+                <div
+                  class="itemyuan"
+                  v-if="
+                    data.orderdetailStatus[2] > 4 ||
+                    (data.orderdetailStatus[2] == 4 &&
+                      data.orderdetailStatus[3] == true)
+                  "
+                >
+                  <img src="../assets/img/success.svg" alt="" />
+                </div>
+                <div
+                  class="itemyuan blue"
+                  v-else-if="
+                    data.orderdetailStatus[2] == 4 &&
+                    data.orderdetailStatus[3] == false
+                  "
+                >
+                  <img class="failImg" src="../assets/img/fail.svg" alt="" />
+                </div>
+                <div
+                  class="itemyuan"
+                  v-else-if="
+                    data.orderdetailStatus[2] == 4 &&
+                    data.orderdetailStatus[3] == 'loading'
+                  "
+                >
+                  <div class="step loading">
+                    <!-- <img class="loading-animation" src="../assets/img/progresing.svg" alt=""> -->
+                    <div class="loading-animation"></div>
+                  </div>
+                </div>
+                <div class="itemyuan grey" v-else></div>
+                <div
+                  class="orderStatus"
+                  :class="data.orderdetailStatus[2] >= 4 ? 'black' : 'greytext'"
+                >
+                  <div
+                    v-if="
+                      data.orderdetailStatus[2] == 4 && data.orderdetailStatus
+                    "
+                  >
+                    {{ data.orderdetailStatus[0] }}
+                  </div>
+                  <div v-else>{{ $t('Success') }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="progress">
+              <div
+                class="progress_blue"
+                :class="data.orderdetailStatus[4] == false ? 'progressing' : ''"
+                :style="{ width: progresswidth }"
+              ></div>
+            </div>
           </div>
         </div>
         <div class="content" :class="isPC ? 'pc' : ''">
@@ -215,14 +423,23 @@
               {{ data.createTime }}
             </div>
           </div>
-          <div class="rate">
+          <div
+            class="rate"
+            v-if="sourceFlag != 'HN' && sourceFlag != 'burndex'"
+          >
             <div class="left">{{ $t('bridge') }}</div>
             <div class="right">
               <img class="dexlogo" :src="dexLogo" alt="" />
               {{
                 this.data.router && this.data.router.router
-                  ? this.data.router.router
-                  : 'SWFT'
+                  ? this.data.router.router == 'bridgers1'
+                    ? twFlag != 'miningtw'
+                      ? 'Bridgers'
+                      : 'MiningTW Bridge'
+                    : this.data.router.router
+                  : twFlag != 'miningtw'
+                  ? 'SWFT'
+                  : 'MiningTW'
               }}
             </div>
           </div>
@@ -274,6 +491,24 @@
               </span>
             </div>
           </div>
+          <div
+            class="rate"
+            v-if="data.depositGasFeeAmt && data.depositCoinCode"
+          >
+            <div class="left">{{ $t('nogasSeviceFee') }}</div>
+            <div class="right">
+              {{ data.depositGasFeeAmt }} {{ data.depositCoinCode }}
+            </div>
+          </div>
+          <div v-if="data.burnRate">
+            <div class="rate" v-if="data.burnRate != 0">
+              <div class="left">{{ $t('burnRate') }}</div>
+              <div class="right">
+                {{ data.burnRate * 100 + '% ' + data.receiveCoinCode }}
+              </div>
+            </div>
+          </div>
+
           <div class="rate">
             <div class="left">{{ $t('outTxid') }}</div>
             <div class="right">
@@ -395,10 +630,22 @@
           {{ $t('orderInfoText') }} &nbsp;<span class="service"
             ><a
               style="color: #2980fa; word-break: break-word"
-              :href="$t('orderInfoService')"
+              :href="
+                twFlag == 'miningtw'
+                  ? $t('orderInfoService_tw')
+                  : twFlag == 'burndex'
+                  ? ''
+                  : $t('orderInfoService')
+              "
               target="_blank"
               rel="noopener noreferrer"
-              >{{ $t('orderInfoService') }}</a
+              >{{
+                twFlag == 'miningtw'
+                  ? $t('orderInfoService_tw')
+                  : twFlag == 'burndex'
+                  ? ''
+                  : $t('orderInfoService')
+              }}</a
             ></span
           >
         </div>
@@ -436,10 +683,21 @@ export default {
       showPopover: false,
       tipTimer: null,
       sourceFlag: localStorage.getItem('sourceFlag'),
+      twFlag: localStorage.getItem('twFlag'),
+      progresswidth: '0',
     }
   },
   computed: {
     dexLogo() {
+      if (this.twFlag == 'miningtw') {
+        return dexList[
+          this.data.router && this.data.router.router
+            ? this.data.router.router == 'bridgers1'
+              ? 'miningTW'
+              : this.data.router.router
+            : 'miningTW'
+        ]
+      }
       return dexList[
         this.data.router && this.data.router.router
           ? this.data.router.router
@@ -464,6 +722,23 @@ export default {
     toNumber() {
       return this.$store.state.toNumber
     },
+    recordType: {
+      get() {
+        return this.$store.state.recordType
+      },
+      set(val) {
+        this.$store.commit('setRecordType', val)
+      },
+    },
+    lang: {
+      get() {
+        return this.$store.getters.getLang
+      },
+      set(val) {
+        this.$i18n.locale = val
+        this.$store.commit('setLang', val)
+      },
+    },
   },
   watch: {
     isShow(val, old) {
@@ -480,7 +755,8 @@ export default {
           status === 'refund_complete' ||
           status === 'wait_for_information' ||
           status === 'WAIT_KYC' ||
-          status === 'complete'
+          status === 'complete' ||
+          status === 'wait_deposit_send_fail'
         )
           return
         this.timer = setInterval(() => {
@@ -489,6 +765,20 @@ export default {
       } else {
         clearInterval(this.timer)
       }
+    },
+    'data.orderdetailStatus': {
+      handler: function (val) {
+        if (val == undefined) return
+        if (val[2] == 1) {
+          this.progresswidth = '0'
+        } else if (val[2] == 2) {
+          this.progresswidth = '33%'
+        } else if (val[2] == 3) {
+          this.progresswidth = '66%'
+        } else {
+          this.progresswidth = '100%'
+        }
+      },
     },
   },
   created() {
@@ -500,6 +790,17 @@ export default {
     this.$bus.off('isShowStatus', this.isShowStatus)
   },
   methods: {
+    windowOpen() {
+      if (this.lang == 'zh') {
+        window.open(
+          'https://swft-allchain-bridge.gitbook.io/swft/swft-wu-gas-dui-huan-fu-wu',
+        )
+      } else {
+        window.open(
+          'https://swft-2.gitbook.io/crosschain/welcome/swft-0-gas-swap-service',
+        )
+      }
+    },
     cutAddress(adr) {
       const beforeAdr = adr.substring(0, 10)
       const afterAdr = adr.substring(adr.length - 10, adr.length)
@@ -529,7 +830,6 @@ export default {
       this.dialogClose()
     },
     dialogClose() {
-      //console.log('监听dialog 关闭事件')
       //接受dialog 关闭事件
       this.isShow = false
       this.$store.commit('setOrder', null)
@@ -538,7 +838,6 @@ export default {
       Toast.success(this.$t('copy_success'))
     },
     onCopyError(val) {
-      // this.$message.success("复制失败");
     },
 
     //获取订单详情
@@ -574,13 +873,13 @@ export default {
             status === 'refund_complete' ||
             status === 'partial_complete' ||
             status === 'wait_for_information' ||
-            status === 'complete'
+            status === 'complete' ||
+            status === 'wait_deposit_send_fail'
           ) {
             clearInterval(this.timer)
           }
         } else {
         }
-        console.log(res)
       } else if (dataObj.router && dataObj.router.router === 'bridgers2') {
         const res = await baseApi.getbridgers2TransDataById({
           orderId: dataObj.orderId,
@@ -614,13 +913,13 @@ export default {
             status === 'refund_complete' ||
             status === 'partial_complete' ||
             status === 'wait_for_information' ||
-            status === 'complete'
+            status === 'complete' ||
+            status === 'wait_deposit_send_fail'
           ) {
             clearInterval(this.timer)
           }
         } else {
         }
-        console.log(res)
       } else if (dataObj.router && dataObj.router === 'NFT') {
         const res = await baseApi.queryOrderStateNFT({
           orderId: dataObj.orderId,
@@ -645,7 +944,8 @@ export default {
             status === 'wait_for_information' ||
             status === 'complete' ||
             status === 'wait_deposit_send_error' ||
-            status === 'fail'
+            status === 'fail' ||
+            status === 'wait_deposit_send_fail'
           ) {
             clearInterval(this.timer)
           }
@@ -675,7 +975,8 @@ export default {
             status === 'partial_complete' ||
             status === 'wait_for_information' ||
             status === 'wait_deposit_send_error' ||
-            status === 'complete'
+            status === 'complete' ||
+            status === 'wait_deposit_send_fail'
           ) {
             clearInterval(this.timer)
           }
@@ -687,141 +988,253 @@ export default {
 
     //解析订单状态
     orderStatus(str) {
-      let statusData = [this.$t('wait_deposit_send'), '#707B9E']
+      let statusData = [
+        this.$t('wait_deposit_send'),
+        '#707B9E',
+        1,
+        'loading',
+        false,
+      ]
       switch (str) {
         case 'wait_deposits':
           statusData[0] = this.$t('wait_deposit_send') //wait_deposit_send   等待存币
           statusData[1] = '#707B9E'
+          statusData[2] = 1
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
+          break
+        case 'wait_deposit_send_fail':
+          statusData[0] = this.$t('deposit_failed') //wait_deposit_send_fail  存币失败
+          statusData[1] = '#FF8484'
+          statusData[2] = 1
+          statusData[3] = false
+          statusData[4] = true
           break
         case 'wait_deposit_send_error':
           statusData[0] = this.$t('trade_fail') //wait_deposit_send_error   存币失败
           statusData[1] = '#FF8484'
+          statusData[2] = 1
+          statusData[3] = false
+          statusData[4] = true //是否是最终状态
           break
         case 'wait_detect':
           statusData[0] = this.$t('wait_deposit_send') //NFT接口  等待存币
           statusData[1] = '#707B9E'
+          statusData[2] = 1
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'exchange':
           statusData[0] = this.$t('exchangeIng') //wait_deposit_send   兑换中
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_exchange':
           statusData[0] = this.$t('exchangeIng') //NFT接口 交换中
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'trade_fail':
           statusData[0] = this.$t('trade_fail') //wait_deposit_send   兑换失败
           statusData[1] = '#FF8484'
+          statusData[2] = 2
+          statusData[3] = false
+          statusData[4] = true //是否是最终状态
           break
         case 'fail':
           statusData[0] = this.$t('trade_fail') //wait_deposit_send   兑换失败
           statusData[1] = '#FF8484'
+          statusData[2] = 2
+          statusData[3] = false
+          statusData[4] = true //是否是最终状态
           break
         case 'wait_deposit_send':
           statusData[0] = this.$t('wait_deposit_send') //wait_deposit_send   等待存币
           statusData[1] = '#707B9E'
+          statusData[2] = 1
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_receive_send':
           statusData[0] = this.$t('wait_receive_send') //wait_receive_send  等待发币
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_send':
           statusData[0] = this.$t('wait_receive_send') //linknft 等待发币
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
 
         case 'wait_receive_confirm':
           statusData[0] = this.$t('wait_receive_confirm') //wait_receive_confirm  等待发币确认
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_refund_send':
           statusData[0] = this.$t('wait_refund_send') //wait_refund_send  等待退币
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_refund':
           statusData[0] = this.$t('wait_refund_send') //linknft 等待退币
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
 
         case 'wait_exchange_return':
           statusData[0] = this.$t('exchangeIng') //wait_exchange_return  等待交换结果
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_exchange_push':
           statusData[0] = this.$t('exchangeIng') //wait_exchange_push  等待交换推送
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_for_information':
           statusData[0] = this.$t('exchangeIng') // wait_for_information   等待用户联系
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'receive_complete':
           statusData[0] = this.$t('receive_complete') // receive_complete   发币完成
           statusData[1] = '#1eb740'
+          statusData[2] = 4
+          statusData[3] = true
+          statusData[4] = true //是否是最终状态
           break
         case 'complete':
           statusData[0] = this.$t('receive_complete')
           statusData[1] = '#1eb740'
+          statusData[2] = 4
+          statusData[3] = true
+          statusData[4] = true //是否是最终状态
           break
         case 'refund_complete':
           statusData[0] = this.$t('refund_complete') // refund_complete   退币完成
           statusData[1] = '#1eb740'
+          statusData[2] = 2
+          statusData[3] = true
+          statusData[4] = true //是否是最终状态
           break
         case 'fail':
           statusData[0] = this.$t('refund_complete') // linknft 交易失败已退币   退币完成
           statusData[1] = '#1eb740'
+          statusData[2] = 2
+          statusData[3] = false
+          statusData[4] = true //是否是最终状态
           break
         case 'refund_sending':
           statusData[0] = this.$t('refund_sending') // refund_sending   即将退币
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_kyc':
           statusData[0] = this.$t('exchangeIng') //  wait_kyc  需要kyc   WAIT_KYC
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'timeout':
           statusData[0] = this.$t('timeout') // timeout   超时
           statusData[1] = '#FF8484'
+          statusData[2] = 1
+          statusData[3] = false
+          statusData[4] = true //是否是最终状态
           break
         case 'wait_refund_confirm':
           statusData[0] = this.$t('wait_refund_confirm') //wait_refund_confirm  等待退币确认
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_partial_send':
           statusData[0] = this.$t('wait_partial_send') //部分成交发币中…
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_partial_send_confirm':
           statusData[0] = this.$t('wait_partial_send_confirm') // 部分成交发币确认中…
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_partial_refund':
           statusData[0] = this.$t('wait_partial_refund') //部分成交退币中…
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_partial_refund_confirm':
           statusData[0] = this.$t('wait_partial_refund_confirm') //部分成交退币确认中…
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'partial_complete':
           statusData[0] = this.$t('partial_complete') //完成
           statusData[1] = '#1eb740'
+          statusData[2] = 4
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'complete':
           statusData[0] = this.$t('receive_complete') //NFT接口 完成
           statusData[1] = '#1eb740'
+          statusData[2] = 4
+          statusData[3] = true
+          statusData[4] = true //是否是最终状态
           break
         case 'wait_partial_send_confirm_error':
           statusData[0] = this.$t('wait_partial_send_confirm_error') //部分成交发币确认中…
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         case 'wait_partial_refund_confirm_error':
           statusData[0] = this.$t('wait_partial_refund_confirm_error') //部分成交退币确认中…
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
           break
         default:
           statusData[0] = this.$t('exchangeIng')
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] = false //是否是最终状态
       }
       return statusData
     },
@@ -842,6 +1255,47 @@ export default {
 
 <style lang="scss" scoped>
 .centerDiv {
+  .free-gas {
+    width: calc(100% + 0.74rem);
+    margin-left: -0.37rem;
+    margin-top: -0.37rem;
+    padding: 0.25rem 0;
+    background: #2980fa;
+    opacity: 1;
+    padding: 0.2rem;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    border-radius: 0.5rem 0.5rem 0 0;
+    .sd {
+      display: inline-block;
+      width: 0.35rem;
+      margin-right: 0.05rem;
+      color: #ffffff;
+    }
+    .free-text {
+      width: 0;
+      flex: 1;
+      font-size: 10px;
+      font-family: Poppins-Regular, Poppins;
+      font-weight: 400;
+      color: #ffffff;
+      line-height: 15px;
+      padding: 0.1rem 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .free-icon {
+      font-family: Poppins-Regular;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 0 0.1rem;
+      font-size: 0.4rem;
+      color: #ffffff;
+    }
+  }
   .imgDiv {
     width: 100%;
     height: auto;
@@ -851,6 +1305,107 @@ export default {
       margin: 0px auto;
       // padding-top: 12px;
       display: block;
+    }
+  }
+  .stepsBox {
+    width: 90%;
+    height: 20px;
+    margin: 0 auto 45px;
+    .steps {
+      position: relative;
+      .yuan {
+        display: flex;
+        justify-content: space-between;
+        z-index: 2;
+        position: relative;
+        .itemBox {
+          position: relative;
+          display: flex;
+          justify-content: space-around;
+        }
+        .itemyuan {
+          background: #ffffff;
+          opacity: 1;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          display: flex;
+          justify-content: space-around;
+          &.blue {
+            border: 2px solid #5391fe;
+          }
+          &.grey {
+            border: 2px solid rgba(216, 230, 255, 0.62);
+          }
+          img {
+            width: 100%;
+          }
+          .failImg {
+            width: 65%;
+          }
+        }
+        .orderStatus {
+          position: absolute;
+          bottom: -27px;
+          width: 120px;
+          font-family: Poppins-Regular, Poppins;
+          font-weight: 400;
+          height: 20px;
+          .black {
+            color: #000000;
+          }
+          &.greytext {
+            color: #cbcbcb;
+          }
+        }
+      }
+      .progress {
+        width: 100%;
+        background: #f1f6ff;
+        border-radius: 22px;
+        height: 10px;
+        position: absolute;
+        top: 25%;
+        .progress_blue {
+          width: 0%;
+          height: 100%;
+          border-radius: 22px;
+          background-color: #5391fe;
+          background-image: none;
+          background-size: 300px 100%;
+          animation: none;
+          &.progressing {
+            background-image: repeating-linear-gradient(
+              -45deg,
+              #3c79fe,
+              #3c7aff 20px,
+              #80aeff 0,
+              #78a9ff 40px
+            );
+            animation: barberpole 12s linear infinite;
+          }
+        }
+      }
+      .loading {
+        width: 100%;
+        .loading-animation {
+          animation: loading 1.25s linear infinite forwards;
+        }
+        div {
+          border: 3px dashed #277ffa;
+          border-radius: 100%;
+          width: 18px;
+          height: 18px;
+        }
+        @keyframes loading {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      }
     }
   }
   .content {
@@ -1073,5 +1628,13 @@ export default {
   line-height: 19px;
   font-weight: 600;
   font-size: 13px;
+}
+@keyframes barberpole {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: 300px 0%;
+  }
 }
 </style>

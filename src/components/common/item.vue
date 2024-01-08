@@ -1,17 +1,16 @@
 <script>
-import { Loading } from 'vant'
-import { ethers } from 'ethers'
-import BigNumber from 'bignumber.js'
-const { ApiPromise, WsProvider } = require('@polkadot/api')
-const { typesBundleForPolkadot } = require('@crustio/type-definitions')
-import * as solanaWeb3 from '@solana/web3.js'
-import getTerraBalanceHandle from '../../utils/getTerraBalance'
-import BtcExchangeHandle from '../../utils/getBtcBalance'
-import getNFTAsset from '../../utils/getNFTAsset'
-import getEOSBalance from '../../utils/getEOSBalance'
+import { Loading } from "vant";
+import { ethers } from "ethers";
+import BigNumber from "bignumber.js";
+import BtcExchangeHandle from "../../utils/getBtcBalance";
+import getEOSBalance from "../../utils/getEOSBalance";
+import { Notify, Dialog } from "vant";
+import getPolkadotBalance from "../../utils/getPolkadotBalance";
+import baseApi from "../../api/baseApi";
+import suiWalletMethods from "../../utils/suiWalletConnect";
 
 export default {
-  name: 'item',
+  name: "item",
   components: {
     Loading,
   },
@@ -19,245 +18,234 @@ export default {
     source: {
       type: Object,
       default() {
-        return {}
+        return {};
       },
     },
     currentCoin: {
       type: Object,
       default() {
-        return {}
+        return {};
       },
     },
     type: {
       type: String,
       default() {
-        return ''
+        return "";
       },
     },
     balanceLoading: {
       type: Boolean,
       default() {
-        return true
+        return true;
+      },
+    },
+    isSupportAdvanced: {
+      type: String,
+      default() {
+        return "";
+      },
+    },
+    activeNetwork: {
+      type: String,
+      default() {
+        return "";
       },
     },
   },
   computed: {
     showNFTInfo() {
-      //判断状态 noOrders 无卖单 Orders 有卖单
-      const asset = this.source.asset
-      let info = ''
+      const asset = this.source.asset;
+      let info = "";
       switch (asset.status) {
-        case 'noOrders':
-          info = this.$t('noOrder', {
-            type: asset.type === 'to' ? '卖' : '买',
-          })
-          break
-        case 'Orders':
-          info = this.$t('price') + '：' + asset.info
-          break
-        case 'noHave':
-          info = this.$t('noHave')
-          break
+        case "noOrders":
+          info = this.$t("noOrder", {
+            type: asset.type === "to" ? "卖" : "买",
+          });
+          break;
+        case "Orders":
+          info = this.$t("price") + "：" + asset.info;
+          break;
+        case "noHave":
+          info = this.$t("noHave");
+          break;
         default:
-          break
+          break;
       }
-      return info
+      return info;
+    },
+    chainId() {
+      return this.$store.state.chainId;
+    },
+    supportArr() {
+      return this.$store.state.allSupportChianArr;
+    },
+    tabActive: {
+      get() {
+        return this.$store.state.tabActive;
+      },
+    },
+    walletAddress() {
+      if (this.$store.state.chainId == "000") {
+        return this.$store.state.walletPolkadot.addrSS58;
+      }
+      if (this.$store.state.chainId == "222") {
+        return this.$store.state.walletPolkadot.addrSS58CRU;
+      }
+      if (this.$store.state.chainId == "333") {
+        return this.$store.state.walletPolkadot.addrSS58DBC;
+      } else if (this.$store.state.chainId == "0") {
+        return this.$store.state.walletTRON;
+      } else {
+        return this.$store.state.wallet.address;
+      }
     },
   },
   watch: {
     balanceLoading(val) {
-      this.loading = val
+      this.loading = val;
     },
   },
   data() {
     return {
-      balance: '',
+      balance: "",
       loading: true,
-    }
+    };
   },
   mounted() {
-    this.loading = this.balanceLoading
-    if (this.source.mainNetwork === 'NFT') {
-      this.getNFTBalance()
+    this.loading = this.balanceLoading;
+    if (this.source.mainNetwork === "NFT") {
     } else if (
-      this.type === 'from' &&
-      (this.$store.state.chainId === '000' ||
-        this.$store.state.chainId === '2021' ||
-        this.$store.state.chainId === '222' ||
-        this.$store.state.chainId === '1993' ||
-        this.$store.state.chainId === '1994' ||
-        this.$store.state.chainId === '1040')
+      this.type === "from" &&
+      (this.$store.state.chainId === "000" ||
+        this.$store.state.chainId === "222" ||
+        this.$store.state.chainId === "333" ||
+        this.$store.state.chainId === "1993" ||
+        this.$store.state.chainId === "1994" ||
+        this.$store.state.chainId === "7299" ||
+        this.$store.state.chainId === "1040")
     ) {
-      this.getCoinBalance()
+      this.getCoinBalance();
     }
   },
   methods: {
     chooseCoin(data) {
-      this.$bus.emit('chooseCoinHandle', data, this.type)
-    },
-    async getNFTBalance() {
-      const asset = await getNFTAsset(this.source, this.type)
-      this.$set(this.source, 'asset', asset)
+      if (this.isSupportAdvanced === "N") {
+        Notify({
+          color: "#ad0000",
+          background: "#ffe1e1",
+          message: this.$t("218"),
+        });
+        return;
+      }
+      if (data.mainNetwork == "BRC20") {
+        Dialog.confirm({
+          message: this.$t("sendBRC20"),
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          confirmButtonText: this.$t("ConfirmNFT"),
+          cancelButtonText: this.$t("btnCancel"),
+        })
+          .then(() => {})
+          .catch(() => {});
+      }
+      this.$bus.emit("chooseCoinHandle", data, this.type);
     },
     async getCoinBalance() {
-      const coin = this.source
-      /* if (coin.mainNetwork === 'TRX') {
-        if (!window.tronWeb) {
-          Notify({
-            color: '#ad0000',
-            background: '#ffe1e1',
-            message: this.$t('noWallet'),
-          })
-          return
-        }
-        let tronWeb = window.tronWeb
-        if (coin.coinCode === 'TRX') {
-          this.loading = true
-          tronWeb.trx
-            .getBalance(this.$store.state.walletTRON)
-            .then((balance) => {
-              this.source.balance = Number(tronWeb.fromSun(balance).toString())
-              this.loading = false
-            })
-        } else {
-          this.loading = true
-          let data = {
-            address: this.$store.state.walletTRON,
-            visible: true,
-          }
-          generalApi
-            .getTRC10TokenAccount(data)
-            .then(async (res) => {
-              let assets = res.assetV2
-              if (assets && assets.length !== 0) {
-                let token = assets.find((e) => {
-                  if (e.key === coin.contact) {
-                    return e
-                  }
-                })
-                if (token) {
-                  this.handleBalance(coin, token.value)
-                } else if (coin.contact.length > 10) {
-                  const { abi } = await tronWeb.trx.getContract(coin.contact)
-                  const contract = tronWeb.contract(abi.entrys, coin.contact)
+      const coin = this.source;
 
-                  const trc20 = await contract.methods
-                    .balanceOf(this.$store.state.walletTRON)
-                    .call()
-                  this.handleBalance(coin, trc20)
-                } else {
-                  this.source.balance = 0
-                  this.loading = false
-                }
-              }
-            })
-            .catch((error) => {
-              console.log(error)
-              this.loading = false
-            })
-        }
-      } else  */
-      if (
-        this.$store.state.chainId === '000' ||
-        this.$store.state.chainId === '222'
-      ) {
-        // Construct
-        let wsProvider = null
-        let api = null
-        if (this.$store.state.chainId === '222') {
-          wsProvider = new WsProvider('wss://api.decloudf.com/')
-
-          api = await ApiPromise.create({
-            provider: wsProvider,
-            typesBundle: typesBundleForPolkadot,
-          })
-        } else {
-          wsProvider = new WsProvider('wss://rpc.polkadot.io')
-          api = await ApiPromise.create({ provider: wsProvider })
-        }
-
-        // 查询余额
-        const account = this.$store.state.walletPolkadot
-        if (account) {
-          let acct = null
-          if (this.$store.state.chainId === '222') {
-            acct = await api.query.system.account(account.addrSS58CRU)
-          } else {
-            acct = await api.query.system.account(account.addrSS58)
-          }
-          const freeBalance = acct.data.free.toString(10)
-          if (freeBalance == '0') {
-            this.source.balance = 0
-            this.loading = false
-          } else {
-            if (this.$store.state.chainId === '222') {
-              var newBalance =
-                freeBalance.slice(0, freeBalance.length - 12) +
-                '.' +
-                freeBalance.slice(1)
-            } else {
-              var newBalance =
-                freeBalance.slice(0, freeBalance.length - 10) +
-                '.' +
-                freeBalance.slice(1)
-            }
-            newBalance = Number(newBalance).toFixed(5)
-            this.source.balance = newBalance
-            this.loading = false
-          }
-        }
-      } else if (this.$store.state.chainId === '2021') {
-        const connection = new solanaWeb3.Connection(
-          solanaWeb3.clusterApiUrl('mainnet-beta'), //devnet   mainnet-beta
-          'confirmed',
-        )
-        if (this.source.contact === '') {
-          let account = await connection.getAccountInfo(window.solana.publicKey)
-          let balanceSOL = 0
-          if (account) {
-            balanceSOL = (Number(account.lamports) / 1000000000).toFixed(6)
-          }
-
-          this.source.balance = balanceSOL
-        } else {
-          const account = await window.solana.connect()
-          const tokenPublic = new solanaWeb3.PublicKey(this.source.contact) //9pBLiojTZMxbAPcsCWs8TQEiuCedRudzEFFakJFRCAoS
-          const tokenAccount = await connection.getParsedTokenAccountsByOwner(
-            window.solana.publicKey,
-            { mint: tokenPublic },
-          )
-          const value = tokenAccount.value
-          if (value.length > 0) {
-            this.source.balance =
-              tokenAccount.value[0].account.data.parsed.info.tokenAmount.uiAmount
-          } else {
-            this.source.balance = 0
-          }
-        }
-        this.loading = false
-      } else if (this.$store.state.chainId === '1993') {
-        this.source.balance = await getTerraBalanceHandle(
+      if (this.$store.state.chainId === "1993" && coin.mainNetwork === "LUNA") {
+        const module = await import("../../utils/getTerraBalance");
+        this.source.balance = await module.default(
           this.source,
-          this.$store.state.wallet.address,
-        )
-        this.loading = false
-      } else if (this.$store.state.chainId === '1994') {
-        try {
-          const balance = await BtcExchangeHandle.getBtcBalanceHandle()
-          this.source.balance = balance
-          this.loading = false
-        } catch {
-          console.log('计算余额出错')
-          this.loading = false
+          this.$store.state.wallet.address
+        );
+        this.loading = false;
+      } else if (
+        this.$store.state.chainId === "1994" &&
+        coin.mainNetwork == "BTC"
+      ) {
+        if (this.$store.state.wallet.connectType == "Unisat") {
+          this.loading = true;
+
+          let resBalance = await window.unisat.getBalance();
+          const balanceNewBTC = Number(resBalance.total) / 10 ** 8;
+          this.source.balance = balanceNewBTC;
+          this.loading = false;
+        } else {
+          try {
+            const balance = await BtcExchangeHandle.getBtcBalanceHandle();
+            this.source.balance = balance;
+            this.loading = false;
+          } catch {
+            this.loading = false;
+          }
         }
-      }else if(this.$store.state.chainId === '1040'){
+      } else if (
+        this.$store.state.chainId === "1994" &&
+        coin.mainNetwork == "BRC20"
+      ) {
+        if (this.$store.state.wallet.connectType == "Unisat") {
+          this.loading = true;
+          const res = await baseApi.queryBRC20({
+            address: this.walletAddress,
+            ticker:
+              this.source.coinCode === "1000SATS"
+                ? "SATS"
+                : this.source.coinCode,
+          });
+          if (res.resCode == 800) {
+            if (res.data.data.detail.length > 0) {
+              this.source.balance = res.data.data.detail[0].data.amt;
+            } else {
+              this.source.balance = 0;
+            }
+          } else {
+            this.source.balance = 0;
+          }
+          this.loading = false;
+        }
+      } else if (
+        this.$store.state.chainId === "1040" &&
+        coin.mainNetwork == "EOS"
+      ) {
         try {
-          const balance = await getEOSBalance(this.source)
-          this.source.balance = balance
-          this.loading = false
+          const balance = await getEOSBalance(this.source);
+          this.source.balance = balance;
+          this.loading = false;
         } catch {
-          console.log('计算余额出错')
-          this.loading = false
+          this.loading = false;
+        }
+      } else if (
+        this.$store.state.chainId === "7299" &&
+        coin.mainNetwork == "SUI"
+      ) {
+        this.loading = true;
+        const balance = await suiWalletMethods.getSuiBalance(coin.contact);
+        let etherString = ethers.utils.formatUnits(balance, coin.coinDecimal);
+        const number = Number(
+          new BigNumber(etherString).toFixed(6, BigNumber.ROUND_DOWN)
+        );
+        this.source.balance = number;
+        this.loading = false;
+      } else if (
+        this.$store.state.chainId === "000" &&
+        coin.mainNetwork == "DOT"
+      ) {
+        this.loading = true;
+        try {
+          let balance1;
+          const balance = await getPolkadotBalance(this.source);
+          balance1 =
+            balance.slice(0, balance.length - 10) + "." + balance.slice(1);
+          if (this.source.contact == "1984") {
+            balance1 = new BigNumber(freeBalance)
+              .dividedBy(BigNumber(10).pow(coin.coinDecimal))
+              .toFixed(4, BigNumber.ROUND_DOWN);
+          }
+          this.source.balance = balance1;
+          this.loading = false;
+        } catch {
+          this.loading = false;
         }
       }
     },
@@ -265,74 +253,88 @@ export default {
       return (
         info.current_price.toString() /
           10 ** info.payment_token_contract.decimals +
-        ' ' +
+        " " +
         info.payment_token_contract.symbol
-      )
+      );
     },
     handleBalance(coin, value) {
-      let etherString = ethers.utils.formatUnits(value, coin.coinDecimal)
+      let etherString = ethers.utils.formatUnits(value, coin.coinDecimal);
       const number = Number(
-        new BigNumber(etherString).toFixed(6, BigNumber.ROUND_DOWN),
-      )
-      this.source.balance = number
-      this.loading = false
+        new BigNumber(etherString).toFixed(6, BigNumber.ROUND_DOWN)
+      );
+      this.source.balance = number;
+      this.loading = false;
     },
   },
   render() {
     if (this.$store.state.toToken) {
       if (
-        `${this.type}` === 'from' &&
-        this.$store.state.toToken.coinCode === this.source.coinCode
+        `${this.type}` === "from" &&
+        this.$store.state.toToken.coinCode === this.source.coinCode &&
+        this.tabActive != "gasSwap"
       ) {
-        return
+        return;
       }
     }
     if (this.$store.state.fromToken) {
       if (
-        `${this.type}` === 'to' &&
+        `${this.type}` === "to" &&
         this.$store.state.fromToken.coinCode === this.source.coinCode
       ) {
-        return
+        return;
       }
+    }
+    if (
+      this.type === "from" &&
+      this.source.mainNetwork !== "NFT" &&
+      this.activeNetwork == "" &&
+      this.supportArr.indexOf(this.source.mainNetwork) == -1
+    ) {
+      return;
     }
     return (
       <div
         id="coin_list"
         onclick={() => {
-          this.chooseCoin(this.source)
+          this.chooseCoin(this.source);
         }}
-        class={
-          this.currentCoin && this.currentCoin.coinCode === this.source.coinCode
-            ? 'active'
-            : ''
-        }
+        class={this.isSupportAdvanced === "N" ? "bgOpacity" : ""}
       >
         <div class="left">
-          {this.source.mainNetwork === 'NFT' ? (
+          {this.source.mainNetwork === "NFT" ? (
             <img
-              class={this.isPC ? 'imgPC' : 'imgM'}
+              class={this.isPC ? "imgPC" : "imgM"}
               src={this.source.logoURI}
               alt=""
             />
           ) : (
             <img
-              class={this.isPC ? 'imgPC' : 'imgM'}
+              class={this.isPC ? "imgPC" : "imgM"}
               src={`https://transfer.swft.pro/swft-v3/images/coins/${this.source.coinCode}.png`}
               alt=""
             />
           )}
-          <div class="coin">
-            {this.source.coinCode}
-            <span>
-              {this.source.mainNetwork || this.source.coinCode}
-              {this.source.mainNetwork === 'NFT' ? (
-                <b class="nft-info">
-                  {this.source.asset ? this.showNFTInfo : ''}
-                </b>
-              ) : (
-                ''
-              )}
-            </span>
+          <div
+            class={
+              this.currentCoin &&
+              this.currentCoin.coinCode === this.source.coinCode
+                ? "active"
+                : ""
+            }
+          >
+            <div class="coin">
+              {this.source.coinCodeShow}
+              <span>
+                {this.source.mainNetwork || this.source.coinCode}
+                {this.source.mainNetwork === "NFT" ? (
+                  <b class="nft-info">
+                    {this.source.asset ? this.showNFTInfo : ""}
+                  </b>
+                ) : (
+                  ""
+                )}
+              </span>
+            </div>
           </div>
         </div>
         <div class="right">
@@ -355,31 +357,39 @@ export default {
               ></path>
             </svg>
           ) : (
-            ''
+            ""
           )}
-          {this.type === 'from' && this.source.mainNetwork !== 'NFT' ? (
+          {this.type === "from" &&
+          this.chainId &&
+          this.source.mainNetwork !== "NFT" &&
+          this.activeNetwork != "" ? (
             <div class="blance-box">
               {this.loading ? (
                 <Loading color="#1989fa" />
               ) : (
-                <span>{this.source.balance}</span>
+                <span
+                  class={
+                    this.currentCoin &&
+                    this.currentCoin.coinCode === this.source.coinCode
+                      ? "active"
+                      : ""
+                  }
+                >
+                  {this.source.balance}
+                </span>
               )}
             </div>
           ) : (
-            ''
+            ""
           )}
         </div>
       </div>
-    )
+    );
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
-/deep/.van-loading__spinner {
-  width: 15px;
-  height: 15px;
-}
 .blance-box {
   height: 27px;
   line-height: 27px;
@@ -393,9 +403,8 @@ export default {
   border-radius: 2px;
   // border-bottom: 1px solid #eee;
   color: #8f98ae;
-  &.active {
-    // background: #f5f6f7;
-    color: #000;
+  &.bgOpacity {
+    opacity: 0.4;
   }
   &.M {
     margin-bottom: 5px;
@@ -420,6 +429,10 @@ export default {
       height: 35px;
       margin-right: 15px;
     }
+    .active {
+      // background: #f5f6f7;
+      color: #000;
+    }
     .coin {
       text-align: left;
       font-family: Poppins-SemiBold, Poppins;
@@ -435,10 +448,18 @@ export default {
   }
   .right {
     text-align: right;
-    svg {
-      width: 15px;
-      height: 15px;
+    .active {
+      // background: #f5f6f7;
+      color: #000;
     }
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  ::v-deep.van-loading__spinner {
+    width: 20px;
+    height: 20px;
   }
 }
 li {

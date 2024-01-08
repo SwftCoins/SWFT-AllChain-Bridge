@@ -3,10 +3,18 @@
     <div v-if="isPC" class="PC">
       <div class="footerContPC">
         <div class="leftFlex">
-          <span v-if="sourceFlag == 'bridgers'" class="iconfont flexSpan" style="font-size: 30px;"
-            >&#xe6c5;</span>
-            <span v-if="sourceFlag !== 'bridgers'" class="iconfont flexSpan" style="font-size: 30px;"
-            >&#xe664;</span>
+          <span
+            v-if="bridgersFlag == 'bridgers'"
+            class="iconfont flexSpan"
+            style="font-size: 30px"
+            >&#xe6c5;</span
+          >
+          <span
+            v-if="bridgersFlag !== 'bridgers'"
+            class="iconfont flexSpan"
+            style="font-size: 30px"
+            >&#xe664;</span
+          >
         </div>
         <div class="leftFlex">
           <svg
@@ -60,13 +68,13 @@
             <svg class="icon svgIcon" aria-hidden="true">
               <use xlink:href="#icon-faq"></use>
             </svg>
-            <span style="font-size:12px"> {{ $t('FAQ') }} </span>
+            <span style="font-size: 12px"> {{ $t('FAQ') }} </span>
           </span>
           <span v-if="isPC" class="flexSpan faq" @click="linkContact('docs')">
             <svg class="icon svgIcon" aria-hidden="true">
               <use xlink:href="#icon-doc"></use>
             </svg>
-            <span style="font-size:12px"> Docs </span>
+            <span style="font-size: 12px"> Docs </span>
           </span>
           <span
             v-if="isPC && walletAddress"
@@ -76,27 +84,30 @@
             <svg class="icon svgIcon" aria-hidden="true">
               <use xlink:href="#icon-VIPbeifen"></use>
             </svg>
-            <span style="font-size:12px"> {{ $t('vipPortal') }} </span>
+            <span style="font-size: 12px"> {{ $t('vipPortal') }} </span>
           </span>
         </div>
         <div class="rightFlex">
           <span class="flexSpan"
-            >©2021 SWFT BlockChain All Rights Reserved</span
+            >©2023 SWFT Blockchain All Rights Reserved</span
           >
           <div class="flexSpan">
-            <svg v-if="lang != 'en'" class="icon svgIcon" aria-hidden="true">
+            <svg v-if="lang != 'en' && lang != 'korea'" class="icon svgIcon" aria-hidden="true">
               <use xlink:href="#icon-a-shiyongjiaochengbeifen2"></use>
             </svg>
             <span
-              v-if="lang != 'en'"
-              style="font-size:12px;margin-right: 20px"
+              v-if="lang != 'en' && lang != 'korea'"
+              style="font-size: 12px; margin-right: 20px"
               @click="linkContact('jiaocheng')"
               >使用教程</span
             >
             <svg class="icon svgIcon" aria-hidden="true">
               <use xlink:href="#icon-a-youjian1beifen"></use>
             </svg>
-            <span style="font-size:12px" @click="linkContact('jiaocheng')"
+            <span v-if="isShowEmail_en" style="font-size: 12px"
+              >contact@swft.pro</span
+            >
+            <span v-else style="font-size: 12px"
               >support@swftcoin.org</span
             >
           </div>
@@ -108,18 +119,27 @@
         <div class="cont1">
           <div class="leftFlex" :style="sourceFlag == 'HN' ? 'width:53%' : ''">
             <span
-              v-if="sourceFlag != 'HN' && sourceFlag !== 'bridgers'"
+              v-if="sourceFlag != 'HN' && bridgersFlag !== 'bridgers'"
               class="iconfont flexSpan"
-              style="font-size: 25px;"
-              >&#xe664;</span>
-               <span v-if="sourceFlag == 'bridgers'" class="iconfont flexSpan" style="font-size: 30px;"
-            >&#xe6c5;</span>
+              style="font-size: 25px"
+              >&#xe664;</span
+            >
+            <span
+              v-if="bridgersFlag == 'bridgers'"
+              class="iconfont flexSpan"
+              style="font-size: 30px"
+              >&#xe6c5;</span
+            >
             <div class="flexSpan">
               <div
-                style="font-size: 10px;transform: scale(0.7);white-space: nowrap;
-    margin-left: -15%;"
+                style="
+                  font-size: 10px;
+                  transform: scale(0.7);
+                  white-space: nowrap;
+                  margin-left: -15%;
+                "
               >
-                ©2021 SWFT BlockChain All Rights Reserved
+                ©2023 SWFT Blockchain All Rights Reserved
               </div>
             </div>
           </div>
@@ -174,23 +194,23 @@
               <svg class="icon svgIcon" aria-hidden="true">
                 <use xlink:href="#icon-faq"></use>
               </svg>
-              <span style="font-size:10px"> {{ $t('FAQ') }} </span>
+              <span style="font-size: 10px"> {{ $t('FAQ') }} </span>
             </span>
             <span class="flexSpan faq" @click="linkContact('docs')">
               <svg class="icon svgIcon" aria-hidden="true">
                 <use xlink:href="#icon-doc"></use>
               </svg>
-              <span style="font-size:10px"> Docs </span>
+              <span style="font-size: 10px"> Docs </span>
             </span>
             <span
               v-if="walletAddress"
-              class="flexSpan faq "
+              class="flexSpan faq"
               @click="linkContact('vipKYC')"
             >
               <svg class="icon svgIcon" aria-hidden="true">
                 <use xlink:href="#icon-VIPbeifen"></use>
               </svg>
-              <span style="font-size:10px"> {{ $t('vipPortal') }} </span>
+              <span style="font-size: 10px"> {{ $t('vipPortal') }} </span>
             </span>
             <span
               v-if="lang != 'en'"
@@ -200,15 +220,16 @@
               <svg class="icon svgIcon" aria-hidden="true">
                 <use xlink:href="#icon-a-shiyongjiaochengbeifen2"></use>
               </svg>
-              <span style="font-size:10px">使用教程 </span>
+              <span style="font-size: 10px">使用教程 </span>
             </span>
           </div>
           <div class="rightFlex">
             <svg class="icon svgIcon flexSpan" aria-hidden="true">
               <use xlink:href="#icon-a-youjian1beifen"></use>
             </svg>
-            <div class="flexSpan" style="width:calc(100% - 18px)">
-              <div class="span1">support@swftcoin.org</div>
+            <div class="flexSpan" style="width: calc(100% - 18px)">
+              <div v-if="isShowEmail_en" class="span1">contact@swft.pro</div>
+              <div v-else class="span1">support@swftcoin.org</div>
             </div>
           </div>
         </div>
@@ -227,6 +248,7 @@ export default {
   components: {},
   data() {
     return {
+      bridgersFlag: localStorage.getItem('bridgersFlag'),
       sourceFlag: localStorage.getItem('sourceFlag'),
     }
   },
@@ -244,13 +266,18 @@ export default {
       let addr = this.$store.state.wallet.address
       if (this.$store.state.chainId == '000') {
         addr = this.$store.state.walletPolkadot.addrSS58
-      }else if (this.$store.state.chainId == '222') {
+      } else if (this.$store.state.chainId == '222') {
         addr = this.$store.state.walletPolkadot.addrSS58CRU
       } else if (this.$store.state.chainId == '0') {
         addr = this.$store.state.walletTRON
+      } else if (this.$store.state.chainId == '333') {
+        addr = this.$store.state.walletPolkadot.addrSS58DBC
       }
       return addr
     },
+    isShowEmail_en(){
+      if( window.location.href.indexOf('allchainbridge.com') != -1 && this.lang == 'en') return true
+    }
   },
   // 监控data中的数据变化
   watch: {},
@@ -277,9 +304,9 @@ export default {
         window.open('https://discord.gg/AHtTqrPKtC')
       } else if (val == 'faq') {
         if (this.lang == 'en') {
-          window.open('https://dexdocs.swft.pro/faq')
+          window.open('https://swft-2.gitbook.io/crosschain/faq')
         } else {
-          window.open('https://images.swft.pro/dex/FAQ_zh.pdf ')
+          window.open('https://swft-allchain-bridge.gitbook.io/swft/')
         }
       } else if (val == 'jiaocheng') {
         if (this.lang != 'en') {
@@ -287,14 +314,12 @@ export default {
           window.open('https://images.swft.pro/dex/SWFTAllChain.pdf')
         }
       } else if (val == 'docs') {
-        window.open('https://dexdocs.swft.pro/')
+        window.open('https://swft-2.gitbook.io/crosschain/')
       } else if (val == 'vipKYC') {
         // var reg = new RegExp('"',"g");//g,表示全部替换。
-        // console.log(sessionStorage.getItem('equipmentNo'));
         // let equipmentNo=sessionStorage.getItem('equipmentNo').replace(reg,"");;
         // .replaceAll('"', "")
         let network = this.$store.getters.getChainIdName
-        console.log(this.walletAddress)
         let equipmentNo = ''
         if (this.walletAddress.length) {
           if (this.walletAddress.length <= 32) {
@@ -308,7 +333,6 @@ export default {
           }
         }
 
-        console.log(equipmentNo)
         if (this.lang == 'en') {
           window.open(
             'https://www.swftc.info/swft-v3/swft-v3-m/kyc/kyc.html?lang=en&equipmentNo=' +

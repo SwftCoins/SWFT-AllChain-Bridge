@@ -265,12 +265,9 @@ function objKeySort(arys) {
 	return newStr;
 }
 const md5Handle = function(sss) {
-  console.log(sss);
   var ss2 = objKeySort(sss);
-  console.log(ss2);
   
   var sign = hex_md5(ss2 + "Gxo2lx^2(oBl3cx92(ixvG4Vy32g4");
-  console.log(sign);
   return sign
 }
 export default md5Handle

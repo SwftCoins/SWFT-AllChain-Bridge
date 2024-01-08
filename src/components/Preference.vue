@@ -36,7 +36,7 @@ export default {
         color: #287FFA;
         font-weight: normal;
         padding-left: 5px;
-        /deep/.orange{
+        ::v-deep.orange{
             color:#FF9100;
             .big{
                 font-size: 14px;

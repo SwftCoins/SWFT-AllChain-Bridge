@@ -1,17 +1,74 @@
 <template>
   <div>
-    <div v-if="fromToken && toToken" class="infoCont">
-      <div class="info">
+    <div v-if="fromToken && toToken && tabActive != 'NFT'" class="infoCont">
+      <div class="info" v-if="sourceFlag != 'HN' && sourceFlag != 'burndex'">
         <div class="info-rate">
-          <span class="title">{{ $t('bridge') }}</span>
-          <span class="cont" v-if="info">
-            <div class="bridge bg" @click="showPriceList">
-              <img :src="info.logoUrl" alt="" />&nbsp;<span
-                >{{ info.dex }} ></span
-              >
+          <span class="title">{{ $t('selectExchangePath') }}</span>
+          <div class="morePriceText" @click="showPriceList">
+            {{ $t('morePrice') }} >
+          </div>
+        </div>
+      </div>
+      <div class="list-info" v-if="info && sourceFlag != 'burndex'">
+        <div class="free-gas" v-if="info.dex == 'SWFT' && isFreeGas">
+          <img class="sd" src="../assets/img/sd1.svg" alt="" />
+          <div class="free-text">
+            <span>
+              {{
+                $t('nogasswap', {
+                  coin: mainCoin,
+                })
+              }}</span>
+          </div>
+          <div class="free-icon" @click.stop="windowOpen">></div>
+        </div>
+        <div class="part1">
+          <div class="item item1">
+            <img :src="
+                twFlag == 'miningtw' &&
+                (info.dex == 'bridgers1' || info.dex == 'SWFT')
+                  ? 'https://images.swft.pro/dex/miningTW.png'
+                  : info.logoUrl
+              " alt="" />
+            &nbsp;
+            {{
+              twFlag != 'miningtw'
+                ? info.dex == 'bridgers1'
+                  ? 'Bridgers'
+                  : info.dex
+                : info.dex == 'bridgers1'
+                ? 'MiningTW Bridge'
+                : info.dex == 'SWFT'
+                ? 'MiningTW'
+                : info.dex
+            }}
+          </div>
+          <div class="item item3" v-if="!isFreeGas">
+            <div v-if="info.diff.indexOf('BEST') > -1" class="" :class="info.diff.indexOf('BEST') > -1 ? 'best' : ''">
+              {{ $t('recommended') }}
             </div>
-          </span>
-          <span v-else>-</span>
+
+            <div v-if="info.diff.indexOf('maximumReturn') > -1 && pathType == 1" class="" :class="info.diff.indexOf('maximumReturn') > -1 ? 'maxTo' : ''">
+              {{ $t('maximumReturn') }}
+            </div>
+            <div v-if="info.diff.indexOf('FAST') > -1 && pathType == 2" class="" :class="info.diff.indexOf('FAST') > -1 ? 'fast' : ''">
+              {{ $t('fast') }}
+            </div>
+          </div>
+        </div>
+        <div class="part2">
+          <div class="item item2">
+            <span class="gery">{{ $t('receivedQuantity') }}：</span>{{ Number(info.toTokenAmount).toFixed(6) }}
+          </div>
+          <div>
+            {{
+              info.estimatedTime == 1
+                ? $t('estimatedTime1')
+                : info.estimatedTime == 2
+                ? $t('estimatedTime2')
+                : $t('estimatedTime3')
+            }}
+          </div>
         </div>
       </div>
       <div class="info">
@@ -32,62 +89,49 @@
               info &&
               info.dex !== 'SWFT' &&
               info.dex !== 'bridgers1' &&
+              info.dex !== 'Aggregator' &&
               info.dex !== 'bridgers2'
                 ? $t('pathfee')
                 : $t('fee')
             }}
-            <img
-              v-if="info"
-              id="tips"
-              @mouseover="tipOpen"
-              @click="tipOpen"
-              src="../assets/img/tip.png"
-            />
-            <Popover
-              v-model="showPopover"
-              theme="dark"
-              trigger="click"
-              placement="bottom-start"
-              :offset="[-10, 8]"
-              :get-container="getContainer"
-            >
+            <img v-if="info" id="tips" @mouseover="tipOpen" @click="tipOpen" src="../assets/img/tip.png" />
+            <Popover v-model="showPopover" theme="dark" trigger="click" placement="bottom-start" :offset="[-10, 8]" :get-container="getContainer">
               <div class="tip-content" v-if="info && info.dex === 'SWFT'">
                 {{ $t('feeTip') }}
               </div>
-              <div
-                class="tip-content"
-                v-if="
-                  info && (info.dex === 'bridgers1' || info.dex === 'bridgers2')
-                "
-              >
+              <div class="tip-content" v-if="
+                  info &&
+                  (info.dex === 'bridgers1' ||
+                    info.dex === 'bridgers2' ||
+                    info.dex === 'Aggregator')
+                ">
                 {{ $t('sSwapfeeTip') }}
               </div>
-              <div
-                class="tip-content"
-                v-if="
+              <div class="tip-content" v-if="
                   info &&
                   info.dex !== 'SWFT' &&
                   info.dex !== 'bridgers1' &&
+                  info.dex !== 'Aggregator' &&
                   info.dex !== 'bridgers2'
-                "
-              >
+                ">
                 {{ $t('pathfeeTip') }}
               </div>
             </Popover>
           </span>
           <span class="cont" v-if="info">
-            <span
-              v-if="
+            <span v-if="
                 info.dex === 'SWFT' ||
                 info.dex === 'bridgers1' ||
+                info.dex === 'Aggregator' ||
                 info.dex === 'bridgers2'
+              " :class="info.isDiscount === 'Y' ? 'fee-span' : ''">{{ getFeeRate(info.depositCoinFeeRate) }} %</span>
+            <!-- <span
+              v-if="
+                info.dex === 'bridgers1' ||
+                info.dex === 'bridgers2' ||
+                info.dex === 'Aggregator'
               "
-              :class="info.isDiscount === 'Y' ? 'fee-span' : ''"
-              >{{ getFeeRate(info.depositCoinFeeRate) }} %</span
-            >
-            <span
-              v-if="info.dex === 'bridgers1' || info.dex === 'bridgers2'"
-            ></span>
+            ></span> -->
             <span v-else>
               {{
                 sourceFlag === 'kfi'
@@ -104,16 +148,28 @@
           <span v-else>-</span>
         </div>
       </div>
-      <div
-        class="info"
-        v-if="info && (info.dex === 'bridgers1' || info.dex === 'bridgers2')"
-      >
+      <div class="info" v-if="
+          info &&
+          (info.dex === 'bridgers1' ||
+            info.dex === 'bridgers2' ||
+            info.dex === 'SWFT' ||
+            info.dex === 'Aggregator') &&
+          sourceFlag != 'kfi'
+        ">
         <div class="info-rate">
           <span class="title">{{ $t('relayerGasfee') }}</span>
           <span class="cont" v-if="info">
             {{ sendGas[0] + ' ' + sendGas[1] }}
           </span>
           <span v-else>-</span>
+        </div>
+      </div>
+      <div class="info" v-if="info && info.dex === 'SWFT' && info.burnRate != 0">
+        <div class="info-rate">
+          <span class="title">{{ $t('burnRate') }}</span>
+          <span class="cont">
+            {{ info.burnRate * 100 + '% ' + toToken.coinCode }}
+          </span>
         </div>
       </div>
       <div class="info" v-if="info && info.dex !== 'SWFT'">
@@ -148,10 +204,12 @@
           <span v-else>-</span>
         </div>
       </div>
-      <div
-        class="info"
-        v-if="info && (info.dex === 'bridgers1' || info.dex === 'bridgers2')"
-      >
+      <div class="info" v-if="
+          info &&
+          (info.dex === 'bridgers1' ||
+            info.dex === 'bridgers2' ||
+            info.dex === 'Aggregator')
+        ">
         <div class="info-quantity">
           <span class="title"> {{ $t('estimatedTime') }}</span>
           <span class="cont" v-if="info">
@@ -209,11 +267,7 @@
             <img :src="NFTSelect.logoURI" alt="" />
           </div>
           <div class="nft-info no-order">
-            <img
-              class="no-order-img"
-              src="../assets/img/nft_noOrder.png"
-              alt=""
-            />
+            <img class="no-order-img" src="../assets/img/nft_noOrder.png" alt="" />
             <div class="nft-text">
               <div class="top">
                 <div class="name">{{ NFTSelect.name }}</div>
@@ -227,23 +281,25 @@
         </div>
       </div>
     </div>
-    <PriceList ref="priceDialog" />
+    <PriceList ref="priceDialog" :pathType="pathType" />
     <SlidingPoint ref="slidingPoint" />
   </div>
 </template>
 <script>
-import { Toast } from 'vant'
-import { Popover } from 'vant'
-import baseApi from '../api/baseApi'
-import bus from '../eventBus'
-import errorCode from '../utils/language.js'
-import BigNumber from 'bignumber.js'
-import PriceList from '@/components/common/priceList'
-import SlidingPoint from '@/components/common/SlidingPoint'
-import axios from 'axios'
-import { Notify } from 'vant'
+import { Toast } from "vant";
+import { Popover } from "vant";
+import baseApi from "../api/baseApi";
+import bus from "../eventBus";
+import errorCode from "../utils/language.js";
+import BigNumber from "bignumber.js";
+// import PriceList from '@/components/common/priceList'
+// import SlidingPoint from '@/components/common/SlidingPoint'
+const PriceList = () => import("@/components/common/priceList");
+const SlidingPoint = () => import("@/components/common/SlidingPoint");
+import { supportNetWork } from "../config/index";
+
 export default {
-  name: 'Info',
+  name: "Info",
   components: {
     Popover,
     PriceList,
@@ -256,157 +312,271 @@ export default {
       tipTimer: null,
       timer: null, //兑换区间计时器
       NFTTimer: null, //兑换区间计时器
-      sourceFlag: localStorage.getItem('sourceFlag'),
+      sourceFlag: localStorage.getItem("sourceFlag"),
+      bridgersFlag: localStorage.getItem("bridgersFlag"),
       feeRate: null,
-      dex: '', //用户选择 兑换渠道  为空没选择过
-    }
+      dex: "", //用户选择 兑换渠道  为空没选择过
+      AggregatorChain: ["ETH", "BSC", "HECO", "POLYGON", "OKExChain", "FTM"], // Aggregator支持的链
+      twFlag: localStorage.getItem("twFlag"),
+      pathType: 0,
+    };
   },
   computed: {
+    lang: {
+      get() {
+        return this.$store.getters.getLang;
+      },
+      set(val) {
+        this.$i18n.locale = val;
+        this.$store.commit("setLang", val);
+      },
+    },
+    tabActive: {
+      get() {
+        return this.$store.state.tabActive;
+      },
+    },
+    bridgeFromTokenchain: {
+      // from 网络
+      get() {
+        return this.$store.state.bridgeFromTokenchain;
+      },
+      set(val) {
+        this.$store.commit("setBridgeFromTokenchain", val);
+      },
+    },
+    bridgeToTokenchain: {
+      // to网络
+      get() {
+        return this.$store.state.bridgeToTokenchain;
+      },
+      set(val) {
+        this.$store.commit("setBridgeToTokenchain", val);
+      },
+    },
+    isFreeGas() {
+      return this.$store.state.isFreeGas;
+    },
+    mainCoin() {
+      const data = supportNetWork.find(
+        (e) => this.fromToken.mainNetwork == e.netWork
+      );
+      if (data) {
+        return data.symbol;
+      }
+    },
     fromToken() {
-      return this.$store.state.fromToken
+      if (this.tabActive == "bridge") {
+        return this.bridgeFromTokenchain;
+      }
+      if (this.tabActive == "gasSwap") {
+        return this.$store.state.gasFromToken;
+      }
+      return this.$store.state.fromToken;
     },
     toToken() {
-      return this.$store.state.toToken
+      if (this.tabActive == "bridge") {
+        return this.bridgeToTokenchain;
+      }
+      if (this.tabActive == "gasSwap") {
+        return this.$store.state.gasToToken;
+      }
+      return this.$store.state.toToken;
     },
     info: {
       get() {
-        return this.$store.state.info
+        return this.$store.state.info;
       },
       set(obj) {
-        this.$store.commit('setInfo', obj)
+        this.$store.commit("setInfo", obj);
       },
     },
     fromNumber() {
-      return this.$store.state.fromNumber
+      return this.$store.state.fromNumber;
     },
     toNumber() {
-      return this.$store.state.toNumber - 0
+      return this.$store.state.toNumber - 0;
     },
     NFTChange() {
-      return this.$store.state.NFTChange
+      return this.$store.state.NFTChange;
     },
     NFTInfo() {
-      return this.$store.state.NFTInfo
+      return this.$store.state.NFTInfo;
     },
     priceList() {
-      return this.$store.state.priceList
+      return this.$store.state.priceList;
     },
     slidingPoint() {
-      return this.$store.state.slidingPoint
+      return this.$store.state.slidingPoint;
     },
     swapConfirm() {
-      return this.$store.state.swapConfirm
+      return this.$store.state.swapConfirm;
     },
     NFTSelect() {
-      if (this.NFTChange == 'from') {
-        return this.$store.state.NFTFromToken
-      } else if (this.NFTChange == 'to') {
-        return this.$store.state.NFTToToken
+      if (this.NFTChange == "from") {
+        return this.$store.state.NFTFromToken;
+      } else if (this.NFTChange == "to") {
+        return this.$store.state.NFTToToken;
       } else {
-        return null
+        return null;
       }
     },
+    NFTFromToken() {
+      return this.$store.state.NFTFromToken;
+    },
+    NFTToToken() {
+      return this.$store.state.NFTToToken;
+    },
     walletAddress() {
-      if (this.$store.state.chainId == '000') {
-        return this.$store.state.walletPolkadot.addrSS58
+      if (this.$store.state.chainId == "000") {
+        return this.$store.state.walletPolkadot.addrSS58;
       }
-      if (this.$store.state.chainId == '222') {
-        return this.$store.state.walletPolkadot.addrSS58CRU
-      } else if (this.$store.state.chainId == '0') {
-        return this.$store.state.walletTRON
+      if (this.$store.state.chainId == "222") {
+        return this.$store.state.walletPolkadot.addrSS58CRU;
+      } else if (this.$store.state.chainId == "333") {
+        return this.$store.state.walletPolkadot.addrSS58DBC;
+      } else if (this.$store.state.chainId == "0") {
+        return this.$store.state.walletTRON;
       } else {
-        return this.$store.state.wallet.address
+        return this.$store.state.wallet.address;
       }
     },
   },
   created() {},
   watch: {
     toToken() {
-      console.log('toTokenChange', this.toToken)
-      this.$store.commit('setToNumber', '')
-      this.$store.commit('setPriceList', [])
-      this.info = null
-      this.initHandle()
+      this.$store.commit("setToNumber", "");
+      this.$store.commit("setPriceList", []);
+      this.info = null;
+      this.initHandle();
     },
     fromToken() {
-      this.$store.commit('setToNumber', '')
-      this.$store.commit('setPriceList', [])
-      this.info = null
-      this.initHandle()
+      this.$store.commit("setToNumber", "");
+      this.$store.commit("setPriceList", []);
+      this.info = null;
+      this.initHandle();
     },
     fromNumber(val) {
-      this.$store.commit('setToNumber', '')
-      this.initHandle()
+      this.$store.commit("setToNumber", "");
+      this.initHandle();
     },
     info(data) {
       //监听渠道变化
-      if (!data) return
+      if (!data) return;
       //计算出 得到数量
-      if (data.dex === 'SWFT') {
+      if (data.dex === "SWFT") {
         let number =
           this.fromNumber * data.instantRate * (1 - data.depositCoinFeeRate) -
-          data.chainFee
-        if (number < 0) number = 0
-        this.$store.commit('setToNumber', number === 0 ? 0 : number.toFixed(6))
+          data.chainFee;
+        if (number < 0) number = 0;
+        this.$store.commit("setToNumber", number === 0 ? 0 : number.toFixed(6));
       } else {
-        this.$store.commit('setToNumber', Number(data.toTokenAmount).toFixed(6))
+        this.$store.commit(
+          "setToNumber",
+          Number(data.toTokenAmount).toFixed(6)
+        );
       }
       this.sendGas = [
         `${data.chainFee}`,
-        data.dex === 'SWFT' || data.dex === 'bridgers1'
-          ? this.toToken.coinCode
-          : data.dex === 'bridgers2'
-          ? 'USDT'
+        data.dex === "SWFT" || data.dex === "bridgers1"
+          ? this.toToken.coinCode || this.toToken.coinCodeShow
+          : data.dex === "bridgers2" || data.dex === "Aggregator"
+          ? "USDT"
           : data.feeToken,
-      ]
-      bus.$emit('getSendGas', this.sendGas)
+      ];
+      bus.$emit("getSendGas", this.sendGas);
+    },
+    NFTToToken(val, oldVal) {
+      if (this.tabActive == "NFT") {
+        this.initHandle();
+      }
+    },
+    NFTFromToken(val, oldVal) {
+      if (this.tabActive == "NFT") {
+        if (oldVal) {
+          this.initHandle();
+        }
+      }
+
+      // }
+    },
+    tabActive(val, oldVal) {
+      if (val == "NFT") {
+        clearInterval(this.timer);
+      } else {
+        clearInterval(this.NFTTimer);
+      }
+    },
+    pathType(val, oldVal) {
+      this.mergeData(this.priceList);
     },
   },
   beforeDestroy() {
-    clearInterval(this.timer)
-    clearInterval(this.NFTTimer)
+    clearInterval(this.timer);
+    clearInterval(this.NFTTimer);
   },
   methods: {
+    windowOpen() {
+      if (this.lang == "zh") {
+        window.open(
+          "https://swft-allchain-bridge.gitbook.io/swft/swft-wu-gas-dui-huan-fu-wu"
+        );
+      } else {
+        window.open(
+          "https://swft-2.gitbook.io/crosschain/welcome/swft-0-gas-swap-service"
+        );
+      }
+    },
     //初始化获取基本信息接口
     initHandle() {
-      console.log('获取基本信息初始化，清除计时器')
-      clearInterval(this.timer)
-      clearInterval(this.NFTTimer)
-      this.getBaseInfo()
-      this.timer = setInterval(() => {
-        this.getBaseInfo()
-      }, 10000)
+      clearInterval(this.timer);
+      clearInterval(this.NFTTimer);
+      if (this.tabActive == "NFT") {
+        if (!this.NFTFromToken || !this.NFTToToken) {
+          return;
+        }
+        this.getNFTInfo();
+        this.NFTTimer = setInterval(() => {
+          this.getNFTInfo();
+        }, 20000);
+      } else {
+        this.getBaseInfo();
+        this.timer = setInterval(() => {
+          this.getBaseInfo();
+        }, 10000);
+      }
     },
     // 获取基本信息
     async getBaseInfo() {
-      const chainId = this.$store.state.chainId
+      const chainId = this.$store.state.chainId;
 
-      if (!this.fromToken || !this.toToken || this.walletAddress === '') {
-        return
+      if (!this.fromToken || !this.toToken) {
+        return;
       }
       // this.$store.commit('setNFTChange', false)
       //NFT 买卖 禁止获取汇率
       if (this.toToken.isNFT || this.fromToken.isNFT) {
         // this.$store.commit('setNFTChange', true)
-        return
+        return;
       }
-      if (this.fromNumber === '' || this.fromNumber <= 0) return
-      this.$store.commit('setUpdating', true)
-      if (this.sourceFlag !== 'bridgers') {
-        this.getSwftTradeData(this.walletAddress, [
+      if (this.fromNumber === "" || this.fromNumber <= 0) return;
+      this.$store.commit("setUpdating", true);
+      if (this.bridgersFlag !== "bridgers") {
+        this.getSwftTradeData([
           this.fromToken.coinCode + this.fromToken.contact,
           this.toToken.coinCode + this.toToken.contact,
-        ])
+        ]);
       }
       //跨链过滤 path 询价请求
+      // (this.AggregatorChain.indexOf(this.fromToken.mainNetwork) != -1 &&  this.AggregatorChain.indexOf(this.toToken.mainNetwork) != -1)
       if (
         this.fromToken.mainNetwork === this.toToken.mainNetwork &&
-        this.sourceFlag !== 'bridgers'
+        this.bridgersFlag !== "bridgers"
       ) {
         this.getBridgeTradeData(this.walletAddress, [
           this.fromToken.coinCode + this.fromToken.contact,
           this.toToken.coinCode + this.toToken.contact,
-        ])
+        ]);
       }
       //跨链执行 bridgers2 询价请求
       // this.getBridgers2TradeData(this.walletAddress, [
@@ -417,454 +587,533 @@ export default {
       this.getSswapBridgeTradeData(this.walletAddress, [
         this.fromToken.coinCode + this.fromToken.contact,
         this.toToken.coinCode + this.toToken.contact,
-      ])
+      ]);
     },
     showPriceList() {
-      this.$refs.priceDialog.$refs.dialogPriceList.show = true
+      this.$refs.priceDialog.$refs.dialogPriceList.show = true;
     },
     bubbleSort(arr) {
-      let max = arr.length - 1
+      let max = arr.length - 1;
       for (var j = 0; j < max; j++) {
         // 声明一个变量，作为标志位
-        var done = true
+        var done = true;
         for (var i = 0; i < max - j; i++) {
-          if (arr[i].toTokenAmount < arr[i + 1].toTokenAmount) {
-            var temp = arr[i]
-            arr[i] = arr[i + 1]
-            arr[i + 1] = temp
-            done = false
+          if (Number(arr[i].toTokenAmount) < Number(arr[i + 1].toTokenAmount)) {
+            var temp = arr[i];
+            arr[i] = arr[i + 1];
+            arr[i + 1] = temp;
+            done = false;
           }
         }
         if (done) {
-          break
+          break;
         }
       }
-      // 这里swft 和 bridgers1 价格一致 swft 排在bridgers1 前面
-      //console.log('询价结果：：：：', arr)
-      //判断 swft 和 bridgers1 同时存在
-      const swft = arr.filter((item) => item.dex === 'SWFT')
-      const sSwap = arr.filter((item) => item.dex === 'bridgers1')
-      if (swft.length > 0 && sSwap.length > 0) {
-        let swftIndex, sSwapIndex, swftInfo, sSwapInfo
+      const sSwap = arr.filter((item) => item.dex === "bridgers1");
+      if (sSwap.length > 0) {
+        let sSwapIndex, sSwapInfo;
         arr.forEach((item, index) => {
-          if (item.dex === 'SWFT') {
-            swftIndex = index
-            swftInfo = item
+          if (item.dex === "bridgers1") {
+            sSwapIndex = index;
+            sSwapInfo = item;
           }
-          if (item.dex === 'bridgers1') {
-            sSwapIndex = index
-            sSwapInfo = item
-          }
-        })
-        //次修改  swft 和 sswap 价格一致 sswap 排在 swft 前面 2022.3.28 ljj
-        if (
-          sSwapIndex > swftIndex &&
-          Number(swftInfo.toTokenAmount).toFixed(6) ===
-            Number(sSwapInfo.toTokenAmount).toFixed(6)
-        ) {
-          console.log('数量相同，swft排在后面了，需要排在前面')
-          arr[swftIndex] = sSwapInfo
-          arr[sSwapIndex] = swftInfo
+        });
+        if (sSwapIndex != 0) {
+          const list = arr.filter((item) => item.dex != "bridgers1");
+          arr = [sSwapInfo, ...list];
         }
       }
+
+      let flagtime = false;
+      let price1 = 0;
+      let price2 = 0;
       arr.forEach((item, index) => {
+        let diffStr = [];
+        this.$set(item, "diff", diffStr);
         if (index === 0) {
-          this.$set(item, 'diff', 'BEST')
+          diffStr.push("BEST");
+          this.$set(item, "diff", diffStr);
+          if (arr[0].estimatedTime == 1) {
+            flagtime = true;
+            diffStr.push("FAST");
+            this.$set(arr[0], "diff", diffStr);
+          }
+          price1 = item.toTokenAmount;
+        } else if (index === 1) {
+          price2 = item.toTokenAmount;
         } else {
           this.$set(
             item,
-            'diff',
-            this.getPersent(arr[0].toTokenAmount, item.toTokenAmount),
-          )
+            "diff",
+            this.getPersent(arr[0].toTokenAmount, item.toTokenAmount)
+          );
         }
-      })
-      return arr
+
+        //速度相同优先最大回报 标记fast
+        let fastFlag = arr[0];
+        let indexFlag = 0;
+
+        if (item.estimatedTime < fastFlag.estimatedTime && !flagtime) {
+          fastFlag = item;
+          indexFlag = index;
+          flagtime = true;
+          diffStr.push("FAST");
+          this.$set(arr[indexFlag], "diff", diffStr);
+        }
+      });
+      if (Number(price2) > Number(price1)) {
+        arr[1].diff.push("maximumReturn");
+      } else {
+        arr[0].diff.push("maximumReturn");
+      }
+      if (this.isFreeGas) {
+        const swftNoGasList = arr.filter((item) => item.dex == "SWFT");
+        const otherList = arr.filter((item) => item.dex != "SWFT");
+        const noGasNewList = [...swftNoGasList, ...otherList];
+        return noGasNewList;
+      }
+      return arr;
+    },
+
+    timeSort(arr) {
+      let max = arr.length - 1;
+      for (var j = 0; j < max; j++) {
+        // 声明一个变量，作为标志位
+        for (var i = 1; i < max - j; i++) {
+          if (Number(arr[i].estimatedTime) > Number(arr[i + 1].estimatedTime)) {
+            var temp = arr[i];
+            arr[i] = arr[i + 1];
+            arr[i + 1] = temp;
+          }
+        }
+      }
+      return arr;
     },
     getPersent(best, other) {
       if (best == 0) {
-        return '0.00%'
+        return "0.00%";
       }
-      return (((other - best) / best) * 100).toFixed(2) + '%'
+      return (((other - best) / best) * 100).toFixed(2) + "%";
     },
     //Bridgers2
     async getBridgers2TradeData(walletAddress, key) {
       // 兑换时 停止询价
       if (this.swapConfirm) {
-        console.log('兑换时 停止询价')
-        this.$store.commit('setUpdating', false)
-        return
+        this.$store.commit("setUpdating", false);
+        return;
       }
       const amount = new BigNumber(this.fromNumber).multipliedBy(
-        BigNumber(10).pow(this.fromToken.coinDecimal),
-      )
+        BigNumber(10).pow(this.fromToken.coinDecimal)
+      );
       const params = {
         fromTokenAddress:
-          this.fromToken.contact === ''
-            ? '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+          this.fromToken.contact === ""
+            ? "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
             : this.fromToken.contact,
         toTokenAddress:
-          this.toToken.contact === ''
-            ? '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+          this.toToken.contact === ""
+            ? "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
             : this.toToken.contact,
         fromTokenAmount: this.toNonExponential(amount),
         fromTokenChain: this.changeNetWork(this.fromToken.mainNetwork),
         toTokenChain: this.changeNetWork(this.toToken.mainNetwork),
         userAddr: this.walletAddress,
-      }
-      const res = await baseApi.getBridgers2TradeData(params)
-      if (res.resCode == '100') {
-        this.$store.commit('setUpdating', false)
+      };
+      const res = await baseApi.getBridgers2TradeData(params);
+      if (res.resCode == "100") {
+        this.$store.commit("setUpdating", false);
         //阻拦
         if (
           key[0] !== this.fromToken.coinCode + this.fromToken.contact ||
           key[1] !== this.toToken.coinCode + this.toToken.contact
         )
-          return
-        if (!res.data.txData) return
-        let resultList = [res.data.txData]
+          return;
+        if (!res.data.txData) return;
+        let resultList = [res.data.txData];
         if (resultList.length > 0) {
           resultList.forEach((element) => {
             //this.$set(element, 'chainFee', element.fee)
             this.$set(
               element,
-              'instantRate',
+              "instantRate",
               new BigNumber(element.toTokenAmount)
                 .dividedBy(new BigNumber(this.fromNumber))
-                .toString(),
-            )
+                .toString()
+            );
             // this.$set(
             //   element,
             //   'toTokenAmount',
             //   this.fromNumber * element.instantRate * (1 - element.fee) -
             //     element.chainFee,
             // )
-            if (element.toTokenAmount < 0) element.toTokenAmount = 0
-            this.$set(element, 'depositCoinFeeRate', element.fee)
-          })
+            if (element.toTokenAmount < 0) element.toTokenAmount = 0;
+            this.$set(element, "depositCoinFeeRate", element.fee);
+          });
         }
-        this.mergeData(resultList)
+        this.mergeData(resultList);
         //return resultList
       } else {
-        return []
+        return [];
       }
     },
     //Bridgers1
     async getSswapBridgeTradeData(walletAddress, key) {
       // 兑换时 停止询价
       if (this.swapConfirm) {
-        console.log('兑换时 停止询价')
-        this.$store.commit('setUpdating', false)
-        return
+        this.$store.commit("setUpdating", false);
+        return;
       }
       const amount = new BigNumber(this.fromNumber).multipliedBy(
-        BigNumber(10).pow(this.fromToken.coinDecimal),
-      )
+        BigNumber(10).pow(this.fromToken.coinDecimal)
+      );
       const params = {
         fromTokenAddress:
-          this.fromToken.contact === ''
-            ? '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+          this.fromToken.contact === ""
+            ? "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
             : this.fromToken.contact,
         toTokenAddress:
-          this.toToken.contact === ''
-            ? '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+          this.toToken.contact === ""
+            ? "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
             : this.toToken.contact,
         fromTokenAmount: this.toNonExponential(amount),
         fromTokenChain: this.changeNetWork(this.fromToken.mainNetwork),
         toTokenChain: this.changeNetWork(this.toToken.mainNetwork),
         userAddr: this.walletAddress,
-      }
-      const res = await baseApi.getSswapBridgeTradeData(params)
-      if (res.resCode == '100') {
-        this.$store.commit('setUpdating', false)
+      };
+      const res = await baseApi.getSswapBridgeTradeData(params);
+      if (res.resCode == "100") {
+        this.$store.commit("setUpdating", false);
         //阻拦
         if (
           key[0] !== this.fromToken.coinCode + this.fromToken.contact ||
           key[1] !== this.toToken.coinCode + this.toToken.contact
         )
-          return
-        if (!res.data.txData) return
-        let resultList = [res.data.txData]
+          return;
+        if (!res.data.txData) return;
+        let resultList = [res.data.txData];
         if (resultList.length > 0) {
           resultList.forEach((element) => {
             //this.$set(element, 'chainFee', element.fee)
             this.$set(
               element,
-              'instantRate',
+              "instantRate",
               new BigNumber(element.toTokenAmount)
                 .dividedBy(new BigNumber(this.fromNumber))
-                .toString(),
-            )
+                .toString()
+            );
             // this.$set(
             //   element,
             //   'toTokenAmount',
             //   this.fromNumber * element.instantRate * (1 - element.fee) -
             //     element.chainFee,
             // )
-            if (element.toTokenAmount < 0) element.toTokenAmount = 0
-            this.$set(element, 'depositCoinFeeRate', element.fee)
-          })
+            if (element.toTokenAmount < 0) element.toTokenAmount = 0;
+            this.$set(element, "depositCoinFeeRate", element.fee);
+          });
         }
-        this.mergeData(resultList)
+        this.mergeData(resultList);
         //return resultList
       } else {
-        return []
+        return [];
       }
     },
-    async getSwftTradeData(walletAddress, key) {
-      console.log(this.swapConfirm)
+    async getSwftTradeData(key) {
       if (this.swapConfirm) {
-        this.$store.commit('setUpdating', false)
-        return
+        this.$store.commit("setUpdating", false);
+        return;
       } // 兑换时 停止询价
-      let info = null
+      let info = null;
       var data = {
         depositCoinCode: this.fromToken.coinCode,
         receiveCoinCode: this.toToken.coinCode,
         walletAddress: this.walletAddress,
+        depositCoinAmt: this.fromNumber,
         //changeType: 'limited',
-      }
+      };
       await baseApi.getBaseInfo(data).then((res) => {
         if (!res) {
-          return errorCode(900, this)
+          return errorCode(900, this);
         }
-        if (res && res.resCode !== '800') {
-          return errorCode(res.resCode, this)
+        if (res && res.resCode !== "800") {
+          return errorCode(res.resCode, this);
         }
 
-        if (res.data.instantRate == '0') {
+        if (res.data.instantRate == "0") {
           Toast({
-            message: this.$t('support_Advanced'),
-            position: 'top',
-          })
+            message: this.$t("support_Advanced"),
+            position: "top",
+          });
         }
-        if (
-          this.$store.state.chainId === null ||
-          this.$store.state.chainId === ''
-        )
-          return
-        this.$store.commit('setUpdating', false)
+        // if (
+        //   this.$store.state.chainId === null ||
+        //   this.$store.state.chainId === ''
+        // )
+        //   return
+        this.$store.commit("setUpdating", false);
         //阻拦
         if (
           key[0] !== this.fromToken.coinCode + this.fromToken.contact ||
           key[1] !== this.toToken.coinCode + this.toToken.contact
         )
-          return
-        info = res.data
-        this.$set(info, 'dex', 'SWFT')
-        this.$set(info, 'logoUrl', 'https://images.swft.pro/dex/SWFT.png')
+          return;
+        info = res.data;
+        this.$set(info, "dex", "SWFT");
+        this.$set(info, "isDex", res.data.isDex);
+        this.$set(info, "logoUrl", "https://images.swft.pro/dex/SWFT.png");
         this.$set(
           info,
-          'toTokenAmount',
-          this.fromNumber * info.instantRate * (1 - info.depositCoinFeeRate) -
-            info.chainFee,
-        ) //this.fromNumber * info.instantRate
-        if (info.toTokenAmount < 0) info.toTokenAmount = 0
-        this.mergeData([info])
-      })
+          "toTokenAmount",
+          (
+            this.fromNumber * info.instantRate * (1 - info.depositCoinFeeRate) -
+            info.chainFee
+          )
+            .toFixed(7)
+            .slice(0, -1)
+        ); //this.fromNumber * info.instantRate
+        if (info.toTokenAmount < 0) info.toTokenAmount = 0;
+        this.mergeData([info]);
+      });
       //return info
     },
     async getBridgeTradeData(walletAddress, key) {
       // 兑换时 停止询价
       if (this.swapConfirm) {
-        console.log('兑换时 停止询价')
-        this.$store.commit('setUpdating', false)
-        return
+        console.log("兑换时 停止询价");
+        this.$store.commit("setUpdating", false);
+        return;
       }
       const amount = new BigNumber(this.fromNumber).multipliedBy(
-        BigNumber(10).pow(this.fromToken.coinDecimal),
-      )
+        BigNumber(10).pow(this.fromToken.coinDecimal)
+      );
       const params = {
         fromTokenAddress:
-          this.fromToken.contact === ''
-            ? '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+          this.fromToken.contact === ""
+            ? "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
             : this.fromToken.contact, //源token地址
         toTokenAddress:
-          this.toToken.contact === ''
-            ? '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+          this.toToken.contact === ""
+            ? "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
             : this.toToken.contact, //目标token地址
         fromTokenAmount: this.toNonExponential(amount), //输入金额
         fromTokenChain: this.changeNetWork(this.fromToken.mainNetwork), //ETH，BSC, HECO
         toTokenChain: this.changeNetWork(this.toToken.mainNetwork), //ETH，BSC, HECO
         userAddr: this.walletAddress,
         toAddress: this.$store.state.address,
-      }
+        source: this.sourceFlag,
+      };
       try {
-        const res = await baseApi.multiQuote(params)
-        if (res.resCode == '100') {
-          this.$store.commit('setUpdating', false)
+        const res = await baseApi.multiQuote(params);
+        if (res.resCode == "100") {
+          this.$store.commit("setUpdating", false);
           //阻拦
           if (
             key[0] !== this.fromToken.coinCode + this.fromToken.contact ||
             key[1] !== this.toToken.coinCode + this.toToken.contact
           )
-            return
-          let resultList = res.data.txData.filter(
-            (item) =>
-              item.dex !== 'SWFT' &&
-              item.dex !== 'ClassZZ' &&
-              item.dex !== 'Bridgers' &&
-              item.dex !== 'sSwap' &&
-              item.dex !== 'MetaPath' &&
-              item.dex !== 'TransitSwap',
-          )
+            return;
+          // 判断同链还是跨链
+          const isOrigin =
+            this.fromToken.mainNetwork != this.toToken.mainNetwork &&
+            this.AggregatorChain.indexOf(this.fromToken.mainNetwork) != -1 &&
+            this.AggregatorChain.indexOf(this.toToken.mainNetwork) != -1;
+          let resultList = [];
+          if (!isOrigin) {
+            resultList = res.data.txData.filter(
+              (item) =>
+                item.dex !== "SWFT" &&
+                item.dex !== "ClassZZ" &&
+                item.dex !== "Bridgers" &&
+                item.dex !== "sSwap" &&
+                item.dex !== "MetaPath" &&
+                item.dex !== "TransitSwap"
+            );
+          } else {
+            resultList = res.data.txData.filter(
+              (item) => item.dex == "Aggregator"
+            );
+          }
           if (resultList.length > 0) {
             resultList.forEach((element) => {
-              this.$set(element, 'chainFee', element.fee)
+              if (element.dex !== "Aggregator") {
+                this.$set(element, "chainFee", element.fee);
+              } else {
+                this.$set(element, "depositCoinFeeRate", element.fee);
+              }
               this.$set(
                 element,
-                'instantRate',
+                "instantRate",
                 new BigNumber(element.receiveTokenAmount)
                   .dividedBy(new BigNumber(this.fromNumber))
-                  .toString(),
-              )
+                  .toString()
+              );
               //添加过滤标识
-              this.$set(element, 'dexType', 'pathBridge')
-            })
+              this.$set(element, "dexType", "pathBridge");
+            });
           }
-          this.mergeData(resultList, 'pathBridge')
+          this.mergeData(resultList, "pathBridge");
           //return resultList
         } else {
-          return []
+          return [];
         }
       } catch {
-        return []
+        return [];
       }
     },
     changeNetWork(network) {
-      if (network === 'AVAXC') {
-        return 'AVALANCHE'
-      } else if (network === 'FTM') {
-        return 'FANTOM'
-      } else if (network === 'ARB') {
-        return 'ARBITRUM'
+      if (network === "AVAXC") {
+        return "AVALANCHE";
+      } else if (network === "FTM") {
+        return "FANTOM";
+      } else if (network === "ARB") {
+        return "ARBITRUM";
+      } else if (network === "TRX") {
+        return "TRON";
+      } else if (network === "SOL") {
+        return "SOLANA";
+      } else if (network === "opBNB" || network === "zkEVM") {
+        return network;
       } else {
-        return network.toUpperCase()
+        return network.toUpperCase();
       }
     },
     mergeData(data, type) {
-      let priceList
-      if (type === 'pathBridge') {
+      let priceList;
+      if (type === "pathBridge") {
         priceList = this.priceList.filter(
-          (item) => item.dexType !== 'pathBridge',
-        )
+          (item) => item.dexType !== "pathBridge"
+        );
       } else {
-        priceList = this.priceList
+        priceList = this.priceList;
       }
-      if (!priceList) priceList = []
+      if (!priceList) priceList = [];
       //先合并
-      let mergeList = [...priceList, ...data]
+      let mergeList = [...priceList, ...data];
       //在去重  排序
-      const newList = this.unique(mergeList)
-      this.$store.commit('setPriceList', newList)
-      const chooseList = newList.filter((item) => item.dex === this.dex)
+      const newList = this.unique(mergeList);
+      let timeSortList = newList;
+      if (this.pathType == 2) {
+        timeSortList = this.timeSort(newList);
+        this.$store.commit("setPriceList", timeSortList);
+      } else {
+        this.$store.commit("setPriceList", newList);
+      }
+
+      const chooseList = newList.filter((item) => item.dex === this.dex);
       //是否存在
       if (chooseList.length > 0) {
-        this.info = chooseList[0]
+        this.info = chooseList[0];
       } else {
-        this.info = newList.length > 0 ? newList[0] : null
-        this.dex = ''
+        let infoItem = newList.filter((item) => item.diff.indexOf("BEST") > -1);
+        this.info = newList.length > 0 ? newList[0] : null;
+        this.dex = "";
       }
     },
     unique(list) {
-      let result = {}
-      let finalResult = []
+      let result = {};
+      let finalResult = [];
       for (let i = 0; i < list.length; i++) {
-        result[list[i].dex] = list[i]
+        result[list[i].dex] = list[i];
       }
       for (let item in result) {
-        finalResult.push(result[item])
+        finalResult.push(result[item]);
       }
-      finalResult = this.bubbleSort(finalResult)
-      return finalResult
+      finalResult = this.bubbleSort(finalResult);
+      return finalResult;
     },
     toNonExponential(num, type) {
-      var m = num.toExponential().match(/\d(?:\.(\d*))?e([+-]\d+)/)
-      if (!m) return 0
-      if (type === 'parseInt') {
-        let str = num.toFixed(Math.max(0, (m[1] || '').length - m[2]))
-        if (str.indexOf('.') === -1) {
-          return num.toFixed(Math.max(0, (m[1] || '').length - m[2]))
+      var m = num.toExponential().match(/\d(?:\.(\d*))?e([+-]\d+)/);
+      if (!m) return 0;
+      if (type === "parseInt") {
+        let str = num.toFixed(Math.max(0, (m[1] || "").length - m[2]));
+        if (str.indexOf(".") === -1) {
+          return num.toFixed(Math.max(0, (m[1] || "").length - m[2]));
         } else {
-          return str.substring(0, str.indexOf('.'))
+          return str.substring(0, str.indexOf("."));
         }
       } else {
-        return num.toFixed(Math.max(0, (m[1] || '').length - m[2]))
+        return num.toFixed(Math.max(0, (m[1] || "").length - m[2]));
       }
     },
     tipOpen() {
-      const self = this
-      clearTimeout(this.tipTimer)
-      self.showPopover = true
+      const self = this;
+      clearTimeout(this.tipTimer);
+      self.showPopover = true;
       this.tipTimer = setTimeout(() => {
-        self.showPopover = false
-      }, 3000)
+        self.showPopover = false;
+      }, 3000);
     },
     getContainer() {
-      return document.querySelector('.info-fee')
+      return document.querySelector(".info-fee");
     },
     //获取NFT 信息
     async getNFTInfo(type) {
-      const _this = this
-      let params = {}
-  
-      params = {
-        tokenId: _this.NFTFromToken.tokenId,
-        paymentContract: _this.NFTFromToken.paymentInfo.paymentContract,
-        platformId: _this.NFTFromToken.platformId,
-        orderSide: 0,
-        coinCode: _this.NFTToToken.coinCode,
-        fromTokenChain: _this.NFTToToken.mainNetwork,
-        fromAddress: this.walletAddress,
-        fromTokenAddress: _this.NFTFromToken.contractAddr,
+      const _this = this;
+      let params = {};
+      if (_this.NFTToToken.isNFT) {
+        //买
+        params = {
+          nftId: _this.NFTToToken.id,
+          platformId: _this.NFTToToken.platformId,
+          orderSide: 1,
+          coinCode: _this.NFTFromToken.coinCode,
+          fromTokenChain: _this.NFTFromToken.mainNetwork,
+          fromAddress: this.walletAddress,
+        };
+      } else {
+        params = {
+          tokenId: _this.NFTFromToken.tokenId,
+          paymentContract: _this.NFTFromToken.paymentInfo.paymentContract,
+          platformId: _this.NFTFromToken.platformId,
+          orderSide: 0,
+          coinCode: _this.NFTToToken.coinCode,
+          fromTokenChain: _this.NFTToToken.mainNetwork,
+          fromAddress: this.walletAddress,
+          fromTokenAddress: _this.NFTFromToken.contractAddr,
+        };
       }
       await baseApi.quote(params).then((res) => {
-        if (res.resCode === '800') {
+        if (res.resCode === "800") {
           if (res.data) {
-            let info = res.data
+            let info = res.data;
             _this.$set(
               info,
-              'imageUrl',
-              _this.NFTChange === 'from'
+              "imageUrl",
+              _this.NFTChange === "from"
                 ? _this.NFTFromToken.logoURI
-                : _this.NFTToToken.logoURI,
-            )
+                : _this.NFTToToken.logoURI
+            );
             _this.$set(
               info,
-              'collectionName',
-              _this.NFTChange === 'from'
+              "collectionName",
+              _this.NFTChange === "from"
                 ? _this.NFTFromToken.name
-                : _this.NFTToToken.name,
-            )
+                : _this.NFTToToken.name
+            );
             _this.$set(
               info,
-              'tokenId',
-              _this.NFTChange === 'from'
+              "tokenId",
+              _this.NFTChange === "from"
                 ? _this.NFTFromToken.tokenId
-                : _this.NFTToToken.tokenId,
-            )
-            _this.$set(info, 'dex', res.data.dex)
-            console.log('NFTChange:::::', _this.NFTChange)
-            console.log('info:::::', info)
-            _this.$store.commit('setNFTInfo', info)
-            console.log('info:::::', _this.NFTInfo)
+                : _this.NFTToToken.tokenId
+            );
+            _this.$set(info, "dex", res.data.dex);
+            _this.$store.commit("setNFTInfo", info);
           }
         } else {
-          _this.$store.commit('setNFTInfo', null)
-          return
+          _this.$store.commit("setNFTInfo", null);
+          return;
         }
-      })
+      });
     },
     // 计算手续费率
     getFeeRate(val) {
-      // console.log(val);
-      return new BigNumber(val).multipliedBy(100)
+      return new BigNumber(val).multipliedBy(100);
     },
     setSlidingPoint() {
-      console.log('打开滑点设置')
-      this.$refs.slidingPoint.$refs.dialogSlidingPoint.show = true
+      this.$refs.slidingPoint.$refs.dialogSlidingPoint.show = true;
     },
   },
-}
+};
 </script>
 <style lang="scss" scoped>
 .infoCont {
@@ -900,6 +1149,13 @@ export default {
         display: inline-block;
         cursor: pointer;
       }
+    }
+    .morePriceText {
+      color: #277ffa;
+      background: #f3f8ff;
+      border-radius: 10px;
+      padding: 1px 5px;
+      cursor: pointer;
     }
     .cont {
       font-size: 0.259rem;
@@ -941,6 +1197,141 @@ export default {
       font-size: 12px;
       text-align: left;
       font-family: PingFangSC-Semibold, PingFang SC;
+    }
+  }
+  .list-info {
+    width: 100%;
+    min-height: 1.666rem;
+    box-sizing: border-box;
+    cursor: pointer;
+    margin-bottom: 0.2rem;
+    border: 1px solid #277ffa;
+    border-radius: 0.25rem;
+    background-color: #f3f8ff;
+    font-family: Poppins-Regular;
+    overflow: hidden;
+    .free-gas {
+      width: 100%;
+      background: #277ffa;
+      opacity: 1;
+      padding: 0 0.1rem 0 0.2rem;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      .sd {
+        display: inline-block;
+        width: 0.35rem;
+        margin-right: 0.05rem;
+        color: #ffffff;
+      }
+      .free-text {
+        width: 0;
+        flex: 1;
+        font-size: 10px;
+        font-family: Poppins-Regular, Poppins;
+        font-weight: 400;
+        color: #ffffff;
+        line-height: 15px;
+        padding: 0.1rem 0;
+        text-align: left;
+      }
+      .free-icon {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 0 0.1rem;
+        font-size: 0.4rem;
+        color: #ffffff;
+      }
+    }
+    &.th-title {
+      font-family: Poppins-Regular, Poppins;
+      font-weight: 400;
+      color: #999999;
+    }
+    &.list {
+      font-family: Poppins-Regular, Poppins;
+      color: #292929;
+    }
+    &.active {
+      background: #f0f7ff;
+      border: 1px solid #73acff;
+      border-radius: 0.25rem;
+    }
+    .item {
+      display: flex;
+      align-items: center;
+      border-radius: 5px;
+      &.item1 {
+        // width: 45%;
+        font-size: 0.259rem;
+        font-family: Poppins-SemiBold, Poppins;
+        // height: 0.6rem;
+      }
+      &.item2 {
+        width: 70%;
+        // height: 0.6rem;
+        overflow: hidden;
+        overflow-x: auto;
+      }
+      .gery {
+        color: #999999;
+      }
+      &.item3 {
+        // width: 15%;
+        font-size: 12px;
+        justify-content: end;
+
+        font-size: 12px;
+        &.err {
+          color: #cd4444;
+        }
+        .best {
+          color: #24af5c;
+          background-color: #e8fff2;
+          border: 1px solid #24af5c;
+          border-radius: 5px;
+          padding: 2px 3px;
+          margin-left: 3px;
+        }
+        .fast {
+          color: #277ffa;
+          background-color: #f3f8ff;
+          border: 1px solid #277ffa;
+          border-radius: 5px;
+          padding: 2px 3px;
+          margin-left: 3px;
+        }
+        .maxTo {
+          color: #277ffa;
+          background-color: #f3f8ff;
+          border: 1px solid #277ffa;
+          border-radius: 5px;
+          padding: 2px 3px;
+          margin-left: 3px;
+        }
+      }
+
+      img {
+        width: 0.63rem;
+        height: 0.63rem;
+      }
+    }
+    .part1 {
+      margin-bottom: 0.16rem;
+      margin-top: 0.22rem;
+    }
+
+    .part1,
+    .part2 {
+      padding: 0 0.22rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    .part2 {
+      font-size: 0.259rem;
+      font-family: Poppins-SemiBold, Poppins;
+      margin-bottom: 0.22rem;
     }
   }
 }

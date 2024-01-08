@@ -15,14 +15,12 @@ const PhantomConnectHandle = ($scope) => {
   if (store.state.wallet.connectType === 'Phantom') {
     return ($scope.$refs.dialog.show = false)
   }
-  console.log('Phantom连接',window.solana)
   connect($scope)
 }
 async function connect($scope) {
   let resp = null
   let publicKey = null
   resp = await window.solana.connect()
-  console.log(window.solana)
   publicKey = window.solana.publicKey.toBase58()
   if (publicKey == null) {
     return Notify({
@@ -33,7 +31,6 @@ async function connect($scope) {
   }
 
   if (publicKey) {
-    console.log('connected!', publicKey)
     $scope.wallet = 'Phantom'
     store.commit('setChainId', '2021')
     store.commit('setWalletAddress', publicKey)
@@ -46,7 +43,6 @@ async function connect($scope) {
 
   // window.solana.connect()
   // window.solana.on('connect', (res) => {
-  //   console.log('connected!', res.toBase58())
   //   $scope.wallet = 'Phantom'
   //   store.commit('setChainId', '2021')
   //   store.commit('setWalletAddress', res.toBase58())

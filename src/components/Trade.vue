@@ -1,43 +1,28 @@
 <template>
-  <div class="trade" :class="sourceFlag === 'bridgers' ? 'border' : ''">
-    <div class="swap-content">
-      <div class="trade-boxs">
-        <TradeBox
-          style="width: calc(50% - 18px)"
-          ref="fromToken"
-          type="from"
-          @getMax="getMax"
-        />
-        <svg
-          t="1623380158754"
-          :class="isPC ? 'icon' : 'iconM'"
-          viewBox="0 0 1024 1024"
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
-          p-id="1319"
-          width="200"
-          height="200"
-          @click="exchangeTokens"
-        >
-          <path
-            d="M955.574857 505.947429c-1.993143 145.627429-27.282286 266.203429-101.229714 338.102857-71.917714 73.947429-192.493714 99.236571-338.102857 101.229714-145.627429-1.993143-266.203429-27.282286-338.121143-101.229714-73.947429-71.899429-99.236571-192.475429-101.229714-338.102857 2.011429-145.627429 27.282286-266.203429 101.229714-338.102858 71.917714-73.947429 192.493714-99.254857 338.102857-101.248 145.627429 2.011429 266.203429 27.300571 338.121143 101.229715 73.947429 71.917714 99.236571 192.493714 101.229714 338.121143z"
-            fill="#F8FBFF"
-            p-id="1320"
-          ></path>
-          <path
-            d="M438.528 358.089143v-82.779429s0.237714-4.352-8.301714-6.4c-7.021714-1.554286-13.805714 3.328-13.805715 3.328-3.017143 2.304-142.884571 103.533714-142.884571 103.533715s-13.293714 6.930286-13.293714 20.772571c0 13.330286 9.526857 18.962286 9.526857 18.962286l143.634286 100.717714s9.051429 3.346286 16.822857 1.810286c8.301714-1.810286 8.301714-7.954286 8.301714-7.954286v-77.659429h139.849143s110.244571 15.122286 110.244571 56.905143c0 0-1.755429-131.236571-113.737143-131.236571h-136.356571z"
-            fill="#000000"
-            p-id="1321"
-          ></path>
-          <path
-            d="M581.394286 691.547429v82.779428s1.517714 5.12 10.550857 6.144c6.034286 0.768 9.801143-2.304 11.044571-3.328 3.017143-2.048 143.140571-103.533714 143.140572-103.533714s13.312-6.930286 13.312-20.772572c0-13.586286-9.545143-18.962286-9.545143-18.962285l-143.890286-100.717715s-6.034286-3.602286-14.061714-1.554285c-10.057143 2.56-10.550857 7.954286-10.550857 7.954285v77.403429h-140.617143s-110.226286-15.122286-110.226286-56.905143c0 0 1.755429 131.236571 113.993143 131.236572l136.850286 0.256z"
-            fill="#277FFA"
-            p-id="1322"
-          ></path>
+  <div class="trade" :class="
+      bridgersFlag === 'bridgers' || sourceFlag == ('msafedapp' || 'msafeb')
+        ? 'border'
+        : ''
+    ">
+    <!-- <div v-if="sourceFlag == 'HN'" class="tabTop">
+      <Tab />
+    </div> -->
+    <div class="swap-content" v-if="tabActive == 'swap' || tabActive == 'bridge' || tabActive == 'gasSwap'">
+      <div class="trade-boxs" v-if="tabActive == 'swap'">
+        <TradeBox style="width: calc(50% - 18px)" ref="fromToken" type="from" @getMax="getMax" />
+        <svg t="1623380158754" :class="isPC ? 'icon' : 'iconM'" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1319" width="200" height="200" @click="exchangeTokens">
+          <path d="M955.574857 505.947429c-1.993143 145.627429-27.282286 266.203429-101.229714 338.102857-71.917714 73.947429-192.493714 99.236571-338.102857 101.229714-145.627429-1.993143-266.203429-27.282286-338.121143-101.229714-73.947429-71.899429-99.236571-192.475429-101.229714-338.102857 2.011429-145.627429 27.282286-266.203429 101.229714-338.102858 71.917714-73.947429 192.493714-99.254857 338.102857-101.248 145.627429 2.011429 266.203429 27.300571 338.121143 101.229715 73.947429 71.917714 99.236571 192.493714 101.229714 338.121143z" fill="#F8FBFF" p-id="1320"></path>
+          <path d="M438.528 358.089143v-82.779429s0.237714-4.352-8.301714-6.4c-7.021714-1.554286-13.805714 3.328-13.805715 3.328-3.017143 2.304-142.884571 103.533714-142.884571 103.533715s-13.293714 6.930286-13.293714 20.772571c0 13.330286 9.526857 18.962286 9.526857 18.962286l143.634286 100.717714s9.051429 3.346286 16.822857 1.810286c8.301714-1.810286 8.301714-7.954286 8.301714-7.954286v-77.659429h139.849143s110.244571 15.122286 110.244571 56.905143c0 0-1.755429-131.236571-113.737143-131.236571h-136.356571z" fill="#000000" p-id="1321"></path>
+          <path d="M581.394286 691.547429v82.779428s1.517714 5.12 10.550857 6.144c6.034286 0.768 9.801143-2.304 11.044571-3.328 3.017143-2.048 143.140571-103.533714 143.140572-103.533714s13.312-6.930286 13.312-20.772572c0-13.586286-9.545143-18.962286-9.545143-18.962285l-143.890286-100.717715s-6.034286-3.602286-14.061714-1.554285c-10.057143 2.56-10.550857 7.954286-10.550857 7.954285v77.403429h-140.617143s-110.226286-15.122286-110.226286-56.905143c0 0 1.755429 131.236571 113.993143 131.236572l136.850286 0.256z" fill="#277FFA" p-id="1322"></path>
         </svg>
         <TradeBox style="width: calc(50% - 18px)" ref="toToken" type="to" />
       </div>
-
+      <div class="bridge-content" v-if="tabActive == 'bridge'">
+        <BridgeTrade />
+      </div>
+      <div class="bridge-content" v-if="tabActive == 'gasSwap'">
+        <GasTrade />
+      </div>
       <ReceivingAddress />
       <!-- <Preference /> -->
       <Info />
@@ -50,646 +35,2068 @@
         </div>
       </div>
     </div>
+    <HNAddLiquidity ref="HNAddLiquidity" v-if="tabActive == 'addLiquidity'" />
     <SwapConfirm :sendGas="sendGas" ref="swapConfirm" @comfirm="comfirm" />
+    <noServe ref="noServeDialog"></noServe>
   </div>
 </template>
 
 <script>
+// const TradeBox = () => import("../components/TradeBox")
+const SwapConfirm = () => import("./SwapConfirm");
+const ReceivingAddress = () => import("./ReceivingAddress");
+const HNAddLiquidity = () => import("./HNAddLiquidity");
+const BridgeTrade = () => import("./BridgeTrade");
+const GasTrade = () => import("./GasTrade");
+const noServe = () => import("./noServe");
+// const Info = () => import("./Info")
+const Preference = () => import("./Preference");
+
 // 组件
-import TradeBox from '../components/TradeBox'
-import SwapConfirm from './SwapConfirm'
-import ReceivingAddress from './ReceivingAddress'
-import Info from './Info'
+import TradeBox from "../components/TradeBox";
+// import SwapConfirm from './SwapConfirm'
+// import ReceivingAddress from './ReceivingAddress'
+// import HNAddLiquidity from './HNAddLiquidity'
+// import noServe from './noServe'
+import Info from "./Info";
 // import Preference from './Preference'
 // 插件
-import { Notify, Dialog } from 'vant'
-import { ethers } from 'ethers'
-import Web3 from 'web3'
-const web3 = new Web3()
-import abi from '../utils/abi'
-let provider, signer
+import { Notify, Dialog } from "vant";
+import { ethers } from "ethers";
+import tronAbi from "../utils/tronAbi";
+
+let provider, signer;
 if (window.ethereum) {
-  provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
-  signer = provider.getSigner()
+  provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+  signer = provider.getSigner();
 }
-import { ApiPromise, WsProvider } from '@polkadot/api'
-const { typesBundleForPolkadot } = require('@crustio/type-definitions')
-import BigNumber from 'bignumber.js'
-import bus from '../eventBus'
-import getAllBalance from '../utils/getAllBalance'
-import getNFTAsset from '../utils/getNFTAsset'
-import * as solanaWeb3 from '@solana/web3.js'
-import getTerraBalanceHandle from '../utils/getTerraBalance'
-import BtcExchangeHandle from '../utils/getBtcBalance'
-import getTronBalance from '../utils/getTronBalance'
-import baseApi from '../api/baseApi'
-import getEOSBalance from '../utils/getEOSBalance'
+
+import BigNumber from "bignumber.js";
+import bus from "../eventBus";
+import getAllBalance from "../utils/getAllBalance";
+import BtcExchangeHandle from "../utils/getBtcBalance";
+import getTronBalance from "../utils/getTronBalance";
+import baseApi from "../api/baseApi";
+import getEOSBalance from "../utils/getEOSBalance";
+import getAPTBalance from "../utils/getAPTBalance";
+import { supportNetWork } from "../config";
+import getSolTokenBalance from "../utils/getSolTokenBalance";
+import tronApi from "../api/BaseGeneralApi";
+import getPolkadotBalance from "../utils/getPolkadotBalance";
+import getDogeBalance from "../utils/getDogeBalance";
+import axios from "axios";
+import suiWalletMethods from "../utils/suiWalletConnect";
+import getFILBalance from "../utils/getFILBalance";
+import seiWalletConnect from "../utils/seiWalletConnect";
+import havahWalletConnect from "../utils/havahWalletConnect";
+
+let tp = null;
+let isTP = false;
+import { EthereumProvider } from "@walletconnect/ethereum-provider";
+let WalletConnectProvider = null;
+try {
+  tp = require("tp-js-sdk");
+  isTP = tp.isConnected();
+} catch (error) {
+  console.log(error);
+}
 export default {
-  name: 'Trade',
+  name: "Trade",
   components: {
     TradeBox,
     ReceivingAddress,
     Info,
     SwapConfirm,
+    noServe,
+    HNAddLiquidity,
+    BridgeTrade,
+    GasTrade,
     // Preference,
   },
   data() {
     return {
       needApprove: false,
       sendGas: null,
-      sourceFlag: localStorage.getItem('sourceFlag'),
-    }
+      sourceFlag: localStorage.getItem("sourceFlag"),
+      bridgersFlag: localStorage.getItem("bridgersFlag"),
+    };
   },
   watch: {
     // 监听钱包是否激活
-    chainId(val, old) {},
+    chainId(val, old) {
+      if (!this.isUserChoose) {
+        //this.aiSetToken()
+      }
+    },
     fromToken(val, oldVal) {
-      this.$store.commit('setBalance', 0)
-      this.init()
+      if (!val) return;
+      if (
+        this.toToken &&
+        val.mainNetwork == this.toToken.mainNetwork &&
+        val.coinCode == this.toToken.coinCode
+      ) {
+        this.toToken = null;
+      }
+      this.$store.commit("setBalance", 0);
+      this.init();
     },
   },
   computed: {
+    isUserChoose() {
+      return this.$store.state.isUserChoose;
+    },
     order() {
-      return this.$store.state.order
+      return this.$store.state.order;
     },
     // 当前链路
     chainId() {
-      return this.$store.state.chainId
+      return this.$store.state.chainId;
     },
     walletAddress() {
-      if (this.$store.state.chainId == '000') {
-        return this.$store.state.walletPolkadot.addrSS58
+      if (this.$store.state.chainId == "000") {
+        return this.$store.state.walletPolkadot.addrSS58;
       }
-      if (this.$store.state.chainId == '222') {
-        return this.$store.state.walletPolkadot.addrSS58CRU
-      } else if (this.$store.state.chainId == '0') {
-        return this.$store.state.walletTRON
+      if (this.$store.state.chainId == "222") {
+        return this.$store.state.walletPolkadot.addrSS58CRU;
+      }
+      if (this.$store.state.chainId == "333") {
+        return this.$store.state.walletPolkadot.addrSS58DBC;
+      } else if (this.$store.state.chainId == "0") {
+        return this.$store.state.walletTRON;
       } else {
-        return this.$store.state.wallet.address
+        return this.$store.state.wallet.address;
       }
+    },
+    tabActive: {
+      get() {
+        return this.$store.state.tabActive;
+      },
+    },
+    bridgeFromTokenchain: {
+      // from 网络
+      get() {
+        return this.$store.state.bridgeFromTokenchain;
+      },
+      set(val) {
+        this.$store.commit("setBridgeFromTokenchain", val);
+      },
+    },
+    bridgeToTokenchain: {
+      // to网络
+      get() {
+        return this.$store.state.bridgeToTokenchain;
+      },
+      set(val) {
+        this.$store.commit("setBridgeToTokenchain", val);
+      },
+    },
+    bridgeChooseToken: {
+      get() {
+        return this.$store.state.bridgeChooseToken;
+      },
+      set(val) {},
     },
     fromToken: {
       get() {
-        return this.$store.state.fromToken
+        if (this.tabActive == "bridge") {
+          return this.bridgeFromTokenchain;
+        }
+        if (this.tabActive == "gasSwap") {
+          return this.$store.state.gasFromToken;
+        }
+        return this.$store.state.fromToken;
       },
       set(val) {
-        this.$store.commit('setFromToken', val)
+        this.$store.commit("setFromToken", val);
       },
     },
     toToken: {
       get() {
-        return this.$store.state.toToken
+        if (this.tabActive == "bridge") {
+          return this.bridgeToTokenchain;
+        }
+        if (this.tabActive == "gasSwap") {
+          return this.$store.state.gasToToken;
+        }
+        return this.$store.state.toToken;
       },
       set(val) {
-        this.$store.commit('setToToken', val)
+        if (this.tabActive == "gasSwap") {
+          return this.$store.commit("setgasToToken", val);
+        }
+        this.$store.commit("setToToken", val);
       },
     },
     info() {
-      return this.$store.state.info
+      return this.$store.state.info;
     },
     showSwapBtn() {
       if (this.$store.state.fromNumber > 0) {
         if (this.$store.state.updating) {
-          return this.$t('updating')
+          return this.$t("updating");
         } else {
-          return this.$t('swap')
+          return this.$t("swap");
         }
       } else if (this.$store.state.NFTChange) {
-        return this.$t('swap')
+        return this.$t("swap");
       } else {
-        return this.$t('exchangeQuantity')
+        return this.$t("exchangeQuantity");
       }
     },
     getChainIdName: {
       get() {
-        return this.$store.getters.getChainIdName
+        return this.$store.getters.getChainIdName;
       },
       set(val) {},
     },
     NFTChange() {
-      return this.$store.state.NFTChange
+      return this.$store.state.NFTChange;
+    },
+    connectType() {
+      return this.$store.state.wallet.connectType;
+    },
+    rpcObject() {
+      return this.$store.state.rpcObject;
+    },
+    coinList() {
+      return this.$store.state.coinList;
     },
   },
   created() {
-    this.init()
+    this.init();
   },
   beforeDestroy() {
-    clearInterval(this.timer)
+    clearInterval(this.timer);
   },
   mounted() {
     // 页面初始化获取汇率
-    this.ratio = new BigNumber(0)
-    bus.$on('getSendGas', (res) => {
-      this.sendGas = res
-    })
+    this.ratio = new BigNumber(0);
+    bus.$on("getSendGas", (res) => {
+      this.sendGas = res;
+    });
   },
   methods: {
+    // 查看当前选择链的代币是否有余额，没有换有余额的流行币
+    async aiSetToken() {
+      await this.getBalance();
+      //余额不为0
+      if (!this.fromToken || this.fromToken.balance != 0) {
+        return;
+      }
+      // 判断当前链 是否与钱包匹配
+      let arr = supportNetWork.filter((item) => item.chainId == this.chainId);
+      if (arr.length == 0) return;
+      const netWork = arr[0];
+      if (netWork.netWork != this.fromToken.mainNetwork || !netWork.isEvm) {
+        return;
+      }
+      // 计算当前链的有余额的代币
+      let balanceList = [];
+      const tokenList = this.coinList.filter(
+        (item) => item.mainNetwork == netWork.netWork
+      );
+      let mainCoin = tokenList.filter(
+        (item) =>
+          (item.contact == "" ||
+            item.coinCode.includes("USDT") ||
+            item.coinCode.includes("USDC")) &&
+          this.toToken.coinCode != item.coinCode
+      );
+      const data = await getAllBalance(mainCoin, netWork.netWork);
+      mainCoin.forEach((item, index) => {
+        const coinDecimalNum = item.coinDecimal == null ? 0 : item.coinDecimal;
+        const balance = new BigNumber(data[index].result)
+          .shiftedBy(-(coinDecimalNum != 0 ? coinDecimalNum : 18))
+          .toFixed(6, BigNumber.ROUND_DOWN);
+        item.balance = balance > 0 ? Number(balance) : 0;
+        if (item.balance > 0) {
+          balanceList.push(item);
+        }
+      });
+      mainCoin = this.sortObjectsByProperty(balanceList, "balance");
+      if (mainCoin.length == 0) return;
+      this.fromToken = mainCoin[0];
+      localStorage.setItem("localFromToken", JSON.stringify(mainCoin[0]));
+    },
+    sortObjectsByProperty(arr, prop) {
+      arr.sort(function (a, b) {
+        if (a[prop] > b[prop]) {
+          return -1;
+        }
+        if (a[prop] < b[prop]) {
+          return 1;
+        }
+        return 0;
+      });
+      return arr;
+    },
     //初始化获取币种余额
     init() {
-      clearInterval(this.timer)
-      this.getBalance()
+      clearInterval(this.timer);
+      this.getBalance();
       this.timer = setInterval(() => {
-        this.getBalance()
-      }, 5000)
+        this.getBalance();
+      }, 5000);
     },
     // 监听链路变化
     changeFromToken(item) {
-      this.fromToken = item
-      this.$refs.fromToken.number = this.fromToken.balance
-      this.changeToken(item)
+      this.fromToken = item;
+      this.$refs.fromToken.number = this.fromToken.balance;
+      this.changeToken(item);
     },
     changetoToken(item) {
-      this.toToken = item
-      this.changeToken(item)
+      this.toToken = item;
+      this.changeToken(item);
     },
     changeToken(item) {
-      this.ratio = 0
-      this.init()
+      this.ratio = 0;
+      this.init();
       // 获取兑换数额
-      this.ratio = new BigNumber(0)
-      this.getRatio()
+      this.ratio = new BigNumber(0);
+      this.getRatio();
     },
     // 切换币种
     changeTokensBox() {
       // 交换币种
-      ;[this.fromToken, this.toToken] = [this.toToken, this.fromToken]
+      [this.fromToken, this.toToken] = [this.toToken, this.fromToken];
     },
     // 获取最大余额
     getMax() {
       //判断区间范围是否计算出
-      let max
+      let max;
       if (this.info !== null) {
         max =
           Number(this.info.depositMax) < Number(this.$store.state.balance)
             ? this.info.depositMax
-            : this.$store.state.balance
+            : this.$store.state.balance;
       } else {
-        max = this.$store.state.balance
+        max = this.$store.state.balance;
       }
-      this.$store.commit('setFromNumber', max)
+      this.$store.commit("setFromNumber", max);
     },
     // 获取余额
     async getBalance() {
-      const coin = this.$store.state.fromToken
-      const wallet = this.$store.state.wallet
+      const coin = this.fromToken;
+      const wallet = this.$store.state.wallet;
       if (
         !coin ||
-        !wallet ||
         (!wallet.address &&
           !this.$store.state.walletPolkadot &&
           !this.$store.state.walletTRON)
       ) {
-        return
+        return;
       }
+      //fil获取余额
+      if (coin.mainNetwork === "FIL" && window.filecoin) {
+        if (this.connectType == "MathWalletFIL") {
+          const filBalance = await getFILBalance();
+          this.setBalance(coin, (Number(filBalance) / 10 ** 18).toFixed(6));
+        }
+      }
+
       //dot获取余额
-      if (coin.mainNetwork === 'DOT' || coin.mainNetwork === 'CRU') {
-        const account = this.$store.state.walletPolkadot
-        if (!account || !account.addr) {
-          return
-        }
-        // Construct
-        let wsProvider = null
-        let api = null
-        if (coin.mainNetwork === 'CRU') {
-          wsProvider = new WsProvider('wss://api.decloudf.com/')
-          api = await ApiPromise.create({
-            provider: wsProvider,
-            typesBundle: typesBundleForPolkadot,
-          })
+      if (
+        coin.mainNetwork === "DOT" ||
+        coin.mainNetwork === "CRU" ||
+        coin.mainNetwork === "DBC"
+      ) {
+        if (this.connectType != "Polkadot") return;
+        const freeBalance = await getPolkadotBalance(coin);
+        if (freeBalance == "0") {
+          this.setBalance(coin, 0);
         } else {
-          wsProvider = new WsProvider('wss://rpc.polkadot.io')
-          api = await ApiPromise.create({ provider: wsProvider })
-        }
-
-        // 查询余额
-        let acct = null
-
-        if (coin.mainNetwork === 'CRU') {
-          acct = await api.query.system.account(account.addrSS58CRU)
-        } else {
-          acct = await api.query.system.account(account.addrSS58)
-        }
-        const freeBalance = acct.data.free.toString(10)
-        if (freeBalance == '0') {
-          this.setBalance(coin, 0)
-        } else {
-          if (coin.mainNetwork === 'CRU') {
+          if (coin.mainNetwork === "CRU") {
             var newBalance =
               freeBalance.slice(0, freeBalance.length - 12) +
-              '.' +
-              freeBalance.slice(1)
+              "." +
+              freeBalance.slice(1);
+          } else if (coin.mainNetwork === "DBC") {
+            var newBalance = freeBalance / 1000000000000000;
           } else {
             var newBalance =
               freeBalance.slice(0, freeBalance.length - 10) +
-              '.' +
-              freeBalance.slice(1)
+              "." +
+              freeBalance.slice(1);
+            if (coin.contact == "1984") {
+              newBalance = new BigNumber(freeBalance)
+                .dividedBy(BigNumber(10).pow(coin.coinDecimal))
+                .toFixed(4, BigNumber.ROUND_DOWN);
+            }
           }
 
-          newBalance = Number(newBalance).toFixed(5)
-          if (
-            this.$store.state.chainId == '000' ||
-            this.$store.state.chainId == '222'
-          ) {
-            //拦截切换链请求返回
-            this.setBalance(coin, newBalance)
-          }
+          newBalance = Number(newBalance).toFixed(5);
+          this.setBalance(coin, newBalance);
         }
       }
       //trx获取余额
-      if (coin.mainNetwork === 'TRX') {
-        const reslt = await getTronBalance()
-        let tronWeb = window.tronWeb
-        if (coin.coinCode === 'TRX') {
-          this.setBalance(coin, tronWeb.fromSun(reslt.balance).toString())
+      if (coin.mainNetwork === "TRX") {
+        if (
+          (this.connectType != "TronLink" && this.isPC) ||
+          (!this.isPC && !window.tronWeb)
+        )
+          return;
+        const reslt = await getTronBalance();
+        let tronWeb = window.tronWeb;
+        if (coin.coinCode === "TRX") {
+          this.setBalance(coin, tronWeb.fromSun(reslt.balance).toString());
         } else {
           if (coin.contact.length > 10) {
-            const contract = await tronWeb.contract().at(coin.contact)
-            const trc20 = await contract
-              .balanceOf(this.$store.state.walletTRON)
-              .call()
-            const bal = tronWeb
-              .toBigNumber(trc20)
+            const contractAddress = coin.contact; // TRC20 代币的合约地址
+            const accountAddress = this.$store.state.walletTRON; // 需要查询余额的账户地址
+            let contract = null;
+            if (contractAddress == "TMz2SWatiAtZVVcH2ebpsbVtYwUPT9EdjH") {
+              contract = await tronWeb.contract(tronAbi, contractAddress);
+            } else {
+              contract = await tronWeb.contract().at(contractAddress);
+            }
+            const balance = await contract.balanceOf(accountAddress).call();
+            const tronBalance = tronWeb
+              .BigNumber(balance.toString())
               .shiftedBy(-(coin.coinDecimal != null ? coin.coinDecimal : 18))
-              .toFixed(6, BigNumber.ROUND_DOWN)
-            this.setBalance(coin, bal > 0 ? bal : 0)
+              .toFixed(6, BigNumber.ROUND_DOWN);
+            this.setBalance(coin, tronBalance > 0 ? tronBalance : 0);
+            // try{
+
+            //   const res = await tronApi.getTRC20TokenBalance(
+            //     tronWeb.address.toHex(coin.contact),
+            //     tronWeb.address.toHex(this.$store.state.walletTRON),
+            //   )
+            //   let bal = res.constant_result[0].replace(/\b(0+)/gi, '')
+            //   bal = bal === '' ? '0x0' : '0x' + bal
+            //   const balance = tronWeb
+            //     .BigNumber(bal)
+            //     .shiftedBy(-(coin.coinDecimal != null ? coin.coinDecimal : 18))
+            //     .toFixed(6, BigNumber.ROUND_DOWN)
+            //   coin.balance = balance > 0 ? balance : 0
+            //   this.setBalance(coin, balance)
+            // }catch(error){
+            // }
           } else {
-            let assets = reslt.assetV2
+            let assets = reslt.assetV2;
             if (assets && assets.length !== 0) {
               let token = assets.find((e) => {
                 if (e.key === coin.contact) {
-                  return e
+                  return e;
                 }
-              })
+              });
               if (token) {
-                const bal = new BigNumber(token.value)
+                const balance = new BigNumber(token.value)
                   .shiftedBy(
-                    -(coin.coinDecimal != null ? coin.coinDecimal : 18),
+                    -(coin.coinDecimal != null ? coin.coinDecimal : 18)
                   )
-                  .toFixed(6, BigNumber.ROUND_DOWN)
-                this.setBalance(coin, bal > 0 ? bal : 0)
+                  .toFixed(6, BigNumber.ROUND_DOWN);
+                this.setBalance(coin, balance);
               } else {
-                this.$store.commit('setBalance', 0)
+                this.setBalance(coin, 0);
               }
             } else {
-              this.$store.commit('setBalance', 0)
+              this.setBalance(coin, 0);
             }
           }
         }
       }
       // SOL获取余额
-      if (coin.mainNetwork === 'SOL') {
+      if (coin.mainNetwork === "SOL") {
+        if (this.connectType != "Phantom") return;
+        const solanaWeb3 = await import("@solana/web3.js");
         const connection = new solanaWeb3.Connection(
-          solanaWeb3.clusterApiUrl('mainnet-beta'),
-          'confirmed',
-        )
-        if (coin.contact === '') {
-          let account = await connection.getAccountInfo(window.solana.publicKey)
+          this.$store.state.rpcObject.SOL[0] || "https://rpc.ankr.com/solana",
+          "confirmed"
+        );
+        if (coin.contact === "") {
+          let account = null;
+          try {
+            account = await connection.getAccountInfo(window.solana.publicKey);
+          } catch (error) {}
           if (account) {
             const balanceSOL = (Number(account.lamports) / 1000000000).toFixed(
-              6,
-            )
-            this.setBalance(coin, balanceSOL)
+              6
+            );
+            this.setBalance(coin, balanceSOL);
           } else {
-            this.setBalance(coin, 0)
+            this.setBalance(coin, 0);
           }
         } else {
-          const account = await window.solana.connect()
-          const tokenPublic = new solanaWeb3.PublicKey(coin.contact) //9pBLiojTZMxbAPcsCWs8TQEiuCedRudzEFFakJFRCAoS
-          const tokenAccount = await connection.getParsedTokenAccountsByOwner(
-            window.solana.publicKey,
-            { mint: tokenPublic },
-          )
-          const value = tokenAccount.value
-          if (value.length > 0) {
-            this.setBalance(
-              coin,
-              tokenAccount.value[0].account.data.parsed.info.tokenAmount
-                .uiAmount,
-            )
+          const balance = await getSolTokenBalance(
+            this.walletAddress,
+            coin.contact
+          );
+          // const account = await window.solana.connect()
+          // const tokenPublic = new solanaWeb3.PublicKey(coin.contact) //9pBLiojTZMxbAPcsCWs8TQEiuCedRudzEFFakJFRCAoS
+          // const tokenAccount = await connection.getParsedTokenAccountsByOwner(
+          //   window.solana.publicKey,
+          //   { mint: tokenPublic },
+          // )
+          // const value = tokenAccount.value
+          if (balance > 0) {
+            this.setBalance(coin, balance);
           } else {
-            this.setBalance(coin, 0)
+            this.setBalance(coin, 0);
           }
         }
       }
       //terra 获取余额
-      if (coin.mainNetwork === 'LUNA') {
-        const address = this.$store.state.wallet.address
-        const balance = await getTerraBalanceHandle(coin, address)
-        this.setBalance(coin, balance)
+      if (coin.mainNetwork === "LUNA") {
+        if (this.connectType != "TerraStation") return;
+        const module = await import("../utils/getTerraBalance");
+        const address = this.$store.state.wallet.address;
+        const balance = await module.default(coin, address);
+        this.setBalance(coin, balance);
       }
       //BTC 获取余额
-      if (coin.mainNetwork === 'BTC') {
-        const balance = await BtcExchangeHandle.getBtcBalanceHandle()
-        this.setBalance(coin, balance)
+      if (coin.mainNetwork === "BTC") {
+        if (
+          this.connectType == "LiqualityWallet" ||
+          this.connectType == "TokenPocketBTC"
+        ) {
+          const balance = await BtcExchangeHandle.getBtcBalanceHandle();
+          this.setBalance(coin, balance);
+          return;
+        } else if (this.connectType == "Unisat") {
+          let resBalance = await window.unisat.getBalance();
+          const balanceNewBTC = Number(resBalance.total) / 10 ** 8;
+          this.setBalance(coin, balanceNewBTC);
+        }
       }
       // EOS 获取余额
-      if (coin.mainNetwork === 'EOS') {
-        const res = await getEOSBalance(coin)
+      if (coin.mainNetwork === "EOS") {
+        if (this.connectType != "LeafWallet") return;
+        const res = await getEOSBalance(coin);
         this.setBalance(
           coin,
-          new BigNumber(res).toFixed(6, BigNumber.ROUND_DOWN),
-        )
-        return
+          new BigNumber(res).toFixed(6, BigNumber.ROUND_DOWN)
+        );
+        return;
       }
-      if (coin.mainNetwork === 'XRP') {
-        if (coin.coinCode === 'XRP') {
-          const xrpBalance = await baseApi.getXRPBalance(wallet.address)
-          let balance = 0
+      if (coin.mainNetwork === "XRP") {
+        if (this.connectType != "XUMM") return;
+        if (coin.coinCode === "XRP") {
+          const xrpBalance = await baseApi.getXRPBalance(wallet.address);
+          let balance = 0;
           if (xrpBalance.xrpBalance) {
             balance =
-              Number(xrpBalance.xrpBalance) - xrpBalance.ownerCount * 2 - 10
+              Number(xrpBalance.xrpBalance) - xrpBalance.ownerCount * 2 - 10;
           }
           this.setBalance(
             coin,
-            new BigNumber(balance).toFixed(6, BigNumber.ROUND_DOWN),
-          )
-          return
+            new BigNumber(balance).toFixed(6, BigNumber.ROUND_DOWN)
+          );
+          return;
         }
-        const tokensBalance = await baseApi.getXRPTokensBalance(wallet.address)
+        const tokensBalance = await baseApi.getXRPTokensBalance(wallet.address);
         const tokenInfo = tokensBalance.find(
-          (e) => e.counterparty === coin.contact,
-        )
+          (e) => e.counterparty === coin.contact
+        );
         if (tokenInfo) {
           this.setBalance(
             coin,
-            new BigNumber(tokenInfo.value).toFixed(6, BigNumber.ROUND_DOWN),
-          )
+            new BigNumber(tokenInfo.value).toFixed(6, BigNumber.ROUND_DOWN)
+          );
         }
-        return
+        return;
       }
 
+      if (coin.mainNetwork === "APT") {
+        if (this.connectType != "Petra" && this.connectType != "MSafe") return;
+        const res = await getAPTBalance(coin);
+        this.setBalance(
+          coin,
+          new BigNumber(res).toFixed(6, BigNumber.ROUND_DOWN)
+        );
+        return;
+      }
+
+      //doge 获取余额
+      if (coin.mainNetwork === "DOGE") {
+        if (this.connectType != "TokenPocketDoge") return;
+        const balance = await getDogeBalance();
+        this.setBalance(coin, balance);
+        return;
+      }
+      //sui 获取余额
+      if (coin.mainNetwork === "SUI") {
+        if (
+          this.connectType != "SuiWallet" &&
+          this.connectType != "OKExWalletSui"
+        )
+          return;
+        const balance = await suiWalletMethods.getSuiBalance(coin.contact);
+        this.setBalance(coin, balance);
+        return;
+      }
+
+      //sei获取余额
+      if (coin.mainNetwork === "SEI") {
+        if (this.connectType != "Compass") return;
+        const balance = await seiWalletConnect.getSEIBalance();
+        this.setBalance(coin, (Number(balance) / 10 ** 6).toFixed(6));
+        return;
+      }
+      //brc20获取余额
+      if (coin.mainNetwork === "BRC20") {
+        if (this.connectType != "Unisat") return;
+        const res = await baseApi.queryBRC20({
+          address: wallet.address,
+          ticker: coin.coinCode === "1000SATS" ? "SATS" : coin.coinCode,
+        });
+        if (res.resCode == 800) {
+          if (res.data.data.detail.length > 0) {
+            let balance = 0;
+            let options = [];
+            res.data.data.detail.forEach((list) => {
+              balance += Number(list.data.amt);
+              options.push({
+                value: list.inscriptionId,
+                label: list.data.amt,
+                ...list,
+              });
+            });
+            this.$store.commit("setbalanceOptions", options);
+            this.setBalance(coin, balance);
+          } else {
+            this.setBalance(coin, 0);
+          }
+        } else {
+          this.setBalance(coin, 0);
+        }
+        return;
+      }
+
+      //HVH获取余额
+      if (coin.mainNetwork === "HVH") {
+        if (this.connectType != "HAVAH") return;
+        const balance = await havahWalletConnect.getHVHBalance();
+        this.setBalance(coin, (Number(balance) / 10 ** 18).toFixed(6));
+        return;
+      }
       //BSC ETH HECO POLYGON OKExChain TT ARB FTM AVAXC
       if (
-        coin.mainNetwork === 'BSC' ||
-        coin.mainNetwork === 'ETH' ||
-        coin.mainNetwork === 'HECO' ||
-        coin.mainNetwork === 'POLYGON' ||
-        coin.mainNetwork === 'OKExChain' ||
-        coin.mainNetwork === 'ARB' ||
-        coin.mainNetwork === 'AVAXC' ||
-        coin.mainNetwork === 'TT' ||
-        coin.mainNetwork === 'XDC' ||
-        coin.mainNetwork === 'KLAY' ||
-        coin.mainNetwork === 'CELO' ||
-        coin.mainNetwork === 'ORC' ||
-        coin.mainNetwork === 'SGB' ||
-        coin.mainNetwork === 'HPB' ||
-        coin.mainNetwork === 'CRONOS' ||
-        coin.mainNetwork === 'ECH' ||
-        coin.mainNetwork === 'AME' ||
-        coin.mainNetwork === 'CUBE' ||
-        coin.mainNetwork === 'GNOSIS' ||
-        coin.mainNetwork === 'FTM'
+        coin.mainNetwork === "BSC" ||
+        coin.mainNetwork === "ETH" ||
+        coin.mainNetwork === "HECO" ||
+        coin.mainNetwork === "POLYGON" ||
+        coin.mainNetwork === "DIS" ||
+        coin.mainNetwork === "ETHW" ||
+        coin.mainNetwork === "Optimism" ||
+        coin.mainNetwork === "OKExChain" ||
+        coin.mainNetwork === "ARB" ||
+        coin.mainNetwork === "AVAXC" ||
+        coin.mainNetwork === "TT" ||
+        coin.mainNetwork === "XDC" ||
+        coin.mainNetwork === "KLAY" ||
+        coin.mainNetwork === "CELO" ||
+        coin.mainNetwork === "ORC" ||
+        coin.mainNetwork === "SGB" ||
+        coin.mainNetwork === "HPB" ||
+        coin.mainNetwork === "CRONOS" ||
+        coin.mainNetwork === "ECH" ||
+        coin.mainNetwork === "AME" ||
+        coin.mainNetwork === "CUBE" ||
+        coin.mainNetwork === "GNOSIS" ||
+        coin.mainNetwork === "ETC" ||
+        coin.mainNetwork === "KCC" ||
+        coin.mainNetwork === "BRISE" ||
+        coin.mainNetwork === "FTM" ||
+        coin.mainNetwork === "DRAC" ||
+        coin.mainNetwork === "FSC" ||
+        coin.mainNetwork === "FRZ" ||
+        coin.mainNetwork === "GRC30" ||
+        coin.mainNetwork === "CORE" ||
+        coin.mainNetwork === "DC" ||
+        coin.mainNetwork === "MTR" ||
+        coin.mainNetwork === "BTTC" ||
+        coin.mainNetwork === "ZKSYNC" ||
+        coin.mainNetwork === "CFX" ||
+        coin.mainNetwork === "EOS(EVM)" ||
+        coin.mainNetwork === "FVM" ||
+        coin.mainNetwork === "PulseChain" ||
+        coin.mainNetwork === "LINEA" ||
+        coin.mainNetwork === "PEGO" ||
+        coin.mainNetwork === "opBNB" ||
+        coin.mainNetwork === "ETRC20" ||
+        coin.mainNetwork === "OZO" ||
+        coin.mainNetwork === "QITMEER" ||
+        coin.mainNetwork === "PATEX" ||
+        coin.mainNetwork === "zkEVM" ||
+        coin.mainNetwork === "SCROLL" ||
+        coin.mainNetwork === "MNT" ||
+        coin.mainNetwork === "BASE"
       ) {
-        const data = await getAllBalance([coin], coin.mainNetwork)
-        const balance = new BigNumber(data[0].result)
-          .shiftedBy(-(coin.coinDecimal != null ? coin.coinDecimal : 18))
-          .toFixed(7, BigNumber.ROUND_DOWN)
-          .slice(0, -1)
-        this.$store.commit('setBalance', balance > 0 ? balance : 0)
+        if (
+          this.connectType == "LeafWallet" ||
+          this.connectType == "LiqualityWallet" ||
+          this.connectType == "TokenPocketBTC" ||
+          this.connectType == "TerraStation" ||
+          this.connectType == "Phantom" ||
+          this.connectType == "TronLink" ||
+          this.connectType == "Polkadot" ||
+          this.connectType == "SuiWallet" ||
+          this.connectType == "Unisat" ||
+          this.connectType == "Petra" ||
+          this.connectType == "HAVAH" ||
+          (this.connectType == "MathWalletFIL" && coin.mainNetwork == "FIL") ||
+          this.connectType == "OKExWalletSui"
+        )
+          return;
+        const data = await getAllBalance([coin], coin.mainNetwork);
+        if (coin.mainNetwork === "CFX") {
+          this.$store.commit("setBalance", data > 0 ? data : 0);
+          return;
+        }
+        const coinDecimalNum = coin.coinDecimal == null ? 0 : coin.coinDecimal;
+        const balance =
+          new BigNumber(data[0].result)
+            .shiftedBy(-(coinDecimalNum != 0 ? coinDecimalNum : 18))
+            .toFixed(7, BigNumber.ROUND_DOWN)
+            .slice(0, -1) - 0;
+        this.$store.commit("setBalance", balance > 0 ? balance : 0);
       }
     },
     // 显示余额
     setBalance(coin, balance) {
       if (
-        (this.$store.state.chainId == '000' && coin.coinCode == 'DOT') ||
-        (this.$store.state.chainId == '222' && coin.coinCode == 'CRU') ||
-        (this.$store.state.chainId == '1993' && coin.mainNetwork == 'LUNA') ||
-        (this.$store.state.chainId == '1994' && coin.mainNetwork == 'BTC') ||
-        (this.$store.state.chainId == '2021' && coin.mainNetwork == 'SOL') ||
-        (this.$store.state.chainId == '1008600' && coin.mainNetwork == 'XRP') ||
-        (this.$store.state.chainId == '0' && coin.mainNetwork == 'TRX') ||
-        (this.$store.state.chainId == '1040' && coin.mainNetwork == 'EOS')
+        (this.$store.state.chainId == "000" &&
+          (coin.coinCode == "DOT" || coin.coinCode == "USDT(DOT)")) ||
+        (this.$store.state.chainId == "222" && coin.coinCode == "CRU") ||
+        (this.$store.state.chainId == "333" && coin.coinCode == "DBC") ||
+        (this.$store.state.chainId == "1993" && coin.mainNetwork == "LUNA") ||
+        (this.$store.state.chainId == "1994" && coin.mainNetwork == "BTC") ||
+        (this.$store.state.chainId == "2021" && coin.mainNetwork == "SOL") ||
+        (this.$store.state.chainId == "1008600" && coin.mainNetwork == "XRP") ||
+        (this.$store.state.chainId == "0" && coin.mainNetwork == "TRX") ||
+        (this.$store.state.chainId == "1040" && coin.mainNetwork == "EOS") ||
+        (this.$store.state.chainId == "072611" && coin.mainNetwork == "APT") ||
+        (this.$store.state.chainId == "9666" && coin.mainNetwork == "DOGE") ||
+        (this.$store.state.chainId == "1200" && coin.mainNetwork == "FIL") ||
+        (this.$store.state.chainId == "1333" && coin.mainNetwork == "SEI") ||
+        (this.$store.state.chainId == "6000" && coin.mainNetwork == "HVH") ||
+        (this.$store.state.chainId == "1994" && coin.mainNetwork == "BRC20")
       ) {
-        const list = this.$store.state.coinList
-        this.$store.commit('setCoinList', list)
-        this.$store.commit('setBalance', Number(balance))
+        const list = this.$store.state.coinList;
+        this.$store.commit("setCoinList", list);
+        this.$store.commit("setBalance", Number(balance));
       } else {
         let etherString = ethers.utils.formatUnits(
           balance,
-          this.fromToken.coinDecimal,
-        )
+          this.fromToken.coinDecimal
+        );
         const number = Number(
-          new BigNumber(etherString).toFixed(6, BigNumber.ROUND_DOWN),
-        )
-        const list = this.$store.state.coinList
-        this.$store.commit('setCoinList', list)
-        this.$store.commit('setBalance', number)
+          new BigNumber(etherString).toFixed(6, BigNumber.ROUND_DOWN)
+        );
+        const list = this.$store.state.coinList;
+        this.$store.commit("setCoinList", list);
+        this.$store.commit("setBalance", number);
       }
     },
-    GetAngleRewards(Address, useraddr, callback) {
-      const myContract = new web3.eth.Contract(abi, Address)
-      const account = useraddr
-      sendEtherFrom(account)
 
-      function sendEtherFrom(account) {
-        const method = 'eth_sendTransaction'
-        let data = web3.eth.abi.encodeFunctionCall(
-          {
-            name: 'send',
-            type: 'function',
-            inputs: [],
-            outputs: [],
-          },
-          [],
-        )
-        const parameters = [
-          {
-            from: account,
-            to: Address,
-            data: data,
-          },
-        ]
-        const from = account
-        const payload = {
-          method: method,
-          params: parameters,
-          from: from,
-        }
-        callback(null)
-        ethereum.sendAsync(payload, function (err, response) {
-          const rejected = 'User denied transaction signature.'
-          if (response.error && response.error.message.includes(rejected)) {
-            callback('refuse')
-          }
-          if (response.code == '-32603') {
-            callback('fail')
-          }
-          if (response.error && response.error.code == '-32603') {
-            callback('fail')
-          }
-          if (response.result) {
-            timer_takeGain = setInterval(() => {
-              number_takeGain++
-              // 查询交易是否完成，这里要通过这个方法去一直查询交易是否完成
-              web3.eth
-                .getTransactionReceipt(response.result)
-                .then(function (res) {
-                  if (res == null) {
-                    callback(res)
-                  } else if (res.status) {
-                    callback(res.status)
-                    clearInterval(timer_takeGain)
-                  } else {
-                    clearInterval(timer_takeGain)
-                  }
-                })
-              if (number_takeGain > 10) {
-                clearInterval(timer_takeGain)
-                callback('timeout')
-                number_takeGain = 1
-              }
-            }, 2000)
-          }
-        })
-      }
-    },
     // // 交易
     async exchange() {
-      if (
-        this.$store.state.chainId !== '000' &&
-        this.$store.state.chainId !== '222' &&
-        this.$store.state.chainId !== '0' &&
-        (!this.$store.state.wallet || !this.$store.state.wallet.address)
-      ) {
-        bus.$emit('getMetaMask')
-        return
-      }
-      if (!this.$store.state.info || this.$store.state.updating) return
+      //  const hash = await suiWalletMethods.transfer('0x18059ccdd404691d5d6953b83cde0d1387174f426c3adda9b2df4bf9033b1874', 6,
+      // //  {"coinAllCode":"SUI","coinCode":"SUI","mainNetwork":"SUI","contact":"0x2::sui::SUI","coinDecimal":9,"noSupportCoin":"MDS,XMR,SKM,GLM,DX,BUY,BTRST,RARI,MUSE,BSMV,SUI","isSupportAdvanced":"Y","isSupportMemo":"N","coinCodeShow":"SUI(SUI)","balance":2.573288}
+      //  {"coinAllCode":"SUI","coinCode":"SUI","mainNetwork":"SUI","contact":"0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN","coinDecimal":6,"noSupportCoin":"MDS,XMR,SKM,GLM,DX,BUY,BTRST,RARI,MUSE,BSMV,SUI","isSupportAdvanced":"Y","isSupportMemo":"N","coinCodeShow":"SUI(SUI)","balance":9.002683}
+      //  );
+      //  console.log(hash)
 
       if (
-        Number(this.$store.state.fromNumber) > Number(this.$store.state.balance)
+        this.$store.state.chainId !== "000" &&
+        this.$store.state.chainId !== "222" &&
+        this.$store.state.chainId !== "0" &&
+        this.$store.state.chainId !== "333" &&
+        this.$store.state.chainId !== "072611" &&
+        this.$store.state.chainId !== "7299" &&
+        (!this.$store.state.wallet || !this.$store.state.wallet.address)
+      ) {
+        bus.$emit("getMetaMask");
+        return;
+      }
+
+      const actionCode = localStorage.getItem("actionCode");
+      const isLimit = localStorage.getItem("isLimit");
+      if (
+        actionCode !== "hdueyjsnxodi38n4u2n2kw3j" &&
+        isLimit !== "1" &&
+        process.env.NODE_ENV !== "development"
+      ) {
+        this.$refs.noServeDialog.serveShow();
+        return;
+      }
+
+      if (
+        this.$store.state.fromNumber === "" ||
+        this.$store.state.fromNumber <= 0
       ) {
         Notify({
-          color: '#ad0000',
-          background: '#ffe1e1',
-          message: this.$t('insufficient', {
+          color: "#ad0000",
+          background: "#ffe1e1",
+          message: this.$t("exchangeQuantity"),
+        });
+        return;
+      }
+      if (
+        !this.$store.state.info ||
+        this.$store.state.updating ||
+        !this.fromToken ||
+        !this.toToken
+      )
+        return;
+      //这里判断是否链接钱包，网络是否正确
+      let mainNetWorrk = this.fromToken.mainNetwork;
+      if (mainNetWorrk == "TRX") {
+        mainNetWorrk = "TRON";
+      }
+      if (mainNetWorrk == "DOT") {
+        mainNetWorrk = "Polkadot";
+      }
+      const val = {
+        netWork: mainNetWorrk,
+      };
+      const activeNetwork = supportNetWork.filter(
+        (item) => item.netWork == mainNetWorrk
+      )[0];
+      if (activeNetwork.chainId != this.chainId) {
+        return await this.chechNetwork(val);
+      }
+      // 余额判断
+      if (
+        Number(this.$store.state.fromNumber) >
+        (this.tabActive == "bridge"
+          ? Number(this.bridgeChooseToken.balance)
+          : Number(this.$store.state.balance))
+      ) {
+        Notify({
+          color: "#ad0000",
+          background: "#ffe1e1",
+          message: this.$t("insufficient", {
             coin: this.fromToken.coinCode,
           }),
-        })
-        return
+        });
+        return;
       }
       if (
         Number(this.$store.state.fromNumber) < Number(this.info.depositMin) ||
         Number(this.$store.state.fromNumber) > Number(this.info.depositMax)
       ) {
         Notify({
-          color: '#ad0000',
-          background: '#ffe1e1',
-          message: this.$t('rangeTip'),
-        })
-        return
-      }
-      if (
-        this.$store.state.fromNumber === '' ||
-        this.$store.state.fromNumber <= 0
-      ) {
-        Notify({
-          color: '#ad0000',
-          background: '#ffe1e1',
-          message: this.$t('exchangeQuantity'),
-        })
-        return
-      }
-      if (!this.$store.state.address) {
-        Notify({
-          color: '#ad0000',
-          background: '#ffe1e1',
-          message: this.$t('receivingAddress'),
-        })
-        return
-      }
-      if (
-        this.fromToken.mainNetwork == 'SOL' ||
-        this.toToken.mainNetwork == 'SOL'
-      ) {
-        return Dialog.confirm({
-          message: this.$t('solTip'),
-          messageAlign: 'left',
-          confirmButtonColor: '#277ffa',
-          confirmButtonText: this.$t('btnContinue'),
-          cancelButtonText: this.$t('btnCancel'),
-        })
-          .then(() => {
-            // on confirm
-            this.$refs.swapConfirm.show()
-            return
-          })
-          .catch(() => {
-            // on cancel
-            return
-          })
-      }
-      if (
-        this.fromToken.mainNetwork == 'CUBE' &&
-        this.toToken.mainNetwork != 'CUBE'
-      ) {
-        return Dialog.confirm({
-          message: this.$t('cubeTip'),
-          messageAlign: 'left',
-          confirmButtonColor: '#277ffa',
-          confirmButtonText: this.$t('btnContinue'),
-          cancelButtonText: this.$t('btnCancel'),
-        })
-          .then(() => {
-            // on confirm
-            this.$refs.swapConfirm.show()
-            return
-          })
-          .catch(() => {
-            // on cancel
-            return
-          })
+          color: "#ad0000",
+          background: "#ffe1e1",
+          message: this.$t("rangeTip", {
+            min: this.info.depositMin,
+            max: this.info.depositMax,
+          }),
+        });
+        return;
       }
 
-      this.$refs.swapConfirm.show()
-      return
+      if (!this.$store.state.address) {
+        Notify({
+          color: "#ad0000",
+          background: "#ffe1e1",
+          message: this.$t("receivingAddress"),
+        });
+        return;
+      }
+
+      if (
+        this.fromToken.mainNetwork == "SOL" ||
+        this.toToken.mainNetwork == "SOL"
+      ) {
+        return Dialog.confirm({
+          message: this.$t("solTip"),
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          confirmButtonText: this.$t("btnContinue"),
+          cancelButtonText: this.$t("btnCancel"),
+        })
+          .then(() => {
+            // on confirm
+            this.$refs.swapConfirm.show();
+            return;
+          })
+          .catch(() => {
+            // on cancel
+            return;
+          });
+      }
+      if (
+        this.fromToken.mainNetwork == "CUBE" &&
+        this.toToken.mainNetwork != "CUBE"
+      ) {
+        return Dialog.confirm({
+          message: this.$t("cubeTip"),
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          confirmButtonText: this.$t("btnContinue"),
+          cancelButtonText: this.$t("btnCancel"),
+        })
+          .then(() => {
+            // on confirm
+            this.$refs.swapConfirm.show();
+            return;
+          })
+          .catch(() => {
+            // on cancel
+            return;
+          });
+      }
+      // ETC 兑换提示
+      if (
+        this.fromToken.mainNetwork == "ETC" &&
+        this.fromToken.coinCode == "ETC"
+      ) {
+        return Dialog.confirm({
+          message: this.$t("ETCTip"),
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          confirmButtonText: this.$t("btnContinue"),
+          cancelButtonText: this.$t("btnCancel"),
+        })
+          .then(() => {
+            // on confirm
+            this.$refs.swapConfirm.show();
+            return;
+          })
+          .catch(() => {
+            // on cancel
+            return;
+          });
+      }
+      // ETHF 兑换提示
+      if (
+        this.fromToken.mainNetwork == "ETHF" &&
+        this.fromToken.coinCode == "ETHF"
+      ) {
+        return Dialog.confirm({
+          message: this.$t("ETHFTip"),
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          confirmButtonText: this.$t("btnContinue"),
+          cancelButtonText: this.$t("btnCancel"),
+        })
+          .then(() => {
+            // on confirm
+            this.$refs.swapConfirm.show();
+            return;
+          })
+          .catch(() => {
+            // on cancel
+            return;
+          });
+      }
+      // FREN(ETHF) 兑换提示
+      if (
+        this.fromToken.mainNetwork == "ETHF" &&
+        this.fromToken.coinCode == "FREN"
+      ) {
+        return Dialog.confirm({
+          message: this.$t("deepInfo"),
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          confirmButtonText: this.$t("btnContinue"),
+          cancelButtonText: this.$t("btnCancel"),
+        })
+          .then(() => {
+            // on confirm
+            this.$refs.swapConfirm.show();
+            return;
+          })
+          .catch(() => {
+            // on cancel
+            return;
+          });
+      }
+      // 深度问题 兑换提示
+      if (this.info.dex == "SWFT" && this.info.isDex == "Y") {
+        return Dialog.confirm({
+          message: this.$t("deepInfo"),
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          confirmButtonText: this.$t("btnContinue"),
+          cancelButtonText: this.$t("btnCancel"),
+        })
+          .then(() => {
+            // on confirm
+            this.$refs.swapConfirm.show();
+            return;
+          })
+          .catch(() => {
+            // on cancel
+            return;
+          });
+      }
+      // ETHW 兑换提示
+      if (
+        this.fromToken.mainNetwork == "ETHW" &&
+        this.fromToken.coinCode == "ETHW"
+      ) {
+        return Dialog.confirm({
+          message: this.$t("ETHWTip"),
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          confirmButtonText: this.$t("btnContinue"),
+          cancelButtonText: this.$t("btnCancel"),
+        })
+          .then(() => {
+            // on confirm
+            this.$refs.swapConfirm.show();
+            return;
+          })
+          .catch(() => {
+            // on cancel
+            return;
+          });
+      }
+      //ELF
+      if (
+        (this.fromToken.mainNetwork == "ETH" &&
+          this.fromToken.coinCode == "ELF(ERC20)") ||
+        (this.fromToken.mainNetwork == "BSC" &&
+          this.fromToken.coinCode == "ELF(BSC)") ||
+        this.toToken.coinCode == "ELF(ERC20)" ||
+        this.toToken.coinCode == "ELF(BSC)"
+      ) {
+        return Dialog.confirm({
+          message: this.$t("deepInfo"),
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          confirmButtonText: this.$t("btnContinue"),
+          cancelButtonText: this.$t("btnCancel"),
+        })
+          .then(() => {
+            // on confirm
+            this.$refs.swapConfirm.show();
+            return;
+          })
+          .catch(() => {
+            // on cancel
+            return;
+          });
+      }
+      // BTC 兑换提示
+      if (
+        this.fromToken.mainNetwork == "BTC" &&
+        this.fromToken.coinCode == "BTC"
+      ) {
+        let gas = "0.0003";
+        try {
+          const result = await axios.get(
+            "https://blockstream.info/api/fee-estimates"
+          );
+          const maxValue = Math.max(...Object.values(result));
+          const num = Math.ceil(maxValue);
+          gas = (num * 224) / 10 ** 8;
+        } catch (error) {}
+        return Dialog.confirm({
+          message: this.$t("BTCTip", {
+            num: gas,
+          }),
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          confirmButtonText: this.$t("btnContinue"),
+          cancelButtonText: this.$t("btnCancel"),
+        })
+          .then(() => {
+            // on confirm
+            this.$refs.swapConfirm.show();
+            return;
+          })
+          .catch(() => {
+            // on cancel
+            return;
+          });
+      }
+      this.$refs.swapConfirm.show();
+      return;
+    },
+    async walletconnectchangeNet(val) {
+      WalletConnectProvider = await EthereumProvider.init(
+        this.connectType == "imToken"
+          ? this.$store.getters.EthereumProviderInitImtoken
+          : this.$store.getters.EthereumProviderInit
+      );
+
+      let arrWc = [
+        "1",
+        "10",
+        "56",
+        "100",
+        "137",
+        "324",
+        "42161",
+        "42220",
+        "43114",
+      ];
+      let arr = supportNetWork.filter((item) => item.netWork == val.netWork);
+      if (arrWc.indexOf(arr[0].chainId) == -1) {
+        Dialog.alert({
+          message: this.$t("noUseNetwork"),
+          theme: "round-button",
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          className: "noChangeNetwork",
+        });
+        return;
+      }
+
+      const toChainId = Number(arr[0].chainId);
+      try {
+        // 调用切换链方法
+        await WalletConnectProvider.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: `0x${toChainId.toString(16)}` }],
+        }).then((resltTo) => {
+          this.$store.commit("setChainId", toChainId.toString());
+          // 切换链成功，可以执行后续操作
+          // this.exchange()
+        });
+      } catch (error) {
+        // 切换链失败，处理错误情况
+        if (error.code == "-32601") {
+          Dialog.alert({
+            message: this.$t("wcWalletNotchain", { chain: val.netWork }),
+            theme: "round-button",
+            messageAlign: "left",
+            confirmButtonColor: "#277ffa",
+            className: "noChangeNetwork",
+          });
+        }
+        console.error("切换链失败:", error);
+      }
+    },
+    async chechNetwork(val) {
+      //walletConnect 连接拦截切换
+      if (val && this.$store.state.isWalletConnect) {
+        const network = this.$store.getters.getChainIdName;
+        const activeNetWork = val.netWork;
+        this.walletconnectchangeNet(val);
+        return;
+        // if (network === activeNetWork) {
+        //   return
+        // } else {
+        //   //判断支持的链 ETH BSC HECO POLYGON OKExChain TT ARB AVAXC
+        //   if (
+        //     activeNetWork === 'ETH' ||
+        //     activeNetWork === 'BSC' ||
+        //     activeNetWork === 'HECO' ||
+        //     activeNetWork === 'POLYGON' ||
+        //     activeNetWork === 'OKExChain' ||
+        //     activeNetWork === 'TT' ||
+        //     activeNetWork === 'ARB' ||
+        //     activeNetWork === 'AVAXC' ||
+        //     activeNetWork === 'ORC' ||
+        //     activeNetWork === 'FTM'
+        //   ) {
+        //     let tip = ''
+        //     if (this.isPC) {
+        //       tip = this.$t('noChangeNetwork', {
+        //         network: activeNetWork,
+        //       })
+        //     } else {
+        //       tip = this.$t('mbnoChangeNetwork', {
+        //         network: activeNetWork,
+        //       })
+        //     }
+        //     Dialog.alert({
+        //       message: tip,
+        //       theme: 'round-button',
+        //       messageAlign: 'left',
+        //       confirmButtonColor: '#277ffa',
+        //       className: 'noChangeNetwork',
+        //     })
+        //   }
+        //   //不支持的 TRON Polkadot
+        //   else if (
+        //     activeNetWork === 'TRON' ||
+        //     activeNetWork === 'Polkadot' ||
+        //     activeNetWork === 'CRU' ||
+        //     activeNetWork === 'DBC' ||
+        //     activeNetWork === 'APT'
+        //   ) {
+        //     Dialog.alert({
+        //       message: this.$t('noUseNetwork'),
+        //       theme: 'round-button',
+        //       messageAlign: 'left',
+        //       confirmButtonColor: '#277ffa',
+        //       className: 'noChangeNetwork',
+        //     })
+        //   }
+        //   return
+        // }
+      }
+      //doge链只能在tp app中使用，其他情况做一下拦截提示
+      if (
+        this.isPC &&
+        (!isTP || localStorage.getItem("utm_source") !== "tokenpocket") &&
+        val.netWork == "DOGE"
+      ) {
+        Dialog.alert({
+          message: this.$t("dogeUseTP", {
+            network: val.netWork,
+          }),
+          theme: "round-button",
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          className: "noChangeNetwork",
+        });
+        return;
+      }
+      //FIL链只能在MathWallet app中使用，其他情况做一下拦截提示
+      if (
+        this.isPC &&
+        this.connectType !== "MathWalletFIL" &&
+        val.netWork == "FIL"
+      ) {
+        Dialog.alert({
+          message: this.$t("dogeUseTP", {
+            network: val.netWork,
+          }),
+          theme: "round-button",
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          className: "noChangeNetwork",
+        });
+        return;
+      }
+      //移动端 tron 链 切换拦截
+      if (
+        !this.isPC &&
+        window.tronWeb &&
+        window.tronWeb.defaultAddress.base58 &&
+        (isTP || localStorage.getItem("utm_source") === "tokenpocket") &&
+        val.netWork == "TRON"
+      ) {
+        Dialog.alert({
+          message: this.$t("noUseTronLink", {
+            network: val.netWork,
+          }),
+          theme: "round-button",
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          className: "noChangeNetwork",
+        });
+        return;
+      }
+      //移动端EOS拦截
+      if (
+        !this.isPC &&
+        (isTP || localStorage.getItem("utm_source") === "tokenpocket") &&
+        val.netWork == "EOS"
+      ) {
+        Dialog.alert({
+          message: this.$t("noUseEOS", {
+            network: val.netWork,
+          }),
+          theme: "round-button",
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          className: "noChangeNetwork",
+        });
+        return;
+      }
+      if (
+        this.connectType === "LeafWallet" &&
+        localStorage.getItem("utm_source") === "tokenpocket"
+      ) {
+        Dialog.alert({
+          message: this.$t("noUseEOS", {
+            network: val.netWork,
+          }),
+          theme: "round-button",
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          className: "noChangeNetwork",
+        });
+        return;
+      }
+      //移动端sol 切换拦截
+      if (
+        !this.isPC &&
+        (isTP || localStorage.getItem("utm_source") === "tokenpocket") &&
+        val.netWork == "SOL"
+      ) {
+        Dialog.alert({
+          message: this.$t("noUseSolana", {
+            network: val.netWork,
+          }),
+          theme: "round-button",
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          className: "noChangeNetwork",
+        });
+        return;
+      }
+      if (
+        this.connectType === "Phantom" &&
+        localStorage.getItem("utm_source") === "tokenpocket"
+      ) {
+        Dialog.alert({
+          message: this.$t("noUseSolana", {
+            network: val.netWork,
+          }),
+          theme: "round-button",
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          className: "noChangeNetwork",
+        });
+        return;
+      }
+      //移动端doge 切换拦截
+      if (
+        !this.isPC &&
+        (isTP || localStorage.getItem("utm_source") === "tokenpocket") &&
+        val.netWork == "DOGE"
+      ) {
+        Dialog.alert({
+          message: this.$t("noUseDoge", {
+            network: val.netWork,
+          }),
+          theme: "round-button",
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          className: "noChangeNetwork",
+        });
+        return;
+      }
+      if (
+        this.connectType === "TokenPocketDoge" &&
+        localStorage.getItem("utm_source") === "tokenpocket"
+      ) {
+        Dialog.alert({
+          message: this.$t("noUseDoge", {
+            network: val.netWork,
+          }),
+          theme: "round-button",
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          className: "noChangeNetwork",
+        });
+        return;
+      }
+      //移动端 dot 切换拦截
+      const { web3Accounts, web3Enable } = await import(
+        "@polkadot/extension-dapp"
+      );
+      const extensions = await web3Enable("my cool dapp");
+      const allAccountsSS58 = await web3Accounts({ ss58Format: 0 });
+      if (
+        !this.isPC &&
+        allAccountsSS58.length > 0 &&
+        (isTP || localStorage.getItem("utm_source") === "tokenpocket") &&
+        (val.netWork == "DOT" || val.netWork == "CRU" || val.netWork == "DBC")
+      ) {
+        Dialog.alert({
+          message: this.$t("noUsePolkadot", {
+            network: val.netWork,
+          }),
+          theme: "round-button",
+          messageAlign: "left",
+          confirmButtonColor: "#277ffa",
+          className: "noChangeNetwork",
+        });
+        return;
+      }
+      if (
+        val &&
+        (val.netWork === "Polkadot" ||
+          val.netWork === "CRU" ||
+          val.netWork === "DBC")
+      ) {
+        this.polkDotFuc(val);
+        return;
+      }
+      if (val && val.netWork === "TRON") {
+        this.$bus.emit("checkTronLink");
+        return;
+      }
+      if (val && val.netWork === "SOL") {
+        this.$bus.emit("connectPhantom");
+        return;
+      }
+      if (val && val.netWork === "LUNA") {
+        this.$bus.emit("connectTerraStation");
+        return;
+      }
+      if (val && (val.netWork === "BTC" || val.netWork === "BRC20")) {
+        this.$bus.emit("connectLiqualityWallet");
+        return;
+      }
+      if (val && val.netWork === "XRP") {
+        this.$bus.emit("connectXUMMWallet");
+        return;
+      }
+      if (val && val.netWork === "EOS") {
+        this.$bus.emit("connectEOS");
+        return;
+      }
+      if (val && val.netWork === "SUI") {
+        this.$bus.emit("connectSUI");
+        return;
+      }
+      //Nabox 插件
+      if (this.connectType === "Nabox") {
+        if (val.netWork !== this.$store.getters.getChainIdName) {
+          Dialog.alert({
+            message: this.$t("noUseNabox", {
+              network: val.netWork,
+            }),
+            theme: "round-button",
+            messageAlign: "left",
+            confirmButtonColor: "#277ffa",
+            className: "noChangeNetwork",
+          });
+        }
+        return;
+      }
+      //OKExWallet 插件
+      if (this.connectType === "OKExWallet") {
+        const network = this.$store.getters.getChainIdName;
+        if (network !== val.netWork) {
+          supportNetWork.some((e) => {
+            if (e.netWork === val.netWork) {
+              const chainId = okexchain.networkVersion;
+              if (e.chainId !== chainId) {
+                const newChainId = parseInt(e.chainId);
+                okexchain
+                  .request({
+                    method: "wallet_addEthereumChain",
+                    params: [
+                      {
+                        chainId: `0x${newChainId.toString(16)}`,
+                        chainName:
+                          e.netWork == "ORC" ? "Ontology EVM" : e.netWork,
+                        nativeCurrency: {
+                          name: e.symbol,
+                          symbol: e.symbol,
+                          decimals: e.decimals,
+                        },
+                        rpcUrls: this.rpcObject[e.netWork] || [e.rpcUrl],
+                        blockExplorerUrls: [e.blockExplorerUrls],
+                      },
+                    ],
+                  })
+                  .then(() => {
+                    const updateChainId = okexchain.networkVersion;
+                    if (
+                      updateChainId !== this.$store.state.chainId &&
+                      window.location.href.indexOf("tokenpocket") != -1
+                    ) {
+                      this.$store.commit(
+                        "setChainId",
+                        parseInt(updateChainId) + ""
+                      );
+                    }
+                  })
+                  .catch((error) => {});
+              }
+            }
+          });
+        }
+        return;
+      }
+      //OpenBlock 插件
+      if (this.connectType === "OpenBlock") {
+        const network = this.$store.getters.getChainIdName;
+        if (network !== val.netWork) {
+          supportNetWork.some((e) => {
+            if (e.netWork === val.netWork) {
+              const chainId = this.$store.state.chainId;
+              if (e.chainId !== chainId) {
+                const newChainId = parseInt(e.chainId);
+                window.openblock
+                  .request({
+                    method: "wallet_addEthereumChain",
+                    params: [
+                      {
+                        chainId: `0x${newChainId.toString(16)}`,
+                        chainName:
+                          e.netWork == "ORC" ? "Ontology EVM" : e.netWork,
+                        nativeCurrency: {
+                          name: e.symbol,
+                          symbol: e.symbol,
+                          decimals: e.decimals,
+                        },
+                        rpcUrls: this.rpcObject[e.netWork] || [e.rpcUrl],
+                        blockExplorerUrls: [e.blockExplorerUrls],
+                      },
+                    ],
+                  })
+                  .then(async (data) => {
+                    if (data.code) {
+                      Dialog.alert({
+                        message: this.$t("noUseOpenBlock", {
+                          network: val.netWork,
+                        }),
+                        theme: "round-button",
+                        messageAlign: "left",
+                        confirmButtonColor: "#277ffa",
+                        className: "noChangeNetwork",
+                      });
+                      return;
+                    }
+                    const updateChainId = await window.openblock.request({
+                      method: "eth_chainId",
+                    });
+                    if (updateChainId !== this.$store.state.chainId) {
+                      this.$store.commit(
+                        "setChainId",
+                        parseInt(updateChainId) + ""
+                      );
+                    }
+                    this.exchange();
+                    // if (
+                    //   updateChainId !== this.$store.state.chainId &&
+                    //   window.location.href.indexOf('tokenpocket') != -1
+                    // ) {
+                    //   this.$store.commit(
+                    //     'setChainId',
+                    //     parseInt(updateChainId) + '',
+                    //   )
+                    // }
+                  })
+                  .catch((error) => {});
+              }
+            }
+          });
+        }
+        return;
+      }
+      //EchoooWallet 插件
+      if (this.connectType === "EchoooWallet") {
+        const network = this.$store.getters.getChainIdName;
+        if (network !== val.netWork) {
+          supportNetWork.some((e) => {
+            if (e.netWork === val.netWork) {
+              const chainId = window.echoooEth.networkVersion;
+              if (e.chainId !== chainId) {
+                const newChainId = parseInt(e.chainId);
+                window.echoooEth
+                  .request({
+                    method: "wallet_switchEthereumChain",
+                    params: [
+                      {
+                        chainId: `0x${newChainId.toString(16)}`,
+                        chainName:
+                          e.netWork == "ORC" ? "Ontology EVM" : e.netWork,
+                        nativeCurrency: {
+                          name: e.symbol,
+                          symbol: e.symbol,
+                          decimals: e.decimals,
+                        },
+                        rpcUrls: this.rpcObject[e.netWork] || [e.rpcUrl],
+                        blockExplorerUrls: [e.blockExplorerUrls],
+                      },
+                    ],
+                  })
+                  .then(() => {
+                    const updateChainId =
+                      window.echoooEth.networkVersion;
+                    if (
+                      updateChainId !== this.$store.state.chainId &&
+                      window.location.href.indexOf("tokenpocket") != -1
+                    ) {
+                      this.$store.commit(
+                        "setChainId",
+                        parseInt(updateChainId) + ""
+                      );
+                    }
+                  })
+                  .catch((error) => {});
+              }
+            }
+          });
+        }
+        return;
+      }
+      //oneKey 插件
+      if (this.connectType === "oneKey") {
+        const network = this.$store.getters.getChainIdName;
+        if (network !== val.netWork) {
+          supportNetWork.some((e) => {
+            if (e.netWork === val.netWork) {
+              const chainId = window.$onekey.ethereum.networkVersion;
+              if (e.chainId !== chainId) {
+                const newChainId = parseInt(e.chainId);
+                window.$onekey.ethereum
+                  .request({
+                    method: "wallet_addEthereumChain",
+                    params: [
+                      {
+                        chainId: `0x${newChainId.toString(16)}`,
+                        chainName:
+                          e.netWork == "ORC" ? "Ontology EVM" : e.netWork,
+                        nativeCurrency: {
+                          name: e.symbol,
+                          symbol: e.symbol,
+                          decimals: e.decimals,
+                        },
+                        rpcUrls: this.rpcObject[e.netWork] || [e.rpcUrl],
+                        blockExplorerUrls: [e.blockExplorerUrls],
+                      },
+                    ],
+                  })
+                  .then(() => {
+                    const updateChainId =
+                      window.$onekey.ethereum.networkVersion;
+                    if (
+                      updateChainId !== this.$store.state.chainId &&
+                      window.location.href.indexOf("tokenpocket") != -1
+                    ) {
+                      this.$store.commit(
+                        "setChainId",
+                        parseInt(updateChainId) + ""
+                      );
+                    }
+                  })
+                  .catch((error) => {});
+              }
+            }
+          });
+        }
+        return;
+      }
+      // onto 切换
+      if (this.connectType === "ONTO") {
+        Notify(
+          this.$t("noUseONTO", {
+            network: val.netWork,
+          })
+        );
+        return;
+      }
+      if (this.connectType === "Halo") {
+        const network = this.$store.getters.getChainIdName;
+        if (network !== val.netWork) {
+          supportNetWork.some((e) => {
+            if (e.netWork === val.netWork) {
+              const chainId = window.kucoin.networkVersion;
+              if (e.chainId !== chainId) {
+                const newChainId = parseInt(e.chainId);
+                window.kucoin
+                  .request({
+                    method: "wallet_addEthereumChain",
+                    params: [
+                      {
+                        chainId: `0x${newChainId.toString(16)}`,
+                        chainName:
+                          e.netWork == "ORC" ? "Ontology EVM" : e.netWork,
+                        nativeCurrency: {
+                          name: e.symbol,
+                          symbol: e.symbol,
+                          decimals: e.decimals,
+                        },
+                        rpcUrls: this.rpcObject[e.netWork] || [e.rpcUrl],
+                        blockExplorerUrls: [e.blockExplorerUrls],
+                      },
+                    ],
+                  })
+                  .then(() => {
+                    const updateChainId = window.kucoin.networkVersion;
+                    if (
+                      updateChainId !== this.$store.state.chainId &&
+                      window.location.href.indexOf("tokenpocket") != -1
+                    ) {
+                      this.$store.commit(
+                        "setChainId",
+                        parseInt(updateChainId) + ""
+                      );
+                    }
+                  })
+                  .catch((error) => {
+                    Notify(
+                      this.$t("noSupportChain", {
+                        wallet: "Kucoin",
+                        network: val.netWork,
+                      })
+                    );
+                  });
+              }
+            }
+          });
+        }
+        return;
+      }
+      if (this.connectType === "CLVWallet") {
+        const network = this.$store.getters.getChainIdName;
+        if (network !== val.netWork) {
+          supportNetWork.some((e) => {
+            if (e.netWork === val.netWork) {
+              const chainId = window.clover.networkVersion;
+              if (e.chainId !== chainId) {
+                const newChainId = parseInt(e.chainId);
+                window.clover
+                  .request({
+                    method: "wallet_addEthereumChain",
+                    params: [
+                      {
+                        chainId: `0x${newChainId.toString(16)}`,
+                        chainName:
+                          e.netWork == "ORC" ? "Ontology EVM" : e.netWork,
+                        nativeCurrency: {
+                          name: e.symbol,
+                          symbol: e.symbol,
+                          decimals: e.decimals,
+                        },
+                        rpcUrls: this.rpcObject[e.netWork] || [e.rpcUrl],
+                        blockExplorerUrls: [e.blockExplorerUrls],
+                      },
+                    ],
+                  })
+                  .then(() => {
+                    const updateChainId = window.clover.networkVersion;
+                    if (
+                      updateChainId !== this.$store.state.chainId &&
+                      window.location.href.indexOf("tokenpocket") != -1
+                    ) {
+                      this.$store.commit(
+                        "setChainId",
+                        parseInt(updateChainId) + ""
+                      );
+                    }
+                  })
+                  .catch((error) => {
+                    Notify(
+                      this.$t("noSupportChain", {
+                        wallet: "CLV Wallet",
+                        network: val.netWork,
+                      })
+                    );
+                  });
+              }
+            }
+          });
+        }
+        return;
+      }
+      if (this.connectType === "Crypto") {
+        const network = this.$store.getters.getChainIdName;
+        if (network !== val.netWork) {
+          supportNetWork.some((e) => {
+            if (e.netWork === val.netWork) {
+              const chainId = window.deficonnectProvider.networkVersion;
+              if (e.chainId !== chainId) {
+                const newChainId = parseInt(e.chainId);
+                window.deficonnectProvider
+                  .request({
+                    method: "wallet_addEthereumChain",
+                    params: [
+                      {
+                        chainId: `0x${newChainId.toString(16)}`,
+                        chainName:
+                          e.netWork == "ORC" ? "Ontology EVM" : e.netWork,
+                        nativeCurrency: {
+                          name: e.symbol,
+                          symbol: e.symbol,
+                          decimals: e.decimals,
+                        },
+                        rpcUrls: this.rpcObject[e.netWork] || [e.rpcUrl],
+                        blockExplorerUrls: [e.blockExplorerUrls],
+                      },
+                    ],
+                  })
+                  .then(() => {
+                    const updateChainId =
+                      window.deficonnectProvider.networkVersion;
+                    if (
+                      updateChainId !== this.$store.state.chainId &&
+                      window.location.href.indexOf("tokenpocket") != -1
+                    ) {
+                      this.$store.commit(
+                        "setChainId",
+                        parseInt(updateChainId) + ""
+                      );
+                    }
+                  })
+                  .catch((error) => {
+                    Notify(
+                      this.$t("noSupportChain", {
+                        wallet: "Crypto",
+                        network: val.netWork,
+                      })
+                    );
+                  });
+              }
+            }
+          });
+        }
+        return;
+      }
+      if (this.connectType === "Bitget") {
+        const network = this.$store.getters.getChainIdName;
+        if (network !== val.netWork) {
+          supportNetWork.some((e) => {
+            if (e.netWork === val.netWork) {
+              const chainId = window.bitkeep.ethereum.networkVersion;
+              if (e.chainId !== chainId) {
+                const newChainId = parseInt(e.chainId);
+                window.bitkeep.ethereum
+                  .request({
+                    method: "wallet_addEthereumChain",
+                    params: [
+                      {
+                        chainId: `0x${newChainId.toString(16)}`,
+                        chainName:
+                          e.netWork == "ORC" ? "Ontology EVM" : e.netWork,
+                        nativeCurrency: {
+                          name: e.symbol,
+                          symbol: e.symbol,
+                          decimals: e.decimals,
+                        },
+                        rpcUrls: this.rpcObject[e.netWork] || [e.rpcUrl],
+                        blockExplorerUrls: [e.blockExplorerUrls],
+                      },
+                    ],
+                  })
+                  .then(() => {
+                    const updateChainId =
+                      window.bitkeep.ethereum.networkVersion;
+                    if (
+                      updateChainId !== this.$store.state.chainId &&
+                      window.location.href.indexOf("tokenpocket") != -1
+                    ) {
+                      this.$store.commit(
+                        "setChainId",
+                        parseInt(updateChainId) + ""
+                      );
+                    }
+                  })
+                  .catch((error) => {
+                    Notify(
+                      this.$t("noSupportChain", {
+                        wallet: "Bitget Wallet",
+                        network: val.netWork,
+                      })
+                    );
+                  });
+              }
+            }
+          });
+        }
+        return;
+      }
+      if (this.connectType === "Patex") {
+        const network = this.$store.getters.getChainIdName;
+        if (network !== val.netWork) {
+          supportNetWork.some((e) => {
+            if (e.netWork === val.netWork) {
+              const chainId = window.patex.ethereum.networkVersion;
+              if (e.chainId !== chainId) {
+                const newChainId = parseInt(e.chainId);
+                window.patex.ethereum
+                  .request({
+                    method: "wallet_switchEthereumChain",
+                    params: [
+                      {
+                        chainId: `0x${newChainId.toString(16)}`,
+                        chainName:
+                          e.netWork == "ORC" ? "Ontology EVM" : e.netWork,
+                        nativeCurrency: {
+                          name: e.symbol,
+                          symbol: e.symbol,
+                          decimals: e.decimals,
+                        },
+                        rpcUrls: this.rpcObject[e.netWork] || [e.rpcUrl],
+                        blockExplorerUrls: [e.blockExplorerUrls],
+                      },
+                    ],
+                  })
+                  .then(() => {
+                    window.patex.ethereum.on("chainChanged", (chainId) => {
+                      this.$store.commit("setChainId", parseInt(chainId) + "");
+                    });
+                    // const updateChainId = window.patex.ethereum.networkVersion
+                    // if (
+                    //   updateChainId !== this.$store.state.chainId &&
+                    //   window.location.href.indexOf('tokenpocket') != -1
+                    // ) {
+                    //   this.$store.commit(
+                    //     'setChainId',
+                    //     parseInt(updateChainId) + '',
+                    //   )
+                    // }
+                  })
+                  .catch((error) => {
+                    Notify(
+                      this.$t("noSupportChain", {
+                        wallet: "Patex Wallet",
+                        network: val.netWork,
+                      })
+                    );
+                  });
+              }
+            }
+          });
+        }
+        return;
+      }
+      if (val && val.netWork === "APT") {
+        this.$bus.emit("connectPetra");
+        return;
+      }
+
+      const network = this.$store.getters.getChainIdName;
+      if (network !== val.netWork) {
+        const res = await ethereum.request({ method: "eth_chainId" });
+        const networkVersion = parseInt(res);
+        if (val.netWork === "ETH") {
+          if (
+            val.netWork === "ETH" &&
+            networkVersion == 1 &&
+            this.connectType === "MetaMask"
+          ) {
+            return this.$store.commit("setChainId", parseInt(1) + "");
+          }
+          if (this.isPC) {
+            if (networkVersion == 1) {
+              this.$bus.emit("switchEVMNetWork");
+              return;
+            }
+            window.ethereum.request({
+              method: "wallet_switchEthereumChain",
+              params: [{ chainId: `0x${parseInt("1").toString(16)}` }],
+            });
+            return;
+          }
+          Notify({
+            color: "#ad0000",
+            background: "#ffe1e1",
+            message: this.$t("network", {
+              network_old: network,
+              network: val.netWork,
+            }),
+          });
+          return;
+        }
+        supportNetWork.some((e) => {
+          if (e.netWork === val.netWork) {
+            const chainId = networkVersion;
+            if (e.chainId !== chainId) {
+              const newChainId = parseInt(e.chainId);
+              window.ethereum
+                .request({
+                  method: "wallet_addEthereumChain",
+                  params: [
+                    {
+                      chainId: `0x${newChainId.toString(16)}`,
+                      chainName:
+                        e.netWork == "ORC" ? "Ontology EVM" : e.netWork,
+                      nativeCurrency: {
+                        name: e.symbol,
+                        symbol: e.symbol,
+                        decimals: e.decimals,
+                      },
+                      rpcUrls: this.rpcObject[e.netWork] || [e.rpcUrl],
+                      blockExplorerUrls: [e.blockExplorerUrls],
+                    },
+                  ],
+                })
+                .then(() => {
+                  const updateChainId = newChainId;
+                  if (
+                    updateChainId !== this.$store.state.chainId &&
+                    window.location.href.indexOf("tokenpocket") != -1
+                  ) {
+                    this.$store.commit(
+                      "setChainId",
+                      parseInt(updateChainId) + ""
+                    );
+                  } else {
+                    this.$bus.emit("switchEVMNetWork");
+                  }
+                });
+            } else {
+              this.$bus.emit("switchEVMNetWork");
+            }
+          }
+          //Notify({ type: "danger", message: this.$t("network",{network_old:network,network:val.netWork}) });
+        });
+      }
+    },
+    //调用polkdot钱包插件
+    async polkDotFuc(val) {
+      if (
+        this.$store.state.walletPolkadot === null &&
+        (val.netWork === "Polkadot" ||
+          val.netWork === "CRU" ||
+          val.netWork === "DBC")
+      ) {
+        this.$bus.emit("getPolkadot", val.netWork);
+      } else {
+        if (val.netWork == "CRU") {
+          this.$store.commit("setChainId", "222");
+          // this.$bus.emit('checkPolkadot', 'CRU')
+        } else if (val.netWork == "DBC") {
+          this.$store.commit("setChainId", "333");
+          // this.$bus.emit('checkPolkadot', 'DBC')
+        } else {
+          this.$store.commit("setChainId", "000");
+          // this.$bus.emit('checkPolkadot', 'DOT')
+        }
+        this.$store.commit("setWalletConnectType", "Polkadot");
+      }
     },
     async exchangeTokens() {
-      if (this.fromToken && this.toToken) {
-        if (this.fromToken.mainNetwork === this.toToken.mainNetwork) {
-          ;[this.fromToken, this.toToken] = [this.toToken, this.fromToken]
-        } else if (
-          (this.fromToken.mainNetwork === 'NFT' &&
-            this.toToken.mainNetwork === 'ETH') ||
-          (this.fromToken.mainNetwork === 'ETH' &&
-            this.toToken.mainNetwork === 'NFT')
-        ) {
-          const from = this.fromToken
-          const to = this.toToken
-          if (to.mainNetwork === 'NFT') {
-            const asset = await getNFTAsset(to, 'from')
-            to.asset = asset
-          } else {
-            const asset = await getNFTAsset(from, 'to')
-            from.asset = asset
-          }
-          this.$store.commit('setFromToken', to)
-          this.$store.commit('setToToken', from)
-          if (this.fromToken.mainNetwork === 'NFT') {
-            this.$store.commit('setChainId', parseInt(10086) + '')
-          } else {
-            this.$store.commit('setChainId', parseInt(1) + '')
-          }
-        } else if (
-          this.fromToken &&
-          this.toToken &&
-          this.fromToken.mainNetwork !== this.toToken.mainNetwork
-        ) {
-          Notify({
-            color: '#ad0000',
-            background: '#ffe1e1',
-            message: this.$t('changeChainIdTip'),
-          })
-        }
-      } else {
-        if (
-          !this.fromToken &&
-          this.getChainIdName === this.toToken.mainNetwork
-        ) {
-          ;[this.fromToken, this.toToken] = [this.toToken, this.fromToken]
-        }
+      let mainNetWorrk = this.toToken.mainNetwork;
+      if (mainNetWorrk == "TRX") {
+        mainNetWorrk = "TRON";
       }
+      if (mainNetWorrk == "DOT") {
+        mainNetWorrk = "Polkadot";
+      }
+      const activeNetwork = supportNetWork.filter(
+        (item) => item.netWork == mainNetWorrk
+      );
+      if (activeNetwork.length < 1) {
+        Notify({
+          color: "#ad0000",
+          background: "#ffe1e1",
+          message: this.$t("notSupported", { coin: this.toToken.coinCode }),
+        });
+        return;
+      }
+      [this.fromToken, this.toToken] = [this.toToken, this.fromToken];
+      // if (this.fromToken && this.toToken) {
+      //   if (this.fromToken.mainNetwork === this.toToken.mainNetwork) {
+      //     ;[this.fromToken, this.toToken] = [this.toToken, this.fromToken]
+      //   } else if (
+      //     (this.fromToken.mainNetwork === 'NFT' &&
+      //       this.toToken.mainNetwork === 'ETH') ||
+      //     (this.fromToken.mainNetwork === 'ETH' &&
+      //       this.toToken.mainNetwork === 'NFT')
+      //   ) {
+      //     const from = this.fromToken
+      //     const to = this.toToken
+      //     if (to.mainNetwork === 'NFT') {
+      //       const asset = await getNFTAsset(to, 'from')
+      //       to.asset = asset
+      //     } else {
+      //       const asset = await getNFTAsset(from, 'to')
+      //       from.asset = asset
+      //     }
+      //     this.$store.commit('setFromToken', to)
+      //     this.$store.commit('setToToken', from)
+      //     if (this.fromToken.mainNetwork === 'NFT') {
+      //       this.$store.commit('setChainId', parseInt(10086) + '')
+      //     } else {
+      //       this.$store.commit('setChainId', parseInt(1) + '')
+      //     }
+      //   } else if (
+      //     this.fromToken &&
+      //     this.toToken &&
+      //     this.fromToken.mainNetwork !== this.toToken.mainNetwork
+      //   ) {
+      //     Notify({
+      //       color: '#ad0000',
+      //       background: '#ffe1e1',
+      //       message: this.$t('changeChainIdTip'),
+      //     })
+      //   }
+      // } else {
+      //   if (
+      //     !this.fromToken &&
+      //     this.getChainIdName === this.toToken.mainNetwork
+      //   ) {
+      //     ;
+      //   }
+      // }
       //if (!this.fromToken || !this.toToken) return
       // if (this.fromToken && this.toToken && this.fromToken.mainNetwork === this.toToken.mainNetwork) {
       //   ;[this.fromToken, this.toToken] = [this.toToken, this.fromToken]
@@ -700,10 +2107,10 @@ export default {
       // }
     },
     comfirm(_b) {
-      this.$refs.order.show(_b)
+      this.$refs.order.show(_b);
     },
   },
-}
+};
 </script>
 <style lang="scss" scoped>
 .trade {
@@ -713,7 +2120,7 @@ export default {
   z-index: 10;
   background: #ffffff;
   box-shadow: 0px 9px 12px 0px rgba(234, 242, 255, 0.15);
-  border-radius: 30px 30px 30px 30px;
+  border-radius: 0 0 30px 30px;
   top: -1px;
   &.border {
     border-radius: 30px;
@@ -731,7 +2138,6 @@ export default {
       width: 100%;
       display: flex;
       justify-content: space-between;
-      align-items: center;
       position: relative;
       .icon {
         width: 40px;
@@ -833,10 +2239,10 @@ export default {
 }
 </style>
 <style lang="scss">
-.atooltip.el-tooltip__popper[x-placement^='top'] .popper__arrow {
+.atooltip.el-tooltip__popper[x-placement^="top"] .popper__arrow {
   border-top-color: rgba(5, 22, 50, 0.93);
 }
-.atooltip.el-tooltip__popper[x-placement^='top'] .popper__arrow:after {
+.atooltip.el-tooltip__popper[x-placement^="top"] .popper__arrow:after {
   border-top-color: rgba(5, 22, 50, 0.93);
 }
 .atooltip {

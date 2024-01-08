@@ -17,20 +17,17 @@ const NaboxConnectHandle = ($scope) => {
   if (store.state.wallet.connectType === 'Nabox') {
     return ($scope.$refs.dialog.show = false)
   }
-  console.log('创建Nabox连接')
   NaboxWallet.off('chainChanged')
   NaboxWallet.off('accountsChanged')
   //监听链变化
   NaboxWallet.on('chainChanged', (chainId) => {
     //过滤当前非Nabox连接
     if (store.state.wallet.connectType !== 'Nabox') return
-    console.log('监听链的变化::::::', chainId)
     connect($scope)
   })
   //监听账户变化
   NaboxWallet.on('accountsChanged', (accounts) => {
     if (store.state.wallet.connectType !== 'Nabox') return
-    console.log('监听账户变化::::::', accounts)
   })
   connect($scope)
 }

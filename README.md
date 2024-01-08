@@ -1,26 +1,26 @@
-# SWFT-AllChain-Bridge
+# my-project
 
+
+## node v14.16.1
 ## Project setup
 ```
-npm install
+yarn install
 ```
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+yarn serve
 ```
 
 ### Compiles and minifies for production
 ```
-npm run build
-``` 
+yarn build
+```
+
+### Lints and fixes files
+```
+yarn lint
+```
 
 ### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/)
-
-## trade.vue
-```
- 1 Get the token list => Reset the token drop-down selection box => Get the swap rate => Check if metamask is already logged in
- 2 Logged in, Show wallet address && Show Balance 
- 3 When switching chains, the token list needs to be adjusted accordingly
-``` 
+See [Configuration Reference](https://cli.vuejs.org/config/).

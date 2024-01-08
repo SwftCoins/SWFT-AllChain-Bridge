@@ -5,7 +5,7 @@
       <span class="title">{{ $t('record') }} </span>
       <span class="more" @click="showRecord">{{ $t('more') }}></span>
     </div>
-    <RecordTab v-if="sourceFlag !== 'bridgers'" />
+    <RecordTab v-if="bridgersFlag !== 'bridgers'" />
     <!-- <BridgersRecordTab v-if="sourceFlag == 'bridgers'" /> -->
     <div
       class="box"
@@ -129,12 +129,14 @@
         </div>
       </div>
     </div>
+    <AIChooseToken ref="AIChooseToken" :tokenData="tokenData" />
   </div>
 </template>
 <script>
 import baseApi from '../api/baseApi'
 import errorCode from '../utils/language.js'
 import RecordTab from './common/RecordTab.vue'
+import AIChooseToken from './common/AIChooseToken.vue'
 import BridgersRecordTab from './common/BridgersRecordTab.vue'
 export default {
   name: 'Record',
@@ -144,11 +146,15 @@ export default {
       timer: null, //查询订单计时器
       detailinfoTimer: null,
       sourceFlag: localStorage.getItem('sourceFlag'),
+      bridgersFlag: localStorage.getItem('bridgersFlag'),
+      isFirst: false, // 根据钱包地址记录来塞 兑换币种， 逻辑判断， 钱包改变第一次请求记录
+      tokenData: null
     }
   },
   components: {
     RecordTab,
     BridgersRecordTab,
+    AIChooseToken
   },
   computed: {
     recordType: {
@@ -165,12 +171,38 @@ export default {
           return this.$store.state.walletPolkadot.addrSS58
         } else if (this.$store.state.chainId == '222') {
           return this.$store.state.walletPolkadot.addrSS58CRU
+        } else if (this.$store.state.chainId == '333') {
+          return this.$store.state.walletPolkadot.addrSS58DBC
         } else if (this.$store.state.chainId == '0') {
           return this.$store.state.walletTRON
         } else {
           return this.$store.state.wallet.address
         }
       },
+    },
+    tabActive: {
+      get() {
+        return this.$store.state.tabActive
+      },
+    },
+    isUserChoose() {
+      return this.$store.state.isUserChoose
+    },
+    fromToken: {
+        get() {
+            if (this.tabActive == 'bridge') {
+            return this.bridgeFromTokenchain
+            }
+            return this.$store.state.fromToken
+        },
+    },
+    toToken: {
+        get() {
+            if (this.tabActive == 'bridge') {
+            return this.bridgeToTokenchain
+            }
+            return this.$store.state.toToken
+        },
     },
   },
   methods: {
@@ -210,6 +242,10 @@ export default {
             })
             this.list = list
           }
+          if(this.isFirst && this.list.length > 0 && this.tabActive == 'swap' && !this.isUserChoose){
+            this.AISetToken(this.list[0])
+          }
+          this.isFirst = false
         }
       } else if (this.recordType === 'bridgers1') {
         const res = await baseApi.getTransData(params)
@@ -256,7 +292,6 @@ export default {
 
     //获取订单详情
     async orderDetail(item) {
-      console.log(item)
       this.$bus.emit('showOrderHandle', true)
       if (item.router && item.router.router === 'bridgers1') {
         const res = await baseApi.getTransDataById({ orderId: item.orderId })
@@ -284,7 +319,6 @@ export default {
           this.$bus.emit('isShowStatus')
         } else {
         }
-        console.log(res)
       } else if (item.router && item.router.router === 'bridgers2') {
         const res = await baseApi.getbridgers2TransDataById({
           orderId: item.orderId,
@@ -313,7 +347,6 @@ export default {
           this.$bus.emit('isShowStatus')
         } else {
         }
-        console.log(res)
       } else if (item.router && item.router === 'NFT') {
         const res = await baseApi.queryOrderStateNFT({ orderId: item.orderId })
         if (res.resCode == 800) {
@@ -356,144 +389,268 @@ export default {
 
     //解析订单状态
     orderStatus(str) {
-      let statusData = [this.$t('wait_deposit_send'), '#707B9E']
+      let statusData = [this.$t('wait_deposit_send'), '#707B9E', 1, 'loading', false]
       switch (str) {
         case 'wait_deposits':
           statusData[0] = this.$t('wait_deposit_send') //wait_deposit_send   等待存币
           statusData[1] = '#707B9E'
+          statusData[2] = 1 
+          statusData[3] = 'loading'
+          statusData[4] = false   //是否是最终状态
+          break
+        case 'wait_deposit_send_fail':
+          statusData[0] = this.$t('deposit_failed') //wait_deposit_send_fail  存币失败
+          statusData[1] = '#FF8484'
+          statusData[2] = 1
+          statusData[3] = false
+          statusData[4] = true
           break
         case 'wait_deposit_send_error':
           statusData[0] = this.$t('trade_fail') //wait_deposit_send_error   存币失败
           statusData[1] = '#FF8484'
+          statusData[2] = 1
+          statusData[3] = false
+          statusData[4] = true   //是否是最终状态
           break
         case 'wait_detect':
           statusData[0] = this.$t('wait_deposit_send') //NFT接口  等待存币
           statusData[1] = '#707B9E'
+          statusData[2] = 1
+          statusData[3] = 'loading'
+          statusData[4] = false   //是否是最终状态
           break
         case 'exchange':
-          statusData[0] = this.$t('exchangeIng') //exchange 兑换中
+          statusData[0] = this.$t('exchangeIng') //wait_deposit_send   兑换中
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] = false   //是否是最终状态
           break
         case 'wait_exchange':
           statusData[0] = this.$t('exchangeIng') //NFT接口 交换中
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] = false   //是否是最终状态
           break
         case 'trade_fail':
-          statusData[0] = this.$t('trade_fail') //trade_fail   兑换失败
+          statusData[0] = this.$t('trade_fail') //wait_deposit_send   兑换失败
           statusData[1] = '#FF8484'
+          statusData[2] = 2
+          statusData[3] = false
+          statusData[4] = true   //是否是最终状态
           break
         case 'fail':
           statusData[0] = this.$t('trade_fail') //wait_deposit_send   兑换失败
           statusData[1] = '#FF8484'
+          statusData[2] = 2
+          statusData[3] = false
+          statusData[4] =  true  //是否是最终状态
           break
         case 'wait_deposit_send':
           statusData[0] = this.$t('wait_deposit_send') //wait_deposit_send   等待存币
           statusData[1] = '#707B9E'
+          statusData[2] = 1
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'wait_receive_send':
           statusData[0] = this.$t('wait_receive_send') //wait_receive_send  等待发币
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'wait_send':
           statusData[0] = this.$t('wait_receive_send') //linknft 等待发币
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
 
         case 'wait_receive_confirm':
           statusData[0] = this.$t('wait_receive_confirm') //wait_receive_confirm  等待发币确认
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'wait_refund_send':
           statusData[0] = this.$t('wait_refund_send') //wait_refund_send  等待退币
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'wait_refund':
           statusData[0] = this.$t('wait_refund_send') //linknft 等待退币
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
 
         case 'wait_exchange_return':
           statusData[0] = this.$t('exchangeIng') //wait_exchange_return  等待交换结果
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'wait_exchange_push':
           statusData[0] = this.$t('exchangeIng') //wait_exchange_push  等待交换推送
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'wait_for_information':
           statusData[0] = this.$t('exchangeIng') // wait_for_information   等待用户联系
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'receive_complete':
           statusData[0] = this.$t('receive_complete') // receive_complete   发币完成
           statusData[1] = '#1eb740'
+          statusData[2] = 4
+          statusData[3] = true
+          statusData[4] =  true  //是否是最终状态
           break
         case 'complete':
           statusData[0] = this.$t('receive_complete')
           statusData[1] = '#1eb740'
+          statusData[2] = 4
+          statusData[3] = true
+          statusData[4] =  true  //是否是最终状态
           break
         case 'refund_complete':
           statusData[0] = this.$t('refund_complete') // refund_complete   退币完成
           statusData[1] = '#1eb740'
+          statusData[2] = 2
+          statusData[3] = true
+          statusData[4] =  true  //是否是最终状态
           break
         case 'fail':
           statusData[0] = this.$t('refund_complete') // linknft 交易失败已退币   退币完成
           statusData[1] = '#1eb740'
+          statusData[2] = 2
+          statusData[3] = false
+          statusData[4] =  true  //是否是最终状态
           break
         case 'refund_sending':
           statusData[0] = this.$t('refund_sending') // refund_sending   即将退币
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'wait_kyc':
           statusData[0] = this.$t('exchangeIng') //  wait_kyc  需要kyc   WAIT_KYC
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'timeout':
           statusData[0] = this.$t('timeout') // timeout   超时
           statusData[1] = '#FF8484'
+          statusData[2] = 1
+          statusData[3] = false
+          statusData[4] =  true  //是否是最终状态
           break
         case 'wait_refund_confirm':
           statusData[0] = this.$t('wait_refund_confirm') //wait_refund_confirm  等待退币确认
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'wait_partial_send':
           statusData[0] = this.$t('wait_partial_send') //部分成交发币中…
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'wait_partial_send_confirm':
           statusData[0] = this.$t('wait_partial_send_confirm') // 部分成交发币确认中…
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'wait_partial_refund':
           statusData[0] = this.$t('wait_partial_refund') //部分成交退币中…
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'wait_partial_refund_confirm':
           statusData[0] = this.$t('wait_partial_refund_confirm') //部分成交退币确认中…
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'partial_complete':
           statusData[0] = this.$t('partial_complete') //完成
           statusData[1] = '#1eb740'
+          statusData[2] = 4
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'complete':
           statusData[0] = this.$t('receive_complete') //NFT接口 完成
           statusData[1] = '#1eb740'
+          statusData[2] = 4
+          statusData[3] = true
+          statusData[4] =  true  //是否是最终状态
           break
         case 'wait_partial_send_confirm_error':
           statusData[0] = this.$t('wait_partial_send_confirm_error') //部分成交发币确认中…
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         case 'wait_partial_refund_confirm_error':
           statusData[0] = this.$t('wait_partial_refund_confirm_error') //部分成交退币确认中…
           statusData[1] = '#707B9E'
+          statusData[2] = 3
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
           break
         default:
           statusData[0] = this.$t('exchangeIng')
           statusData[1] = '#707B9E'
+          statusData[2] = 2
+          statusData[3] = 'loading'
+          statusData[4] =  false  //是否是最终状态
       }
       return statusData
     },
+    async AISetToken(item){
+      const res = await baseApi.queryCoinList()
+      if(res.resCode == 800){
+        const coinList = res.data
+        // 获取from 币种
+         const from = coinList.filter( list => list.coinCode === item.fromCoinCode)
+         //获取to 币种
+         const to = coinList.filter( list => list.coinCode === item.toCoinCode)
+        if(this.fromToken && this.toToken && this.fromToken.coinCode == from[0].coinCode && this.toToken.coinCode == to[0].coinCode) return
+        if(from.length > 0 && to.length > 0){
+          this.tokenData = {
+            from: from[0],
+            to: to[0]
+          }
+          this.$refs.AIChooseToken.show = true
+        }
+      }
+    }
   },
   watch: {
     '$store.state.wallet': {
@@ -515,9 +672,14 @@ export default {
         this.queryAllTrade()
       },
     },
+    walletAddress(address){
+      if(address != ''){
+        this.isFirst = true
+      }
+    }
   },
   created() {
-    if (this.sourceFlag == 'bridgers') {
+    if (this.bridgersFlag == 'bridgers') {
       this.recordType = 'bridgers1'
     } else {
       this.recordType = 'swft'

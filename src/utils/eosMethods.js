@@ -37,7 +37,6 @@ const eosConnectHandle = ($scope) => {
         currentPermission = account.authority
         currentAccount = account.name
         if (account) {
-          console.log('connected!', account.name)
           $scope.wallet = 'LeafWallet'
           store.commit('setChainId', '1040')
           store.commit('setWalletAddress', account.name)
@@ -75,7 +74,6 @@ const EOSExchange = async (res,$scope,changeFromNumber,changeFromToken) => {
   //ScatterJS.scatter.logout().then(a => alert(a))
   let rpc = new JsonRpc(network.fullhost())
   api = ScatterJS.scatter.eos(network, Api, { rpc })
-  console.log(rpc,currentAccount,currentPermission)
   await ScatterJS.login()
   const account = ScatterJS.account('eos');
   try{
@@ -102,7 +100,6 @@ const EOSExchange = async (res,$scope,changeFromNumber,changeFromToken) => {
     }catch(error){
       return error
     }
-    //console.log(result)
   }
 const EOSMethods = {
   eosConnectHandle,

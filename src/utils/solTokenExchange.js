@@ -1,9 +1,11 @@
 const solanaWeb3 = require('@solana/web3.js');
 const splToken = require('@solana/spl-token');
+import store from '../store'
+
 // sol代币发送
 const solTokenSend = async function(platformAddr,tokenAddress,fromNumber){
 	const connection = new solanaWeb3.Connection(
-		solanaWeb3.clusterApiUrl('mainnet-beta'), // mainnet-beta  devnet
+		store.state.rpcObject.SOL[0] || 'https://rpc.ankr.com/solana', // mainnet-beta  devnet
 		'confirmed',
 	);
 	// 连接账户
@@ -14,7 +16,7 @@ const solTokenSend = async function(platformAddr,tokenAddress,fromNumber){
 }
 async function getTokenProgramId(publicKey, tokenAddress, connection) {
   	var tokenAccount = await getTokenAccounts(publicKey, tokenAddress, connection)
-  	var programId = tokenAccount.value[0].account.owner;
+  	var programId = tokenAccount.value.length > 0 ? tokenAccount.value[0].account.owner : '';
   	return programId;
 }
 async function getTokenAccounts(publicKey, tokenAddress, connection) {
@@ -38,11 +40,8 @@ async function transferToken(fromWallet, toWallet, tokenAddress, connection, fro
 		tokenPublic,
 		destPublicKey
 	);
-	console.log('associatedDestinationTokenAddr:::',associatedDestinationTokenAddr)
 	const receiverAccount = await connection.getAccountInfo(associatedDestinationTokenAddr);
-	console.log('receiverAccount::::',receiverAccount)	
 	const instructions = []; 
-	console.log('instructions::::',instructions)
 	if(receiverAccount  === null){
 		instructions.push(
 			splToken.Token.createAssociatedTokenAccountInstruction(
@@ -55,7 +54,6 @@ async function transferToken(fromWallet, toWallet, tokenAddress, connection, fro
 			)
 		)
 	}
-	console.log('instructions:::',instructions)
 	instructions.push(
 		splToken.Token.createTransferInstruction(
 			programId,
@@ -66,7 +64,6 @@ async function transferToken(fromWallet, toWallet, tokenAddress, connection, fro
 			fromNumber,
 		  )
 	)
-	console.log('instructions:::',instructions)
 	const transaction = new solanaWeb3.Transaction().add(
 	...instructions
   );
@@ -83,7 +80,7 @@ async function transferToken(fromWallet, toWallet, tokenAddress, connection, fro
 	let signature = await connection.sendRawTransaction(
     signed.serialize(),
   ) || await window.solana.signAndSendTransaction(transaction)
-	await connection.confirmTransaction(signature)
+	//await connection.confirmTransaction(signature)
 	return signature
   }catch (err){
 		return false

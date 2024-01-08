@@ -1,38 +1,46 @@
 @font-face {
     font-family: Poppins;
     src: url('./Poppins-Bold.ttf');
+    font-display: swap;
 }
 
 @font-face {
     font-family: Poppins-Bold;
     src: url('./Poppins-Bold.ttf');
+    font-display: swap;
 }
 
 @font-face {
     font-family: Poppins-Light;
     src: url('./Poppins-Light.ttf');
+    font-display: swap;
 }
 
 @font-face {
     font-family: Poppins-Medium;
     src: url('./Poppins-Medium.ttf');
+    font-display: swap;
 }
 
 @font-face {
     font-family: Poppins-Regular;
     src: url('./Poppins-Regular.ttf');
+    font-display: swap;
 }
 
 @font-face {
     font-family: Poppins-SemiBold;
     src: url('./Poppins-SemiBold.ttf');
+    font-display: swap;
 }
 
 html {
     -webkit-text-size-adjust: none;
+    height: 100%;
 }
 
 body {
+    height: 100%;
     padding: 0;
     margin: 0;
     background: #f4f8ff;
@@ -172,3 +180,23 @@ body {
         font-family: PingFangSC-Semibold, PingFang SC;
     }
   }
+
+.staking{
+    .el-dialog{
+        border-radius: 10px!important;
+        max-width: 500px!important;
+        background: #FFFFFF!important;
+        .el-dialog__header{
+            font-size: .37rem;
+            font-family: Poppins-Bold, Poppins;
+            font-weight: bold;
+            color: #000000;
+            .el-dialog__title{
+                font-size: .37rem;
+            }
+        }
+        .el-dialog__body{
+            padding: 20px 20px 20px!important;
+        }
+    }
+}

@@ -15,7 +15,6 @@
                <Button @click="approveHandle" :loading="loading" :loading-text="$t('approveText')" class="approve-btn">{{$t('approveText')}}</Button>
            </div>
             <div class="closeIcon">
-                <!-- <img @click="closeOrderDialog" src="../assets/img/close.png" alt="" /> -->
                 <svg @click.stop="closeOrderDialog" class="icon close-icon" aria-hidden="true">
                      <use xlink:href="#icon-cha1"></use>
                 </svg>
@@ -39,8 +38,25 @@ export default {
         Button
     },
     computed: {
+        tabActive: {
+        get() {
+            return this.$store.state.tabActive
+        },
+        },
+        bridgeFromTokenchain:{ // from 网络
+            get(){
+                return this.$store.state.bridgeFromTokenchain
+            },
+            set(val){
+                this.$store.commit('setBridgeFromTokenchain', val)
+            }
+            
+        },
         fromToken: {
             get() {
+                if(this.tabActive == 'bridge'){
+                    return this.bridgeFromTokenchain
+                }
                 return this.$store.state.fromToken
             },
             set(val) {

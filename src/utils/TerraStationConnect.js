@@ -1,10 +1,10 @@
 import { Notify } from 'vant'
 import store from '../store/index'
-import {CreateTxOptions, LCDClient, Extension, MnemonicKey } from '@terra-money/terra.js'
+// import {CreateTxOptions, LCDClient, Extension, MnemonicKey } from '@terra-money/terra.js'
 
-const TerraStationConnectHandle = ($scope) => {
+const TerraStationConnectHandle = async ($scope) => {
+  const {Extension} = await import('@terra-money/terra.js')
   const connetctor = new Extension()
-  console.log(connetctor)
   //判断是否安装TerraStation插件
   if (!connetctor.isAvailable) {
     return Notify({
@@ -19,13 +19,11 @@ const TerraStationConnectHandle = ($scope) => {
   if (store.state.wallet.connectType === 'TerraStation') {
     return ($scope.$refs.dialog.show = false)
   }
-  console.log('TerraStation连接')
   connect(connetctor,$scope)
 }
 function connect(connetctor,$scope) {
   connetctor.request('connect')
   .then((e) => {
-    console.log('connected!', e.payload.address)
     $scope.wallet = 'TerraStation'
     store.commit('setChainId', '1993')
     store.commit('setWalletAddress', e.payload.address)

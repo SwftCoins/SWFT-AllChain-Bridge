@@ -5,12 +5,18 @@
       <span
         :class="recordType == 'swft' ? 'active' : ''"
         @click="changeRecordType('swft')"
-        >SWFT</span
+        >{{
+          twFlag == 'miningtw'
+            ? 'SWAP'
+            : twFlag == 'burndex'
+            ? 'Stablex'
+            : 'SWFT'
+        }}</span
       >
       <span
         :class="recordType == 'bridgers1' ? 'active' : ''"
         @click="changeRecordType('bridgers1')"
-        >bridgers1</span
+        >bridgers</span
       >
     </div>
   </div>
@@ -22,6 +28,7 @@ export default {
   data() {
     return {
       leftAtive: '1%',
+      twFlag: localStorage.getItem('twFlag'),
     }
   },
   computed: {
@@ -39,7 +46,9 @@ export default {
       if (val == 'swft') {
         this.leftAtive = '1%'
       } else if (val == 'bridgers1') {
-        this.leftAtive = '50%'
+        this.leftAtive = '49%'
+      } else if (val == 'NFT') {
+        this.leftAtive = '66%'
       }
       this.recordType = val
     },
@@ -53,7 +62,7 @@ export default {
   text-align: left;
 
   .tab {
-    width: 4.5rem;
+    width: 6.75rem;
     height: 100%;
     display: flex;
     align-items: center;

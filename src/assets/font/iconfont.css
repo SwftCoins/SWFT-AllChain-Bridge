@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2590469 */
-  src: url('iconfont.woff2?t=1648633700024') format('woff2'),
-       url('iconfont.woff?t=1648633700024') format('woff'),
-       url('iconfont.ttf?t=1648633700024') format('truetype');
+  src: url('iconfont.woff2?t=1701829549675') format('woff2'),
+       url('iconfont.woff?t=1701829549675') format('woff'),
+       url('iconfont.ttf?t=1701829549675') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,126 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-FoxWallet:before {
+  content: "\e608";
+}
+
+.icon-HAVAH:before {
+  content: "\e607";
+}
+
+.icon-Patex:before {
+  content: "\e606";
+}
+
+.icon-Compass:before {
+  content: "\e605";
+}
+
+.icon-imToken:before {
+  content: "\e603";
+}
+
+.icon-Halo:before {
+  content: "\e602";
+}
+
+.icon-Unisat:before {
+  content: "\e604";
+}
+
+.icon-SuiWallet:before {
+  content: "\e701";
+}
+
+.icon-Crypto:before {
+  content: "\e601";
+}
+
+.icon-Exodus:before {
+  content: "\e6ff";
+}
+
+.icon-Valora:before {
+  content: "\e6fc";
+}
+
+.icon-korea-normal:before {
+  content: "\e6fd";
+}
+
+.icon-korea:before {
+  content: "\e6fe";
+}
+
+.icon-SAFE:before {
+  content: "\e6f9";
+}
+
+.icon-DBC:before {
+  content: "\e6fa";
+}
+
+.icon-xiaoxi:before {
+  content: "\e61e";
+}
+
+.icon-line:before {
+  content: "\ebf5";
+}
+
+.icon-AuroxWallet:before {
+  content: "\e6f8";
+}
+
+.icon-CLVWallet:before {
+  content: "\e6f6";
+}
+
+.icon-MSafe:before {
+  content: "\e6f5";
+}
+
+.icon-OpenBlock:before {
+  content: "\e6ee";
+}
+
+.icon-Coin98:before {
+  content: "\e6e7";
+}
+
+.icon-OneKey:before {
+  content: "\e6e4";
+}
+
+.icon-Petra:before {
+  content: "\e6e3";
+}
+
+.icon-iToken:before {
+  content: "\e6e2";
+}
+
+.icon-MPCWallet:before {
+  content: "\e6e1";
+}
+
+.icon-chongbi:before {
+  content: "\e6d3";
+}
+
+.icon-duihuan2:before {
+  content: "\e6d4";
+}
+
+.icon-tibi:before {
+  content: "\e6d5";
+}
+
+.icon-zhuanzhang:before {
+  content: "\e6d6";
 }
 
 .icon-bridgers:before {
@@ -181,15 +301,11 @@
   content: "\e685";
 }
 
-.icon-imToken:before {
-  content: "\e684";
-}
-
 .icon-HuobiWallet:before {
   content: "\e681";
 }
 
-.icon-ellipal:before {
+.icon-Ellipal:before {
   content: "\e683";
 }
 

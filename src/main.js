@@ -3,7 +3,9 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import zh from './lang/zh'
+import zht from './lang/zht'
 import en from './lang/en'
+import korea from './lang/korea'
 import VueClipboard from 'vue-clipboard2'
 import axios from 'axios'
 import 'lib-flexible'
@@ -11,9 +13,10 @@ import './assets/css/index.scss'
 import 'element-ui/lib/theme-chalk/index.css'
 import { Tooltip, Select, Button, Popover } from 'element-ui'
 import vueBus from 'vue-bus'
+import './utils/getWindowSourceFlag'
 import './assets/font/iconfont.js'
 import './utils/getBtcBalance.js'
-localStorage.setItem('sourceFlag', 'widget')
+
 Vue.use(vueBus)
 Vue.use(Tooltip)
 Vue.use(Select)
@@ -38,10 +41,12 @@ if (!lang) {
   lang = language.indexOf('zh') != '-1' ? 'zh' : 'en'
 }
 const i18n = new VueI18n({
-  locale: lang,
+  locale: lang, // 语言标识
   messages: {
-    zh: zh, 
-    en: en, 
+    zh: zh, // 中文语言包
+    zht: zht, // 中文繁体语言包
+    en: en, // 英文语言包
+    korea: korea, // 韩文语言包
   },
   silentTranslationWarn: true,
 })
@@ -49,6 +54,18 @@ let isPC = window.matchMedia('(min-width: 500px)').matches
 Vue.prototype.isPC = isPC
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
+Vue.prototype.$formatNumber = function formatNumber(num) {
+  if(!num){
+    return 0
+  }
+  if(num == '--'){
+    return '--'
+  }
+  num = Number(num).toFixed(6) - 0
+  const parts = num.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return parts.join('.')
+}
 new Vue({
   router,
   store,

@@ -5,6 +5,14 @@ import { BitcoinEsploraSwapFindProvider } from '@liquality/bitcoin-esplora-swap-
 import { BitcoinWalletApiProvider } from '@liquality/bitcoin-wallet-api-provider'
 import { BitcoinFeeApiProvider } from '@liquality/bitcoin-fee-api-provider'
 import { BitcoinNetworks } from '@liquality/bitcoin-networks'
+let tp = null
+let isTP = false
+try {
+  tp = require('tp-js-sdk')
+  isTP = tp.isConnected()
+} catch (error) {
+  console.log(error)
+}
 const btcConfig = {
     api: {
     url: 'https://liquality.io/electrs'
@@ -17,6 +25,10 @@ const btcConfig = {
     explorerPath: 'https://blockstream.info/tx/'
 }
 async function getBtcBalanceHandle(){
+    if(isTP){
+        const Balance = await tp.getCurrentBalance()
+        return Balance.data.balance
+    }
     const network =  await bitcoin.request({ method: 'wallet_getConnectedNetwork', params: [] })
     const btcClient = new Client()
     btcClient.addProvider(getBitcoinDataProvider(btcConfig))

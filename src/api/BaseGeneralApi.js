@@ -3,7 +3,7 @@ import store from '../store'
 
 const tronApi = 'https://api.trongrid.io'
 //100000 Requests / Day
-const tronApiKey = ['d17c9fda-f4e6-4da7-92f7-5beba7ed67fb', '1fc1ccfb-b602-41ef-bc69-c7d99991cc65', '6d14d9fd-8c85-47bc-9115-b474a9f54b3a', '779551f0-b95a-48e0-8a4d-274b305e92da']
+const tronApiKey = [] // 需要自己申请api-key
 
 // 增加axios拦截
 axios.interceptors.response.use((suc) => {

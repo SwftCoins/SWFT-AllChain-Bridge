@@ -15,18 +15,15 @@ const OKExWalletConnectHandle = ($scope) => {
   if (store.state.wallet.connectType === 'OKExWallet') {
     return ($scope.$refs.dialog.show = false)
   }
-  console.log('OKExWallet连接')
   //监听链变化
   okexchain.on('chainChanged', (chainId) => {
     //过滤当前非okexchain连接
     if (store.state.wallet.connectType !== 'OKExWallet') return
-    console.log('监听链的变化::::::', chainId)
     connect($scope)
   })
   //监听账户变化
   okexchain.on('accountsChanged', (accounts) => {
     if (store.state.wallet.connectType !== 'OKExWallet') return
-    console.log('监听账户变化::::::', accounts)
   })
   connect($scope)
 }

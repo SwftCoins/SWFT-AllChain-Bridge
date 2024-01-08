@@ -11,17 +11,14 @@ const BTCWalletConnectHandle = ($scope) => {
             }),
         })
     }
-    console.log('window.bitcoin:::',window.bitcoin)
     //创建链接
     if(store.state.wallet.connectType === 'LiqualityWallet'){
         return  $scope.$refs.dialog.show = false
     }
-    console.log('LiqualityWallet连接')
     connect($scope)
 }
 async function connect($scope) {
     // const net =  await bitcoin.request({ method: 'wallet_getConnectedNetwork', params: [] })
-    // console.log(net)
     const enable = await window.bitcoin.enable()
     const net =  await bitcoin.request({ method: 'wallet_getConnectedNetwork', params: [] })
     if(net.name !== 'bitcoin') {
@@ -31,7 +28,6 @@ async function connect($scope) {
             message: $scope.$t('switchNetwork')
         })
     }
-    console.log(net)
     if(enable){
         $scope.wallet = 'LiqualityWallet'
         store.commit('setWalletAddress', enable[0].address)
@@ -42,22 +38,5 @@ async function connect($scope) {
         //存储钱包已连接
         localStorage.setItem('connectorId', 'LiqualityWallet')
     }
-    console.log('enable:::::', enable)
-    // bitcoin.request({ method: 'eth_requestAccounts' })
-    // .then(res => {
-    //     $scope.wallet = 'LiqualityWallet'
-    //     bitcoin.request({ method: 'eth_chainId' }).then((res) => {
-    //         store.commit('setChainId', parseInt(res) + '')
-    //     })
-    //     store.commit('setWalletAddress', res[0])
-    //     store.commit('setWalletName', 'LiqualityWallet')
-    //     store.commit('setWalletConnectType', 'LiqualityWallet')
-    //     $scope.$refs.dialog.show = false
-    //     //存储钱包已连接
-    //     localStorage.setItem('connectorId', 'LiqualityWallet')
-    // })
-    // .catch((err) => {
-    //     $scope.$refs.dialog.show = false
-    // });
 }
 export default BTCWalletConnectHandle

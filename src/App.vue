@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="[isPC ? 'pc' : '',sourceFlag]">
+  <div id="app" :class="[isPC ? 'pc' : '',sourceFlag,twFlag]">
     <router-view />
   </div>
 </template>
@@ -8,7 +8,9 @@ export default {
   name: "App",
   data(){
     return {
-      sourceFlag: ''
+      sourceFlag: localStorage.getItem('sourceFlag'),
+      twFlag:localStorage.getItem('twFlag'),
+      utm_source: localStorage.getItem('utm_source'),
     }
   },
   created(){
@@ -16,13 +18,33 @@ export default {
     if(loading !== null){
      document.body.removeChild(loading)
     }
-    this.sourceFlag = localStorage.getItem('sourceFlag')
+  },
+  watch: {
+    $route: {
+      handler(to, from) {
+        let query = { ...this.$route.query}
+        if(this.sourceFlag && this.sourceFlag != ''){
+          query.sourceFlag = this.sourceFlag
+        }
+        if(this.utm_source && this.utm_source != ''){
+          query.utm_source = this.utm_source
+        }
+        this.$router
+          .replace({
+            query: query,
+            params: { ...this.$route.params },
+          })
+          .catch(() => {})
+      },
+      deep: true,
+    },
   }
 };
 </script>
 <style lang="scss">
 @import './assets/css/theme.scss';
 #app {
+  height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

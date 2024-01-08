@@ -86,10 +86,8 @@ const XUMMConnectClose = () => {
 
 async function getXRPWalletBalance(addr) {
   let xrp = await baseApi.getXRPBalance(addr)
-  console.log('xrp', xrp)
 
   let tokens = await baseApi.getXRPTokensBalance(addr)
-  console.log('tokens', tokens)
 
   let balance = new Array()
   balance[0] = { value: xrp.xrpBalance }

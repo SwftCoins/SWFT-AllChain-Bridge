@@ -16,8 +16,13 @@ export default new Vuex.Store({
     walletTRON: null,
     //存入polkadot  【0】addr是substrate格式 【1】addrSS58 是polkadot 格式，两种格式用于不同的事件请求
     chainId: null,
-    fromToken: null,
-    toToken: null,
+    fromToken:
+      JSON.parse(localStorage.getItem('localFromToken')) == '' ||
+        !JSON.parse(localStorage.getItem('localFromToken')) ||
+        null
+        ? null
+        : JSON.parse(localStorage.getItem('localFromToken')),
+    toToken: null, //JSON.parse(localStorage.getItem('localToToken'))== '' || !JSON.parse(localStorage.getItem('localToToken')) || null ? null : JSON.parse(localStorage.getItem('localToToken')),
     NFTToToken: null,
     NFTFromToken: null,
     // totoken的钱包地址
@@ -59,6 +64,9 @@ export default new Vuex.Store({
       'BSC',
       'HECO',
       'POLYGON',
+      'DIS',
+      'ETHW',
+      'Optimism',
       'OKExChain',
       'ARB',
       'AVAXC',
@@ -75,7 +83,56 @@ export default new Vuex.Store({
       'ECH',
       'CUBE',
       'GNOSIS',
+      'ETC',
+      'BRISE',
+      'KCC',
+      'DRAC',
+      'DC',
+      'FSC',
+      'FRZ',
+      'GRC30',
+      'CORE',
+      'MTR',
+      'BTTC',
+      'ZKSYNC',
+      'CFX',
+      'FVM',
+      'EOS(EVM)',
+      'PulseChain',
+      'LINEA',
+      'PEGO',
+      'opBNB',
+      'BASE',
+      'ETRC20',
+      'QITMEER',
+      'OZO',
+      'PATEX',
+      'zkEVM',
+      'SCROLL',
+      'MNT',
     ],
+    rpcObject: {}, //rpc
+    chainList: [],
+    showChainList: [],
+    supportChianArr: [],
+    bridgeTokens: [], // bridge币种列表
+    bridgeChooseToken: null, //已选择需要跨连桥的代币
+    bridgeFromTokenchain: null,
+    bridgeToTokenchain: null,
+    allSupportChianArr: [],
+    spaceIdDomain: '',
+    isFreeGas: false,
+    isUserChoose: false, // 记录是否用户点击选择币种
+    FIODomain: '', //FIO域名
+    isPlenaConnect: false, //是否Plena 连接
+    wcProjectID: '', // walletconnect projectId 需要自己申请
+    topic: '',
+    gasToToken: null,
+    gasFromToken: null,
+    balanceOptions: [],
+    inscriptionId: null,
+    walletConnect_uri: '',
+    
   },
   getters: {
     getLang: (state, getters) => {
@@ -107,6 +164,68 @@ export default new Vuex.Store({
         return e.chainId === chainId
       })
       return obj ? obj.netWork : null
+    },
+    EthereumProviderInit: (state, getters) => {
+      const objInit = {
+        projectId: state.wcProjectID,
+        showQrModal: true,
+        chains: [1],
+        optionalChains: [1, 10, 56, 100, 137, 324, 42161, 42220, 43114],
+        methods: [
+          'eth_sendTransaction',
+          'eth_signTransaction',
+          'eth_sign',
+          'personal_sign',
+          'eth_signTypedData',
+          'wallet_addEthereumChain',
+          'wallet_switchEthereumChain',
+        ],
+        optionalMethods: [
+          'eth_signTypedData',
+          'eth_signTypedData_v4',
+          'eth_sign',
+        ],
+        events: ['chainChanged', 'accountsChanged'],
+        metadata: {
+          name: 'SWFT ALLChain Bridge',
+          description:
+            'One-stop cross-chain platform: Cross-chain swap Aggregator, Cross-chain Bridge, DEX for BTC, ETH, BSC, TRON, XRPL, SOL, etc.',
+          url: 'https://defi.swft.pro/#/',
+          icons: ['https://images.swft.pro/dex/SWFT.png'],
+        },
+      }
+      return objInit
+    },
+    EthereumProviderInitImtoken: (state, getters) => {
+      const objInit = {
+        projectId: state.wcProjectID,
+        showQrModal: false,
+        chains: [1],
+        optionalChains: [1, 10, 56, 100, 137, 324, 42161, 42220, 43114],
+        methods: [
+          'eth_sendTransaction',
+          'eth_signTransaction',
+          'eth_sign',
+          'personal_sign',
+          'eth_signTypedData',
+          'wallet_addEthereumChain',
+          'wallet_switchEthereumChain',
+        ],
+        optionalMethods: [
+          'eth_signTypedData',
+          'eth_signTypedData_v4',
+          'eth_sign',
+        ],
+        events: ['chainChanged', 'accountsChanged'],
+        metadata: {
+          name: 'SWFT ALLChain Bridge',
+          description:
+            'One-stop cross-chain platform: Cross-chain swap Aggregator, Cross-chain Bridge, DEX for BTC, ETH, BSC, TRON, XRPL, SOL, etc.',
+          url: 'https://defi.swft.pro/#/',
+          icons: ['https://images.swft.pro/dex/SWFT.png'],
+        },
+      }
+      return objInit
     },
   },
   mutations: {
@@ -235,6 +354,67 @@ export default new Vuex.Store({
     setReceiveAddressNFT(state, address) {
       state.receiveAddressNFT = address
     },
+    setRpcObject(state, data) {
+      state.rpcObject = data
+    },
+    setChainList(state, list) {
+      state.chainList = list
+    },
+    setShowChainList(state, list) {
+      state.showChainList = list
+    },
+    setSupportChianArr(state, list) {
+      state.supportChianArr = list
+    },
+    setBridgeTokens(state, list) {
+      state.bridgeTokens = list
+    },
+    setBridgeChooseToken(state, val) {
+      state.bridgeChooseToken = val
+    },
+
+    setBridgeFromTokenchain(state, val) {
+      state.bridgeFromTokenchain = val
+    },
+    setBridgeToTokenchain(state, val) {
+      state.bridgeToTokenchain = val
+    },
+    setallSupportChianArr(state, list) {
+      state.allSupportChianArr = list
+    },
+    setSpaceIdDomain(state, val) {
+      state.spaceIdDomain = val
+    },
+    setIsFreeGas: (state, val) => {
+      state.isFreeGas = val
+    },
+    setIsUserChoose: (state, val) => {
+      state.isUserChoose = val
+    },
+    setFIODomain(state, val) {
+      state.FIODomain = val
+    },
+    setIsPlenaConnect(state, b) {
+      state.isPlenaConnect = b
+    },
+    setTopic(state, val) {
+      state.topic = val
+    },
+    setgasToToken(state, val) {
+      state.gasToToken = val
+    },
+    setgasFromToken(state, val) {
+      state.gasFromToken = val
+    },
+    setbalanceOptions(state, val) {
+      state.balanceOptions = val
+    },
+    setinscriptionId(state, val) {
+      state.inscriptionId = val
+    },
+    setWalletConnect_uri(state, val) {
+      state.walletConnect_uri = val
+    }
   },
   actions: {},
   modules: {},

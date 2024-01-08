@@ -17,23 +17,6 @@
               {{ $t('openXumm') }}
             </a>  
         </div>
-        <!-- <div class="buttonView" v-if="!isPC">
-          <div class="jumpBtn">
-            <a :href="jumpXumm" target="_bank">
-              {{ $t('openXumm') }}
-            </a>  
-          </div>
-          <div class="copyBtn" 
-            v-clipboard:copy="jumpXumm"
-            v-clipboard:success="onCopySuccess"
-            v-clipboard:error="onCopyError"
-            alt="">
-            {{ $t('copyXumm') }}
-          </div>
-        </div>
-        <div class="xummTips" v-if="!isPC">
-          {{ $t('xummTip') }}
-        </div> -->
       </div>
     </Dialog>
   </div>
@@ -83,14 +66,12 @@ export default {
         this.$store.commit('setQRcode',null)
       }, 
       loadHandle(){
-        console.log(666)
         this.showStatus = true
       },
       onCopySuccess(val) {
         Toast.success(this.$t('copy_success'))
       },
       onCopyError(val) {
-        // this.$message.success("复制失败");
       },
     }
 }

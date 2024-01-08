@@ -68,7 +68,6 @@ export default {
       this.slidingPoint = val
     },
     closeHandle(){
-      console.log('监听关闭',this.slidingPoint)
       if(this.slidingPoint == 0){
         this.slidingPoint = 1
       }

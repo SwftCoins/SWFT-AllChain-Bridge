@@ -110,6 +110,12 @@ export default new Vuex.Store({
       'zkEVM',
       'SCROLL',
       'MNT',
+      'Metis',
+      'Moonriver',
+      'Moonbeam',
+      'CMEMO',
+      'Manta',
+      'Blast',
     ],
     rpcObject: {}, //rpc
     chainList: [],
@@ -131,7 +137,7 @@ export default new Vuex.Store({
     gasFromToken: null,
     balanceOptions: [],
     inscriptionId: null,
-    walletConnect_uri: '',
+    walletConnect_uri: ''
     
   },
   getters: {
@@ -187,11 +193,11 @@ export default new Vuex.Store({
         ],
         events: ['chainChanged', 'accountsChanged'],
         metadata: {
-          name: 'SWFT ALLChain Bridge',
+          name: 'ALLChain Bridge',
           description:
             'One-stop cross-chain platform: Cross-chain swap Aggregator, Cross-chain Bridge, DEX for BTC, ETH, BSC, TRON, XRPL, SOL, etc.',
           url: 'https://defi.swft.pro/#/',
-          icons: ['https://images.swft.pro/dex/SWFT.png'],
+          icons: ['https://images.swft.pro/dex/bridgers1.png'],
         },
       }
       return objInit
@@ -218,11 +224,11 @@ export default new Vuex.Store({
         ],
         events: ['chainChanged', 'accountsChanged'],
         metadata: {
-          name: 'SWFT ALLChain Bridge',
+          name: 'ALLChain Bridge',
           description:
             'One-stop cross-chain platform: Cross-chain swap Aggregator, Cross-chain Bridge, DEX for BTC, ETH, BSC, TRON, XRPL, SOL, etc.',
           url: 'https://defi.swft.pro/#/',
-          icons: ['https://images.swft.pro/dex/SWFT.png'],
+          icons: ['https://images.swft.pro/dex/bridgers1.png'],
         },
       }
       return objInit

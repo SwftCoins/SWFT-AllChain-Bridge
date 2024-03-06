@@ -24,6 +24,19 @@
       <Record v-show="showTradeBox && tabActive != 'addLiquidity'" />
       <Records v-if="!showTradeBox" />
       <Order ref="order" />
+      <!-- <div
+        v-if="lang == 'zh' || lang == 'zht' || sourceFlag == 'widget-defi'"
+        class="online-service"
+        :class="sourceFlag == 'SquidGrow' ? 'themeBg' : 'defaultBg'"
+        @click="linkContact()"
+      >
+        <div class="img-service">
+          <img src="../assets/img/service.svg" alt="" />
+        </div>
+        <div class="service-text">
+          {{ $t('support') }}
+        </div>
+      </div> -->
       <!-- bot 客服 对话框 -->
       <div class="online-service" @click="openServiceDialog('icon')">
         <img src="../assets/img/service.svg" alt="" />
@@ -287,7 +300,7 @@ export default {
       }
       baseApi.queryCoinList().then((res) => {
         const arr = []
-        const list = res.data
+        let list = res.data
         list.forEach((e) => {
           if (e.mainNetwork == 'EVM') {
             e.mainNetwork = 'EOS(EVM)'
@@ -299,8 +312,19 @@ export default {
         })
 
         if (Array.isArray(res && res.data)) {
-          this.$store.commit('setCoinList', list)
-          localStorage.setItem('CoinList', JSON.stringify(list))
+          const filterList = list.filter(item => item.coinCode != 'LCT(BSC)')
+          list = filterList
+          const CMEMOList = list.filter( i => i.coinCode == 'MEMO(ERC20)' || i.coinCode == 'CMEMO(MEMO)' || i.coinCode == 'MEMO(MEMO)')
+          const otherList = list.filter( i => i.coinCode != 'MEMO(ERC20)' && i.coinCode != 'CMEMO(MEMO)' && i.coinCode != 'MEMO(MEMO)')
+          let nocoin = ''
+          otherList.forEach( m => {
+            nocoin += m.coinCode + ','
+          })
+          CMEMOList.forEach( m => {
+            m.noSupportCoin = nocoin
+          })
+          this.$store.commit('setCoinList', [...otherList,...CMEMOList])
+          localStorage.setItem('CoinList', JSON.stringify([...otherList,...CMEMOList]))
         }
       })
     },

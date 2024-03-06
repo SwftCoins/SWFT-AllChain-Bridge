@@ -2,12 +2,17 @@
 import { Loading } from "vant";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
+// const { ApiPromise, WsProvider } = require('@polkadot/api')
+// const { typesBundleForPolkadot } = require('@crustio/type-definitions')
+// import * as solanaWeb3 from '@solana/web3.js'
+// import getTerraBalanceHandle from '../../utils/getTerraBalance'
 import BtcExchangeHandle from "../../utils/getBtcBalance";
 import getEOSBalance from "../../utils/getEOSBalance";
 import { Notify, Dialog } from "vant";
 import getPolkadotBalance from "../../utils/getPolkadotBalance";
 import baseApi from "../../api/baseApi";
 import suiWalletMethods from "../../utils/suiWalletConnect";
+import PortkeyMethods from "@/utils/PortkeyMethods";
 
 export default {
   name: "item",
@@ -54,6 +59,7 @@ export default {
   },
   computed: {
     showNFTInfo() {
+      //判断状态 noOrders 无卖单 Orders 有卖单
       const asset = this.source.asset;
       let info = "";
       switch (asset.status) {
@@ -114,6 +120,7 @@ export default {
   mounted() {
     this.loading = this.balanceLoading;
     if (this.source.mainNetwork === "NFT") {
+      
     } else if (
       this.type === "from" &&
       (this.$store.state.chainId === "000" ||
@@ -247,7 +254,15 @@ export default {
         } catch {
           this.loading = false;
         }
-      }
+      } else if (
+        this.$store.state.chainId === "520520" &&
+        coin.mainNetwork == "AELF"
+      ) {
+        this.loading = true;
+        const balance = await PortkeyMethods.getBalance(coin)
+        this.source.balance = balance;
+        this.loading = false;
+        } 
     },
     getNFTOrderBalance(info) {
       return (
@@ -457,7 +472,7 @@ export default {
       height: 20px;
     }
   }
-  ::v-deep.van-loading__spinner {
+  :deep(.van-loading__spinner) {
     width: 20px;
     height: 20px;
   }

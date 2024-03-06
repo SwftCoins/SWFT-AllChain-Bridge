@@ -1,3 +1,78 @@
+<template>
+  <DialogContent ref="dialog" :width='width' @open="openEvent" @close="closeEvent">
+    <div :style="{'height':isPC?'657px':'431px','overflow-y':' hidden'}">
+      <div v-if="isDropAll" class="searchMaxM">
+        <input class="search" :placeholder="$t('searchNetwork')" v-model='searchNetwork' />
+        <svg t="1618546697328" class="search_icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1109" width="200" height="200">
+          <path d="M797.0048 857.2928l60.8-60.7744 71.9104 72.32a21.504 21.504 0 0 1-0.0512 30.336l-30.3872 30.4128a21.504 21.504 0 0 1-30.464-0.0512l-71.808-72.2432z" fill="#000000" p-id="1110"></path>
+          <path d="M506.624 76.8C269.2352 76.8 76.8 269.2352 76.8 506.624s192.4352 429.824 429.824 429.824 429.824-192.4352 429.824-429.824S744.0128 76.8 506.624 76.8z m0 85.9648c189.9008 0 343.8592 153.9584 343.8592 343.8592S696.5248 850.4832 506.624 850.4832 162.7648 696.5248 162.7648 506.624 316.7232 162.7648 506.624 162.7648z" fill="#000000" p-id="1111"></path>
+        </svg>
+      </div>
+      <div v-else class="searchMaxM">
+        <input class="search" :placeholder="$t('search')" v-model='search' />
+        <svg t="1618546697328" class="search_icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1109" width="200" height="200">
+          <path d="M797.0048 857.2928l60.8-60.7744 71.9104 72.32a21.504 21.504 0 0 1-0.0512 30.336l-30.3872 30.4128a21.504 21.504 0 0 1-30.464-0.0512l-71.808-72.2432z" fill="#000000" p-id="1110"></path>
+          <path d="M506.624 76.8C269.2352 76.8 76.8 269.2352 76.8 506.624s192.4352 429.824 429.824 429.824 429.824-192.4352 429.824-429.824S744.0128 76.8 506.624 76.8z m0 85.9648c189.9008 0 343.8592 153.9584 343.8592 343.8592S696.5248 850.4832 506.624 850.4832 162.7648 696.5248 162.7648 506.624 316.7232 162.7648 506.624 162.7648z" fill="#000000" p-id="1111"></path>
+        </svg>
+      </div>
+      <div :class="isPC?'coinFlexPC':'coinFlexM'">
+        <div id="netWork_coin" ref="netWork_coin" class="network">
+          <ul>
+            <li v-if="type === 'to'" @click='choiceNetWork()' :class="getChainIdName ? '' : 'active themeBg'">
+              <img class="networkLogo" :src="require('../../assets/img/all-coin.svg')" />
+              <div>{{$t("allCode")}}</div>
+            </li>
+            <li v-else @click="choiceNetWork()" :class="getChainIdName ? '' : 'active themeBg'">
+              <img class="networkLogo" :src="require('../../assets/img/all-coin.svg')" />
+              <div>{{this.$t("allCode")}}</div>
+            </li>
+            <template>
+              <li v-for="(item,index) in networkList_search" :key="item" :class="classNetWork(item)" @click="choiceNetWork(item,index)">
+                <img class="networkLogo" :src="'https://transfer.swft.pro/swft-v3/images/coins/bridge-' + item + '.png'" />
+                <div>
+                  {{netWorkName(item)== 'CMEMO' ? 'MEMO' : netWorkName(item)}}
+                  {{netWorkName(item) == "Ontology" ? 
+                 'EVM'
+               : 
+              ""
+              }}
+                </div>
+
+                <div v-if="item.isNew == 'Y'" class="new">
+                  <img :src="require('../../assets/img/chainnew.png')" />
+                </div>
+
+                <div v-if="item.isHot == 'Y'" class="hot">
+                  <img :src="require('../../assets/img/chainhot.png')" />
+                </div>
+
+              </li>
+            </template>
+
+          </ul>
+        </div>
+        <div class="dropAll" @click="toggleAll">
+          <div>{{$t("moreNetwork")}}</div>
+          <img v-if="isDropAll" class="networkLogo" :src="require('../../assets/img/jinru.svg')" />
+          <img v-else class="networkLogo" :src="require('../../assets/img/jinru1.svg')" />
+        </div>
+        <div class="list">
+          <div v-if="coinList.length>0" id="list_coin">
+            <item v-for="(item) in coinList" :currentCoin="currentCoin" :type="type" :balanceLoading="balanceLoading" :source="item" :key="item.contact + item.coinCode" :isSupportAdvanced="item.isSupportAdvanced" :activeNetwork="activeNetwork" />
+          </div>
+          <div v-if="search&&coinList.length==0">
+            <img :src="require('../../assets/img/noData.png')" width="206px" height="156px" style="margin: 50px auto" alt="" />
+            <div style="color:#9ea0a5">{{$t('noData')}}</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </DialogContent>
+</template>
+
+
+
 <script>
 import DialogContent from "./dialog";
 import { supportNetWork } from "../../config";
@@ -6,6 +81,7 @@ import VirtualList from "vue-virtual-scroll-list";
 import item from "./item";
 import getAllBalance from "../../utils/getAllBalance";
 import BigNumber from "bignumber.js";
+// import { web3Accounts, web3Enable } from '@polkadot/extension-dapp'
 import getTronBalance from "../../utils/getTronBalance";
 import getAPTBalance from "../../utils/getAPTBalance";
 import baseApi from "../../api/baseApi";
@@ -39,11 +115,21 @@ export default {
   data() {
     return {
       search: "",
+      searchNetwork: "",
       activeNetwork: "",
       timer: null,
       width: "330px",
+      // toShowChain:
+      //   '[BTC, ETH, BSC, HECO, OKExChain,ARB, TT, TRON, Polkadot, KSM, EOS, POLYGON,ETHF,ETHW, IOST, BNB, FTM, AVAXC,SOL,LUNA,XDC,KLAY, XRP,CRU,CELO,ORC,SGB,HPB,CRONOS,AME,ECH,CUBE,GNOSIS,ETC,KCC,BRISE]',
+      //supportStr: 'ETH,BSC,HECO,POLYGON,TRX,DOT',
+      // supportStr:
+      //   'ETH,BSC,HECO,POLYGON,ETHF,ETHW,Polkadot,OKExChain,ARB,TT,TRON, FTM,AVAXC,SOL, LUNA, BTC, XDC,KLAY, XRP,CRU,CELO,EOS,ORC,SGB,HPB,CRONOS,AME,ECH,CUBE,GNOSIS,ETC,KCC,BRISE',
       allAccountsSS58: [],
       balanceLoading: this.chainId ? true : false,
+      isDropAll: false,
+      networkList: [],
+      networkList_search: [],
+      networkList_s: [],
     };
   },
   watch: {
@@ -63,8 +149,45 @@ export default {
         }
       }
     },
+    isDropAll(val) {
+      if (val) {
+        document.getElementById("list_coin").style.display = "none";
+        document.getElementById("netWork_coin").style.height = this.isPC
+          ? "520px"
+          : "325px";
+        document.getElementById("netWork_coin").style.overflowY = "auto";
+      } else {
+        document.getElementById("list_coin").style.display = "block";
+        document.getElementById("netWork_coin").style.height = this.isPC
+          ? "102px"
+          : "82px";
+        document.getElementById("netWork_coin").style.overflowY = "";
+      }
+      let p = document.getElementById("netWork_coin");
+      this.$nextTick(() => {
+        p.scrollTop = 0;
+      });
+    },
+    searchNetwork(val) {
+      if (val) {
+        this.networkList_search = [];
+        this.networkList.forEach((e, index) => {
+          const str = e ? e.toLowerCase() : "";
+          const s = this.searchNetwork.toLowerCase();
+          if (str.indexOf(s) !== -1) {
+            this.networkList_search.push(e);
+          }
+        });
+      }
+    },
   },
   created() {
+    // 币种刷新
+    // this.getCoinList();
+    // 定时器循环获取余额
+    // setInterval(() => {
+    //   this.getBalance();
+    // }, 1000);
     this.$bus.on("chooseCoinHandle", this.choiceCoin);
   },
   beforeDestroy() {
@@ -100,6 +223,11 @@ export default {
     getChainIdName: {
       get() {
         return this.activeNetwork;
+        // if (this.type === 'from') {
+        //   return this.$store.getters.getChainIdName
+        // } else {
+        //   return this.activeNetwork
+        // }
       },
       set(val) {},
     },
@@ -116,6 +244,9 @@ export default {
       return this.$store.state.supportChianArr.toString();
     },
     tokens() {
+      // if (!this.otherCoin) {
+      //   return [];
+      // }
       const coinList = this.$store.state.coinList;
       if (!coinList) {
         return;
@@ -150,6 +281,7 @@ export default {
             ? "TRON"
             : e.mainNetwork) || e.coinCode;
 
+        // 存币列表暂时支持ETH，BSC，HECO,POLYGON,DOT,TT,ARB,FTM ,AVAXC,ORC
         let isSupport = supportNetWork.some((e) => {
           if (e.netWork === netWork) {
             return true;
@@ -181,6 +313,10 @@ export default {
                 });
               }
             });
+            // arr.push({
+            //   netWork,
+            //   list: [e],
+            // })
           }
         } else {
           obj.list.push(e);
@@ -198,7 +334,19 @@ export default {
       if (this.type === "from") {
         this.$store.commit("setCoinListChain", arr);
       }
+      this.networkList = [];
+      arr.forEach((e) => {
+        this.networkList.push(e.netWork);
+      });
+      this.networkList_search = [...this.networkList];
+      this.networkList_s = [...this.networkList];
+
       return arr;
+      // if((localStorage.getItem('sourceFlag') == 'msafedapp' || localStorage.getItem('sourceFlag') == 'msafeb') && this.type == 'from'){
+      //   return arr.filter(item => item.netWork == 'APT')
+      // }else{
+      //   return arr
+      // }
     },
     coinList() {
       const coinList = this.$store.state.coinList;
@@ -251,6 +399,7 @@ export default {
             arr.push(e);
           }
         });
+
         return arr;
       } else {
         if (this.getChainIdName === "" || this.getChainIdName === undefined) {
@@ -275,7 +424,6 @@ export default {
   },
   methods: {
     choiceCoin(item, type) {
-      console.log(JSON.stringify(item));
       if (type === "from") {
         if (this.tabActive == "swap") {
           this.$store.commit("setFromToken", item);
@@ -286,12 +434,34 @@ export default {
           this.$store.commit("setNFTFromToken", item);
         }
         this.$store.commit("setIsUserChoose", true);
+        if(this.$store.state.fromToken.coinCode == 'MEMO(ERC20)' || this.$store.state.fromToken.coinCode == 'CMEMO(MEMO)' || this.$store.state.fromToken.coinCode == 'MEMO(MEMO)'){
+          if((this.$store.state.toToken && this.$store.state.toToken.coinCode != 'CMEMO(MEMO)') && (this.$store.state.toToken && this.$store.state.toToken.coinCode != 'MEMO(ERC20)') && (this.$store.state.toToken && this.$store.state.toToken.coinCode != 'MEMO(MEMO)')){
+            this.$store.commit("setToToken", null);
+          }  
+        }
       } else {
         if (this.tabActive == "swap") {
           this.$store.commit("setToToken", item);
           localStorage.setItem("localToToken", JSON.stringify(item));
         } else if (this.tabActive == "NFT") {
           this.$store.commit("setNFTToToken", item);
+        }
+        //NFT 交易只能兑换ETH
+        // if (this.$store.state.fromToken.mainNetwork === 'NFT') {
+        //   Notify({
+        //     type: 'danger',
+        //     message: this.$t('onlyEth'),
+        //   })
+        // } else {
+        //   this.$store.commit('setToToken', item)
+        // }
+        if(this.$store.state.toToken.coinCode == 'MEMO(ERC20)' || this.$store.state.toToken.coinCode == 'CMEMO(MEMO)' || this.$store.state.toToken.coinCode == 'MEMO(MEMO)'){
+          if((this.$store.state.fromToken && this.$store.state.fromToken.coinCode != 'CMEMO(MEMO)') && (this.$store.state.fromToken && this.$store.state.fromToken.coinCode != 'MEMO(ERC20)') && (this.$store.state.fromToken && this.$store.state.fromToken.coinCode != 'MEMO(MEMO)')){
+            const self = this
+            setTimeout(() => {
+              self.$store.commit("setFromToken", null);
+            },500)
+          }  
         }
       }
       this.$refs.dialog.show = false;
@@ -369,7 +539,13 @@ export default {
           this.getChainIdName === "zkEVM" ||
           this.getChainIdName === "SCROLL" ||
           this.getChainIdName === "MNT" ||
-          this.getChainIdName === "PulseChain")
+          this.getChainIdName === "PulseChain"||
+          this.getChainIdName === "Metis"||
+          this.getChainIdName === "Moonriver"||
+          this.getChainIdName === "Manta"||
+          this.getChainIdName === "CMEMO"||
+          this.getChainIdName === "Blast"||
+          this.getChainIdName === "Moonbeam")
       ) {
         const Web3 = require("web3");
 
@@ -619,6 +795,24 @@ export default {
         });
         this.balanceLoading = false;
       }
+      // if (this.type === "from" && this.getChainIdName === "SUI") {
+      //   //判断当前连接钱包是否为SuiWallet钱包
+      //   if (
+      //     this.connectType != "SuiWallet" &&
+      //     this.connectType != "OKExWalletSui"
+      //   ) {
+      //     this.balanceLoading = false;
+      //     return;
+      //   }
+      //   this.balanceLoading = true;
+
+      //   this.coinList.forEach(async (item) => {
+      //     const balance = await suiWalletMethods.getSuiBalance(item.contact);
+      //     item.balance = (balance / 10 ** 9).toFixed(6, BigNumber.ROUND_DOWN);
+      //   });
+      //   this.balanceLoading = false;
+      //   return;
+      // }
       if (this.type === "from" && this.getChainIdName === "FIL") {
         //判断当前连接钱包是否为MathWallet钱包
         if (this.connectType != "MathWallet") {
@@ -635,19 +829,39 @@ export default {
       }
     },
     //切换网络
-    async choiceNetWork(val) {
-      if (
-        val &&
-        this.supportStr.indexOf(val.netWork) == -1 &&
-        this.type === "from"
-      ) {
+    async choiceNetWork(val, index) {
+      if (val && this.supportStr.indexOf(val) == -1 && this.type === "from") {
         Toast(this.$t("comingSoon"));
         return;
       }
-      this.activeNetwork = (val && val.netWork) || "";
+      this.activeNetwork = (val && val) || "";
       if (this.type == "from") {
         localStorage.setItem("netWork", this.activeNetwork);
       }
+      this.activeToTop(val, index);
+      this.isDropAll = false;
+    },
+    activeToTop(val, index) {
+      let newArr = [...this.networkList];
+      let element = [];
+      if (this.searchNetwork == "") {
+        element = [newArr[index]];
+      } else {
+        newArr.forEach((item, J) => {
+          if (item == val) {
+            element.push(item);
+            index = J;
+          }
+        });
+      }
+      newArr.splice(index, 1);
+      if (element !== undefined && index > 3) {
+        this.networkList_search = [...element, ...newArr];
+        newArr = [...this.networkList_search];
+      } else {
+        this.networkList_search = this.networkList;
+      }
+      this.searchNetwork = "";
     },
     //调用polkdot钱包插件
     async polkDotFuc(val) {
@@ -809,6 +1023,14 @@ export default {
         } else {
           token = list[0];
         }
+      }  else if (sourceFlag === "KITTY") {
+        this.$store.commit("setIsUserChoose", true);
+        const tokenList = list.filter((item) => item.coinCode === "KITTY(SOL)"); //
+        if (tokenList.length > 0) {
+          token = tokenList[0];
+        } else {
+          token = list[0];
+        }
       } else if (
         sourceFlag === "swftgpt-plugin" ||
         sourceFlag === "swftgpt-plugin"
@@ -913,7 +1135,13 @@ export default {
             : JSON.parse(localStorage.getItem("localToToken"));
         token = localToToken || list[0];
       }
-      this.$store.commit("setToToken", token);
+      if(this.$store.state.fromToken?.coinCode == 'CMEMO(MEMO)' || this.$store.state.fromToken?.coinCode == 'MEMO(ERC20)' || this.$store.state.fromToken?.coinCode == 'MEMO(MEMO)'){
+        if(token.coinCode == 'CMEMO(MEMO)' || token.coinCode == 'MEMO(ERC20)' || token.coinCode == 'MEMO(MEMO)'){
+          this.$store.commit("setToToken", token);
+        }
+      }else{
+        this.$store.commit("setToToken", token);
+      }   
     },
     ChainIdNameChangeHandle(val) {
       if (!this.tokens) return;
@@ -979,377 +1207,540 @@ export default {
       });
       return _network;
     },
+    toggleAll() {
+      this.isDropAll = !this.isDropAll;
+    },
+    classNetWork(item) {
+      if (this.type == "to") {
+        return this.getChainIdName === item ? "active" : "";
+      } else {
+        return this.getChainIdName === item && item !== ""
+          ? "active themeBg"
+          : this.getChainIdName !== item && this.supportStr.indexOf(item) == -1
+          ? "notSupport"
+          : "defultList";
+      }
+    },
   },
-  render() {
-    if (this.isPC) {
-      return (
-        <DialogContent
-          ref="dialog"
-          width={this.width}
-          onclose={this.closeEvent}
-          onopen={this.openEvent}
-        >
-          <div class="searchMaxPC">
-            <input
-              class="search"
-              placeholder={this.$t("search")}
-              v-model={this.search}
-            />
-            <svg
-              t="1618546697328"
-              class="search_icon"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="1109"
-              width="200"
-              height="200"
-            >
-              <path
-                d="M797.0048 857.2928l60.8-60.7744 71.9104 72.32a21.504 21.504 0 0 1-0.0512 30.336l-30.3872 30.4128a21.504 21.504 0 0 1-30.464-0.0512l-71.808-72.2432z"
-                fill="#000000"
-                p-id="1110"
-              ></path>
-              <path
-                d="M506.624 76.8C269.2352 76.8 76.8 269.2352 76.8 506.624s192.4352 429.824 429.824 429.824 429.824-192.4352 429.824-429.824S744.0128 76.8 506.624 76.8z m0 85.9648c189.9008 0 343.8592 153.9584 343.8592 343.8592S696.5248 850.4832 506.624 850.4832 162.7648 696.5248 162.7648 506.624 316.7232 162.7648 506.624 162.7648z"
-                fill="#000000"
-                p-id="1111"
-              ></path>
-            </svg>
-          </div>
-          <div class="coinFlexPC">
-            <div class="network">
-              <ul>
-                {this.type === "to" ? (
-                  <li
-                    onclick={() => {
-                      this.choiceNetWork();
-                    }}
-                    class={this.getChainIdName ? "" : "active themeBg"}
-                  >
-                    {this.$t("allCode")}
-                  </li>
-                ) : (
-                  <li
-                    onclick={() => {
-                      this.choiceNetWork();
-                    }}
-                    class={this.getChainIdName ? "" : "active themeBg"}
-                  >
-                    {this.$t("allCode")}
-                  </li>
-                )}
-                {this.tokens.length > 0
-                  ? this.tokens.map((e) => {
-                      if (this.type === "to") {
-                        return (
-                          <li
-                            class={
-                              this.getChainIdName === e.netWork
-                                ? "active themeBg"
-                                : ""
-                            }
-                            onclick={() => {
-                              this.choiceNetWork(e);
-                            }}
-                          >
-                            {this.netWorkName(e.netWork)}
-                            {this.netWorkName(e.netWork) == "Ontology" ? (
-                              <div>EVM</div>
-                            ) : (
-                              ""
-                            )}
+  // render() {
+  //   if (this.isPC) {
+  //     return (
+  //       <DialogContent
+  //         ref="dialog"
+  //         width={this.width}
+  //         onclose={this.closeEvent}
+  //         onopen={this.openEvent}
+  //       >
+  //         {this.isDropAll ? (
+  //           <div class="searchMaxM">
+  //             <input
+  //               class="search"
+  //               placeholder={this.$t("searchNetwork")}
+  //               v-model={this.searchNetwork}
+  //             />
+  //             <svg
+  //               t="1618546697328"
+  //               class="search_icon"
+  //               viewBox="0 0 1024 1024"
+  //               version="1.1"
+  //               xmlns="http://www.w3.org/2000/svg"
+  //               p-id="1109"
+  //               width="200"
+  //               height="200"
+  //             >
+  //               <path
+  //                 d="M797.0048 857.2928l60.8-60.7744 71.9104 72.32a21.504 21.504 0 0 1-0.0512 30.336l-30.3872 30.4128a21.504 21.504 0 0 1-30.464-0.0512l-71.808-72.2432z"
+  //                 fill="#000000"
+  //                 p-id="1110"
+  //               ></path>
+  //               <path
+  //                 d="M506.624 76.8C269.2352 76.8 76.8 269.2352 76.8 506.624s192.4352 429.824 429.824 429.824 429.824-192.4352 429.824-429.824S744.0128 76.8 506.624 76.8z m0 85.9648c189.9008 0 343.8592 153.9584 343.8592 343.8592S696.5248 850.4832 506.624 850.4832 162.7648 696.5248 162.7648 506.624 316.7232 162.7648 506.624 162.7648z"
+  //                 fill="#000000"
+  //                 p-id="1111"
+  //               ></path>
+  //             </svg>
+  //           </div>
+  //         ) : (
+  //           <div class="searchMaxM">
+  //             <input
+  //               class="search"
+  //               placeholder={this.$t("search")}
+  //               v-model={this.search}
+  //             />
+  //             <svg
+  //               t="1618546697328"
+  //               class="search_icon"
+  //               viewBox="0 0 1024 1024"
+  //               version="1.1"
+  //               xmlns="http://www.w3.org/2000/svg"
+  //               p-id="1109"
+  //               width="200"
+  //               height="200"
+  //             >
+  //               <path
+  //                 d="M797.0048 857.2928l60.8-60.7744 71.9104 72.32a21.504 21.504 0 0 1-0.0512 30.336l-30.3872 30.4128a21.504 21.504 0 0 1-30.464-0.0512l-71.808-72.2432z"
+  //                 fill="#000000"
+  //                 p-id="1110"
+  //               ></path>
+  //               <path
+  //                 d="M506.624 76.8C269.2352 76.8 76.8 269.2352 76.8 506.624s192.4352 429.824 429.824 429.824 429.824-192.4352 429.824-429.824S744.0128 76.8 506.624 76.8z m0 85.9648c189.9008 0 343.8592 153.9584 343.8592 343.8592S696.5248 850.4832 506.624 850.4832 162.7648 696.5248 162.7648 506.624 316.7232 162.7648 506.624 162.7648z"
+  //                 fill="#000000"
+  //                 p-id="1111"
+  //               ></path>
+  //             </svg>
+  //           </div>
+  //         )}
+  //         <div class="coinFlexPC">
+  //           <div id="netWork_coin" class="network">
+  //             <ul
+  //               style={{
+  //                 justifyContent: this.isDropAll ? "start" : "space-between",
+  //               }}
+  //             >
+  //               {this.type === "to" ? (
+  //                 <li
+  //                   onclick={() => {
+  //                     this.choiceNetWork();
+  //                   }}
+  //                   class={this.getChainIdName ? "" : "active themeBg"}
+  //                 >
+  //                   <img
+  //                     class="networkLogo"
+  //                     src={require("../../assets/img/all-coin.svg")}
+  //                   />
+  //                   <div>{this.$t("allCode")}</div>
+  //                 </li>
+  //               ) : (
+  //                 <li
+  //                   onclick={() => {
+  //                     this.choiceNetWork();
+  //                   }}
+  //                   class={this.getChainIdName ? "" : "active themeBg"}
+  //                 >
+  //                   <img
+  //                     class="networkLogo"
+  //                     src={require("../../assets/img/all-coin.svg")}
+  //                   />
+  //                   <div>{this.$t("allCode")}</div>
+  //                 </li>
+  //               )}
+  //               {this.networkList.length > 0
+  //                 ? this.networkList_search.map((e) => {
+  //                     if (this.type === "to") {
+  //                       return (
+  //                         <li
+  //                           class={this.getChainIdName === e ? "active" : ""}
+  //                           onclick={() => {
+  //                             this.choiceNetWork(e);
+  //                           }}
+  //                         >
+  //                           <img
+  //                             class="networkLogo"
+  //                             src={
+  //                               "https://transfer.swft.pro/swft-v3/images/coins/bridge-" +
+  //                               e +
+  //                               ".png"
+  //                             }
+  //                           />
+  //                           <div>
+  //                             {this.netWorkName(e)}
+  //                             {this.netWorkName(e) == "Ontology" ? (
+  //                               <div>EVM</div>
+  //                             ) : (
+  //                               ""
+  //                             )}
+  //                           </div>
+  //                           {e.isNew == "Y" ? (
+  //                             <div class="new">
+  //                               <img
+  //                                 src={require("../../assets/img/chainnew.png")}
+  //                               />
+  //                             </div>
+  //                           ) : (
+  //                             ""
+  //                           )}
+  //                           {e.isHot == "Y" ? (
+  //                             <div class="hot">
+  //                               <img
+  //                                 src={require("../../assets/img/chainhot.png")}
+  //                               />
+  //                             </div>
+  //                           ) : (
+  //                             ""
+  //                           )}
+  //                         </li>
+  //                       );
+  //                     } else {
+  //                       return (
+  //                         <li
+  //                           class={
+  //                             this.getChainIdName === e && e.chainId !== ""
+  //                               ? "active themeBg"
+  //                               : this.getChainIdName !== e &&
+  //                                 this.supportStr.indexOf(e) == -1
+  //                               ? "notSupport"
+  //                               : "defultList"
+  //                           }
+  //                           onclick={() => {
+  //                             this.choiceNetWork(e);
+  //                           }}
+  //                         >
+  //                           <img
+  //                             class="networkLogo"
+  //                             src={
+  //                               "https://transfer.swft.pro/swft-v3/images/coins/bridge-" +
+  //                               e +
+  //                               ".png"
+  //                             }
+  //                           />
+  //                           <div>
+  //                             {this.netWorkName(e)}
+  //                             {this.netWorkName(e) == "Ontology" ? (
+  //                               <div>EVM</div>
+  //                             ) : (
+  //                               ""
+  //                             )}
+  //                           </div>
+  //                           {e.isNew == "Y" ? (
+  //                             <div class="new">
+  //                               <img
+  //                                 src={require("../../assets/img/chainnew.png")}
+  //                               />
+  //                             </div>
+  //                           ) : (
+  //                             ""
+  //                           )}
+  //                           {e.isHot == "Y" ? (
+  //                             <div class="hot">
+  //                               <img
+  //                                 src={require("../../assets/img/chainhot.png")}
+  //                               />
+  //                             </div>
+  //                           ) : (
+  //                             ""
+  //                           )}
+  //                         </li>
+  //                       );
+  //                     }
+  //                   })
+  //                 : ""}
+  //             </ul>
+  //           </div>
+  //           <div
+  //             class="dropAll"
+  //             onclick={() => {
+  //               this.toggleAll();
+  //             }}
+  //           >
+  //             <div>{this.$t("moreNetwork")}</div>
+  //             {this.isDropAll ? (
+  //               <img
+  //                 class="networkLogo"
+  //                 src={require("../../assets/img/jinru.svg")}
+  //               />
+  //             ) : (
+  //               <img
+  //                 class="networkLogo"
+  //                 src={require("../../assets/img/jinru1.svg")}
+  //               />
+  //             )}
+  //           </div>
+  //           <div id="list_coin" class="list">
+  //             {this.coinList ? (
+  //               this.coinList.map((e) => {
+  //                 return (
+  //                   <item
+  //                     currentCoin={this.currentCoin}
+  //                     type={this.type}
+  //                     balanceLoading={this.balanceLoading}
+  //                     source={e}
+  //                     key={e.contact + e.coinCode}
+  //                     isSupportAdvanced={e.isSupportAdvanced}
+  //                     activeNetwork={this.activeNetwork}
+  //                   />
+  //                 );
+  //               })
+  //             ) : this.coinList && this.getChainIdName === "NFT" ? (
+  //               <virtual-list
+  //                 class="VirtualList"
+  //                 style=" height: 100%; overflow-y: auto; "
+  //                 data-key="symbol"
+  //                 data-sources={this.coinList}
+  //                 data-component={item}
+  //                 estimate-size={20}
+  //                 keeps={20}
+  //                 extra-props={{
+  //                   currentCoin: this.currentCoin,
+  //                   type: this.type,
+  //                 }}
+  //               />
+  //             ) : (
+  //               ""
+  //             )}
+  //           </div>
+  //         </div>
+  //       </DialogContent>
+  //     );
+  //   } else {
+  //     return (
+  //       <DialogContent
+  //         ref="dialog"
+  //         width={this.width}
+  //         onclose={this.closeEvent}
+  //         onopen={this.openEvent}
+  //       >
+  //         {this.isDropAll ? (
+  //           <div class="searchMaxM">
+  //             <input
+  //               class="search"
+  //               placeholder={this.$t("searchNetwork")}
+  //               v-model={this.searchNetwork}
+  //             />
+  //             <svg
+  //               t="1618546697328"
+  //               class="search_icon"
+  //               viewBox="0 0 1024 1024"
+  //               version="1.1"
+  //               xmlns="http://www.w3.org/2000/svg"
+  //               p-id="1109"
+  //               width="200"
+  //               height="200"
+  //             >
+  //               <path
+  //                 d="M797.0048 857.2928l60.8-60.7744 71.9104 72.32a21.504 21.504 0 0 1-0.0512 30.336l-30.3872 30.4128a21.504 21.504 0 0 1-30.464-0.0512l-71.808-72.2432z"
+  //                 fill="#000000"
+  //                 p-id="1110"
+  //               ></path>
+  //               <path
+  //                 d="M506.624 76.8C269.2352 76.8 76.8 269.2352 76.8 506.624s192.4352 429.824 429.824 429.824 429.824-192.4352 429.824-429.824S744.0128 76.8 506.624 76.8z m0 85.9648c189.9008 0 343.8592 153.9584 343.8592 343.8592S696.5248 850.4832 506.624 850.4832 162.7648 696.5248 162.7648 506.624 316.7232 162.7648 506.624 162.7648z"
+  //                 fill="#000000"
+  //                 p-id="1111"
+  //               ></path>
+  //             </svg>
+  //           </div>
+  //         ) : (
+  //           <div class="searchMaxM">
+  //             <input
+  //               class="search"
+  //               placeholder={this.$t("search")}
+  //               v-model={this.search}
+  //             />
+  //             <svg
+  //               t="1618546697328"
+  //               class="search_icon"
+  //               viewBox="0 0 1024 1024"
+  //               version="1.1"
+  //               xmlns="http://www.w3.org/2000/svg"
+  //               p-id="1109"
+  //               width="200"
+  //               height="200"
+  //             >
+  //               <path
+  //                 d="M797.0048 857.2928l60.8-60.7744 71.9104 72.32a21.504 21.504 0 0 1-0.0512 30.336l-30.3872 30.4128a21.504 21.504 0 0 1-30.464-0.0512l-71.808-72.2432z"
+  //                 fill="#000000"
+  //                 p-id="1110"
+  //               ></path>
+  //               <path
+  //                 d="M506.624 76.8C269.2352 76.8 76.8 269.2352 76.8 506.624s192.4352 429.824 429.824 429.824 429.824-192.4352 429.824-429.824S744.0128 76.8 506.624 76.8z m0 85.9648c189.9008 0 343.8592 153.9584 343.8592 343.8592S696.5248 850.4832 506.624 850.4832 162.7648 696.5248 162.7648 506.624 316.7232 162.7648 506.624 162.7648z"
+  //                 fill="#000000"
+  //                 p-id="1111"
+  //               ></path>
+  //             </svg>
+  //           </div>
+  //         )}
 
-                            {e.isNew == "Y" ? (
-                              <div class="new">
-                                <img
-                                  src={require("../../assets/img/chainnew.png")}
-                                />
-                              </div>
-                            ) : (
-                              ""
-                            )}
-                            {e.isHot == "Y" ? (
-                              <div class="hot">
-                                <img
-                                  src={require("../../assets/img/chainhot.png")}
-                                />
-                              </div>
-                            ) : (
-                              ""
-                            )}
-                          </li>
-                        );
-                      } else {
-                        return (
-                          <li
-                            class={
-                              this.getChainIdName === e.netWork &&
-                              e.chainId !== ""
-                                ? "active themeBg"
-                                : this.getChainIdName !== e.netWork &&
-                                  this.supportStr.indexOf(e.netWork) == -1
-                                ? "notSupport"
-                                : "defultList"
-                            }
-                            onclick={() => {
-                              this.choiceNetWork(e);
-                            }}
-                          >
-                            {this.netWorkName(e.netWork)}
-                            {this.netWorkName(e.netWork) == "Ontology" ? (
-                              <div>EVM</div>
-                            ) : (
-                              ""
-                            )}
+  //         <div class="coinFlexM">
+  //           <div id="netWork_coin" class="network">
+  //             <ul>
+  //               {this.type === "to" ? (
+  //                 <li
+  //                   onclick={() => {
+  //                     this.choiceNetWork();
+  //                   }}
+  //                   class={this.getChainIdName ? "" : "active themeBg"}
+  //                 >
+  //                   <img
+  //                     class="networkLogo"
+  //                     src={require("../../assets/img/all-coin.svg")}
+  //                   />
+  //                   <div>{this.$t("allCode")}</div>
+  //                 </li>
+  //               ) : (
+  //                 <li
+  //                   onclick={() => {
+  //                     this.choiceNetWork();
+  //                   }}
+  //                   class={this.getChainIdName ? "" : "active themeBg"}
+  //                 >
+  //                   <img
+  //                     class="networkLogo"
+  //                     src={require("../../assets/img/all-coin.svg")}
+  //                   />
+  //                   <div>{this.$t("allCode")}</div>
+  //                 </li>
+  //               )}
+  //               {this.networkList.length > 0
+  //                 ? this.networkList_search.map((e) => {
+  //                     if (this.type === "to") {
+  //                       return (
+  //                         <li
+  //                           class={
+  //                             this.getChainIdName === e ? "active themeBg" : ""
+  //                           }
+  //                           onclick={() => {
+  //                             this.choiceNetWork(e);
+  //                           }}
+  //                         >
+  //                           <img
+  //                             class="networkLogo"
+  //                             src={
+  //                               "https://transfer.swft.pro/swft-v3/images/coins/bridge-" +
+  //                               e +
+  //                               ".png"
+  //                             }
+  //                           />
+  //                           <div>
+  //                             {this.netWorkName(e)}
+  //                             {this.netWorkName(e) == "Ontology" ? (
+  //                               <div>EVM</div>
+  //                             ) : (
+  //                               ""
+  //                             )}
+  //                           </div>
+  //                           {e.isNew == "Y" ? (
+  //                             <div class="new">
+  //                               <img
+  //                                 src={require("../../assets/img/chainnew.png")}
+  //                               />
+  //                             </div>
+  //                           ) : (
+  //                             ""
+  //                           )}
+  //                           {e.isHot == "Y" ? (
+  //                             <div class="hot">
+  //                               <img
+  //                                 src={require("../../assets/img/chainhot.png")}
+  //                               />
+  //                             </div>
+  //                           ) : (
+  //                             ""
+  //                           )}
+  //                         </li>
+  //                       );
+  //                     } else {
+  //                       return (
+  //                         <li
+  //                           class={
+  //                             this.getChainIdName === e && e.chainId !== ""
+  //                               ? "active themeBg"
+  //                               : this.getChainIdName !== e &&
+  //                                 this.supportStr.indexOf(e) == -1
+  //                               ? "notSupport"
+  //                               : "defultList"
+  //                           }
+  //                           onclick={() => {
+  //                             this.choiceNetWork(e);
+  //                           }}
+  //                         >
+  //                           <img
+  //                             class="networkLogo"
+  //                             src={
+  //                               "https://transfer.swft.pro/swft-v3/images/coins/bridge-" +
+  //                               e +
+  //                               ".png"
+  //                             }
+  //                           />
+  //                           <div>
+  //                             {this.netWorkName(e)}
+  //                             {this.netWorkName(e) == "Ontology" ? (
+  //                               <div>EVM</div>
+  //                             ) : (
+  //                               ""
+  //                             )}
+  //                           </div>
 
-                            {e.isNew == "Y" ? (
-                              <div class="new">
-                                <img
-                                  src={require("../../assets/img/chainnew.png")}
-                                />
-                              </div>
-                            ) : (
-                              ""
-                            )}
-                            {e.isHot == "Y" ? (
-                              <div class="hot">
-                                <img
-                                  src={require("../../assets/img/chainhot.png")}
-                                />
-                              </div>
-                            ) : (
-                              ""
-                            )}
-                          </li>
-                        );
-                      }
-                    })
-                  : ""}
-              </ul>
-            </div>
-            <div class="line"></div>
-            <div class="list">
-              {this.coinList ? (
-                this.coinList.map((e) => {
-                  return (
-                    <item
-                      currentCoin={this.currentCoin}
-                      type={this.type}
-                      balanceLoading={this.balanceLoading}
-                      source={e}
-                      key={e.contact + e.coinCode}
-                      isSupportAdvanced={e.isSupportAdvanced}
-                      activeNetwork={this.activeNetwork}
-                    />
-                  );
-                })
-              ) : this.coinList && this.getChainIdName === "NFT" ? (
-                <virtual-list
-                  class="VirtualList"
-                  style=" height: 100%; overflow-y: auto; "
-                  data-key="symbol"
-                  data-sources={this.coinList}
-                  data-component={item}
-                  estimate-size={20}
-                  keeps={20}
-                  extra-props={{
-                    currentCoin: this.currentCoin,
-                    type: this.type,
-                  }}
-                />
-              ) : (
-                ""
-              )}
-            </div>
-          </div>
-        </DialogContent>
-      );
-    } else {
-      return (
-        <DialogContent
-          ref="dialog"
-          width={this.width}
-          onclose={this.closeEvent}
-          onopen={this.openEvent}
-        >
-          <div class="searchMaxM">
-            <input
-              class="search"
-              placeholder={this.$t("search")}
-              v-model={this.search}
-            />
-            <svg
-              t="1618546697328"
-              class="search_icon"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="1109"
-              width="200"
-              height="200"
-            >
-              <path
-                d="M797.0048 857.2928l60.8-60.7744 71.9104 72.32a21.504 21.504 0 0 1-0.0512 30.336l-30.3872 30.4128a21.504 21.504 0 0 1-30.464-0.0512l-71.808-72.2432z"
-                fill="#000000"
-                p-id="1110"
-              ></path>
-              <path
-                d="M506.624 76.8C269.2352 76.8 76.8 269.2352 76.8 506.624s192.4352 429.824 429.824 429.824 429.824-192.4352 429.824-429.824S744.0128 76.8 506.624 76.8z m0 85.9648c189.9008 0 343.8592 153.9584 343.8592 343.8592S696.5248 850.4832 506.624 850.4832 162.7648 696.5248 162.7648 506.624 316.7232 162.7648 506.624 162.7648z"
-                fill="#000000"
-                p-id="1111"
-              ></path>
-            </svg>
-          </div>
-          <div class="coinFlexM">
-            <div class="network">
-              <ul>
-                {this.type === "to" ? (
-                  <li
-                    onclick={() => {
-                      this.choiceNetWork();
-                    }}
-                    class={this.getChainIdName ? "" : "active themeBg"}
-                  >
-                    {this.$t("allCode")}
-                  </li>
-                ) : (
-                  <li
-                    onclick={() => {
-                      this.choiceNetWork();
-                    }}
-                    class={this.getChainIdName ? "" : "active themeBg"}
-                  >
-                    {this.$t("allCode")}
-                  </li>
-                )}
-                {this.tokens.length > 0
-                  ? this.tokens.map((e) => {
-                      if (this.type === "to") {
-                        return (
-                          <li
-                            class={
-                              this.getChainIdName === e.netWork
-                                ? "active themeBg"
-                                : ""
-                            }
-                            onclick={() => {
-                              this.choiceNetWork(e);
-                            }}
-                          >
-                            {this.netWorkName(e.netWork)}
-                            {this.netWorkName(e.netWork) == "Ontology" ? (
-                              <div>EVM</div>
-                            ) : (
-                              ""
-                            )}
-                            {e.isNew == "Y" ? (
-                              <div class="new">
-                                <img
-                                  src={require("../../assets/img/chainnew.png")}
-                                />
-                              </div>
-                            ) : (
-                              ""
-                            )}
-                            {e.isHot == "Y" ? (
-                              <div class="hot">
-                                <img
-                                  src={require("../../assets/img/chainhot.png")}
-                                />
-                              </div>
-                            ) : (
-                              ""
-                            )}
-                          </li>
-                        );
-                      } else {
-                        return (
-                          <li
-                            class={
-                              this.getChainIdName === e.netWork &&
-                              e.chainId !== ""
-                                ? "active themeBg"
-                                : this.getChainIdName !== e.netWork &&
-                                  this.supportStr.indexOf(e.netWork) == -1
-                                ? "notSupport"
-                                : "defultList"
-                            }
-                            onclick={() => {
-                              this.choiceNetWork(e);
-                            }}
-                          >
-                            {this.netWorkName(e.netWork)}
-                            {this.netWorkName(e.netWork) == "Ontology" ? (
-                              <div>EVM</div>
-                            ) : (
-                              ""
-                            )}
-
-                            {e.isNew == "Y" ? (
-                              <div class="new">
-                                <img
-                                  src={require("../../assets/img/chainnew.png")}
-                                />
-                              </div>
-                            ) : (
-                              ""
-                            )}
-                            {e.isHot == "Y" ? (
-                              <div class="hot">
-                                <img
-                                  src={require("../../assets/img/chainhot.png")}
-                                />
-                              </div>
-                            ) : (
-                              ""
-                            )}
-                          </li>
-                        );
-                      }
-                    })
-                  : ""}
-              </ul>
-            </div>
-            <div class="line"></div>
-            <div class="list">
-              {this.coinList ? (
-                this.coinList.map((e) => {
-                  return (
-                    <item
-                      currentCoin={this.currentCoin}
-                      type={this.type}
-                      balanceLoading={this.balanceLoading}
-                      source={e}
-                      key={e.contact + e.coinCode}
-                      isSupportAdvanced={e.isSupportAdvanced}
-                      activeNetwork={this.activeNetwork}
-                    />
-                  );
-                })
-              ) : this.coinList ? (
-                <virtual-list
-                  class="VirtualList"
-                  style=" height: 100%; overflow-y: auto; "
-                  data-key="symbol"
-                  data-sources={this.coinList}
-                  data-component={item}
-                  estimate-size={20}
-                  keeps={20}
-                  extra-props={{
-                    currentCoin: this.currentCoin,
-                    type: this.type,
-                  }}
-                />
-              ) : (
-                ""
-              )}
-            </div>
-          </div>
-        </DialogContent>
-      );
-    }
-  },
+  //                           {e.isNew == "Y" ? (
+  //                             <div class="new">
+  //                               <img
+  //                                 src={require("../../assets/img/chainnew.png")}
+  //                               />
+  //                             </div>
+  //                           ) : (
+  //                             ""
+  //                           )}
+  //                           {e.isHot == "Y" ? (
+  //                             <div class="hot">
+  //                               <img
+  //                                 src={require("../../assets/img/chainhot.png")}
+  //                               />
+  //                             </div>
+  //                           ) : (
+  //                             ""
+  //                           )}
+  //                         </li>
+  //                       );
+  //                     }
+  //                   })
+  //                 : ""}
+  //             </ul>
+  //           </div>
+  //           <div
+  //             class="dropAll"
+  //             onclick={() => {
+  //               this.toggleAll();
+  //             }}
+  //           >
+  //             <div>{this.$t("moreNetwork")}</div>
+  //             {this.isDropAll ? (
+  //               <img
+  //                 class="networkLogo"
+  //                 src={require("../../assets/img/jinru1.svg")}
+  //               />
+  //             ) : (
+  //               <img
+  //                 class="networkLogo"
+  //                 src={require("../../assets/img/jinru.svg")}
+  //               />
+  //             )}
+  //           </div>
+  //           <div id="list_coin" class="list">
+  //             {this.coinList ? (
+  //               this.coinList.map((e) => {
+  //                 return (
+  //                   <item
+  //                     currentCoin={this.currentCoin}
+  //                     type={this.type}
+  //                     balanceLoading={this.balanceLoading}
+  //                     source={e}
+  //                     key={e.contact + e.coinCode}
+  //                     isSupportAdvanced={e.isSupportAdvanced}
+  //                     activeNetwork={this.activeNetwork}
+  //                   />
+  //                 );
+  //               })
+  //             ) : this.coinList ? (
+  //               <virtual-list
+  //                 class="VirtualList"
+  //                 style=" height: 100%; overflow-y: auto; "
+  //                 data-key="symbol"
+  //                 data-sources={this.coinList}
+  //                 data-component={item}
+  //                 estimate-size={20}
+  //                 keeps={20}
+  //                 extra-props={{
+  //                   currentCoin: this.currentCoin,
+  //                   type: this.type,
+  //                 }}
+  //               />
+  //             ) : (
+  //               ""
+  //             )}
+  //           </div>
+  //         </div>
+  //       </DialogContent>
+  //     );
+  //   }
+  // },
 };
 </script>
 <style lang="scss" scoped>
@@ -1360,34 +1751,10 @@ p {
   margin: 0;
 }
 
-.searchMaxPC {
-  position: relative;
-  .search {
-    box-sizing: border-box;
-    // border: 1px solid rgba(187, 187, 187, 100);
-    width: 100%;
-    position: relative;
-    padding-left: 48px;
-    border-radius: 10px;
-    font-size: 16px;
-    height: 48px;
-    background: #f9fafb;
-    border-radius: 22px;
-    // box-shadow: 0 0 3px 0 #eee;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    font-family: Poppins-Medium, Poppins;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    outline: none;
-  }
-  .search_icon {
-    position: absolute;
-    top: 10px;
-    left: 15px;
-    width: 25px;
-    height: 25px;
-    color: #000000;
-  }
+input::placeholder {
+  color: #c5d0de;
 }
+
 .searchMaxM {
   position: relative;
   .search {
@@ -1395,55 +1762,88 @@ p {
     // border: 1px solid rgba(187, 187, 187, 100);
     width: 100%;
     position: relative;
-    padding-left: 38px;
-    border-radius: 10px;
+    padding-left: 0.88rem;
+    border-radius: 0.59rem;
     font-size: 16px;
-    height: 38px;
+    height: 1.1rem;
     background: #f9fafb;
-    border-radius: 22px;
+    color: #000;
     // box-shadow: 0 0 3px 0 #eee;
     border: 1px solid rgba(0, 0, 0, 0.06);
-    font-family: Poppins-Medium, Poppins;
+    font-family: Poppins-Regular, Poppins;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     outline: none;
+    font-size: 18px;
   }
   .search_icon {
     position: absolute;
-    top: 10px;
+    top: 0.32rem;
     left: 15px;
-    width: 15px;
-    height: 15px;
-    color: #000000;
+    width: 0.46rem;
+    height: 0.46rem;
+    color: #000;
   }
 }
 .coinFlexPC {
   width: 100%;
-  height: 432px;
+  height: auto;
   margin-top: 22px;
-  display: flex;
-  justify-content: flex-start;
+  // margin-left: 0.18rem;
+  // margin-right: 0.18rem;
+  // display: flex;
+  // justify-content: flex-start;
   .network {
-    overflow-y: auto;
+    overflow: hidden;
     white-space: nowrap;
-    width: 120px;
-    height: calc(100%);
+    width: 100%;
+    height: 102px;
+    transition: height 0.5s;
+    -webkit-transition: height 0.5s;
+    &::-webkit-scrollbar {
+      width: 1px;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 20px;
+      // -webkit-box-shadow: inset 0 0 1px;
+      background: #f9fafb;
+    }
+    &::-webkit-scrollbar-track {
+      // -webkit-box-shadow: inset 0 0 1px #f9fafb;
+      border-radius: 0;
+      background: #fff;
+    }
     ul {
+      display: flex;
+      flex-wrap: wrap;
+
       li {
-        width: 76px;
-        padding: 4px 12px;
+        width: 86px;
+        height: 100px;
+        // padding: 12px 4px;
+        font-size: 12px;
         line-height: 18px;
-        border-radius: 4px;
-        margin-bottom: 19px;
-        background: #f1f3f5;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        margin-right: 4.5px;
+        background: #f9fafb;
         color: #9ea0a5;
-        font-weight: bold;
         cursor: pointer;
         font-size: 0.25rem;
         white-space: normal;
         position: relative;
+        border: 1px solid #f9fafb;
+        font-size: 14px;
+        font-family: Poppins-Regular, Poppins;
+        .networkLogo {
+          width: 40px;
+          height: 40px;
+          margin-top: 12px;
+          margin-bottom: 10px;
+          border-radius: 20px;
+        }
         .new {
           position: absolute;
-          top: -10px;
+          top: 0;
           right: -5px;
           width: 30px;
           img {
@@ -1452,7 +1852,7 @@ p {
         }
         .hot {
           position: absolute;
-          top: -10px;
+          top: 0;
           right: -5px;
           width: 30px;
           img {
@@ -1460,13 +1860,15 @@ p {
           }
         }
         &.active {
-          color: #fff;
+          background: rgba(39, 127, 250, 0.05) !important;
+          border: 1px solid #277ffa;
         }
         &.defultList {
           color: #9ea0a5;
         }
         &.notSupport {
-          color: #b8bfcf;
+          // color: #b8bfcf;
+          opacity: 0.5;
         }
       }
     }
@@ -1477,11 +1879,37 @@ p {
     background-color: #f9fafb;
     margin-right: 20px;
   }
+  .dropAll {
+    width: 100%;
+    height: 40px;
+    background: #f9fafb;
+    border-radius: 8px 8px 8px 8px;
+    opacity: 1;
+    text-align: center;
+    line-height: 40px;
+    margin-top: 15px;
+    color: #8f98ae;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    font-family: Poppins-Regular, Poppins;
+    img {
+      margin-left: 5px;
+      width: 10px;
+      height: 15px;
+    }
+  }
   .list {
-    width: 300px;
-    height: 452px;
+    width: 100%;
+    height: 415px;
     overflow: hidden;
     overflow-y: auto;
+    margin-top: 15px;
+    // margin-left: 0.18rem;
+    // margin-right: 0.18rem;
     ul {
       li {
         display: flex;
@@ -1540,30 +1968,46 @@ p {
   width: 100%;
   height: 350px;
   margin-top: 15px;
-  display: flex;
-  justify-content: flex-start;
+  // display: flex;
+  // justify-content: flex-start;
   font-size: 12px;
   .network {
-    overflow-y: auto;
+    overflow: hidden;
     white-space: nowrap;
-    width: 82px;
-    height: calc(100%);
+    width: 100%;
+    height: 82px;
+    transition: height 0.5s;
+    -webkit-transition: height 0.5s;
     ul {
+      display: flex;
+      flex-wrap: wrap;
       li {
-        width: 80px;
-        padding: 4px 0;
+        width: calc(19% - 2px);
+        height: 80px;
+        // padding: 4px 0;
+        font-size: 12px;
         line-height: 18px;
-        border-radius: 4px;
-        margin-bottom: 15px;
-        background: #f1f3f5;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        margin-right: 1%;
+        background: #f9fafb;
         color: #9ea0a5;
-        font-weight: bold;
         cursor: pointer;
         white-space: nowrap;
         position: relative;
+        border: 1px solid #f9fafb;
+        font-family: Poppins-Regular, Poppins;
+        font-weight: 400;
+        .networkLogo {
+          width: 20px;
+          height: 20px;
+          margin-top: 12px;
+          margin-bottom: 10px;
+          border-radius: 20px;
+        }
         .new {
           position: absolute;
-          top: -10px;
+          top: 0;
           right: -2px;
           width: 30px;
           img {
@@ -1572,7 +2016,7 @@ p {
         }
         .hot {
           position: absolute;
-          top: -10px;
+          top: 0;
           right: -2px;
           width: 30px;
           img {
@@ -1580,10 +2024,12 @@ p {
           }
         }
         &.active {
-          color: #fff;
+          background: rgba(39, 127, 250, 0.05) !important;
+          border: 1px solid #277ffa;
         }
         &.notSupport {
-          color: #b8bfcf;
+          // color: #b8bfcf;
+          opacity: 0.5;
         }
       }
     }
@@ -1594,9 +2040,31 @@ p {
     background-color: #f9fafb;
     margin: 0 5px;
   }
+  .dropAll {
+    width: 100%;
+    height: 30px;
+    background: #f9fafb;
+    border-radius: 8px 8px 8px 8px;
+    opacity: 1;
+    text-align: center;
+    line-height: 30px;
+    margin-top: 10px;
+    color: #8f98ae;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    img {
+      margin-left: 5px;
+      width: 10px;
+      height: 15px;
+    }
+  }
   .list {
-    width: 200px;
-    height: 100%;
+    width: 100%;
+    height: 225px;
     overflow: hidden;
     overflow-y: auto;
     ul {

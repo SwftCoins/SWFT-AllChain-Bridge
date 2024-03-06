@@ -8,11 +8,13 @@
     </div>
     <div class="link-tab" v-if="isPC">
       <div class="tab-list">
-        <router-link to="/">{{ $t('tabSwap') }}</router-link>
+        <router-link :class="$route.name == 'Home' ? 'router-link-active-link' : ''" to="/">{{ $t('tabSwap') }}</router-link>
       </div>
       <div class="tab-list">
-
-        <router-link to="/staking">{{ $t('staking') }}</router-link>
+        <router-link :class="$route.name == 'staking' ? 'router-link-active-link' : ''" to="/staking">{{ $t('staking') }}</router-link>
+      </div>
+      <div class="tab-list">
+        <a @click="openSDEX">SDEX</a>
       </div>
     </div>
     <div class="app-header-right">
@@ -138,6 +140,9 @@
             <li>
               <router-link to="/staking">{{ $t('staking') }}</router-link>
             </li>
+            <li>
+              <a @click="openSDEX">SDEX</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -229,6 +234,9 @@ export default {
     },
   },
   methods: {
+    openSDEX(){
+      window.open('https://sdex.swft.pro/#/swap')
+    },
     changeLink() {
       this.showLinkList = !this.showLinkList;
     },
@@ -334,7 +342,15 @@ export default {
         this.$store.getters.getChainIdName === "zkEVM" ||
         this.$store.getters.getChainIdName === "SCROLL" ||
         this.$store.getters.getChainIdName === "MNT" ||
-        this.$store.getters.getChainIdName === "BASE"
+        this.$store.getters.getChainIdName === "BASE" ||
+        this.$store.getters.getChainIdName === "Metis" ||
+        this.$store.getters.getChainIdName === "Moonriver" ||
+        this.$store.getters.getChainIdName === "Manta" ||
+        this.$store.getters.getChainIdName === "AELF" ||
+        this.$store.getters.getChainIdName === "CMEMO" ||
+        this.$store.getters.getChainIdName === "Blast" ||
+        this.$store.getters.getChainIdName === "Moonbeam"
+        
       ) {
         window.open(data.blockExplorerUrls + "/address/" + this.walletAddress);
       } else if (
@@ -397,14 +413,14 @@ export default {
     }
   }
   .logo {
-    width: 68px;
+    width: 100px;
     height: 80px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     cursor: pointer;
     img {
-      width: 68px;
+      width: 100px;
     }
   }
   .app-header-right {
@@ -571,7 +587,8 @@ export default {
     margin-left: 50px;
     a {
       color: #c3dbfe;
-      &.router-link-exact-active {
+      cursor: pointer;
+      &.router-link-active-link {
         color: #ffffff;
         position: relative;
         &::after {

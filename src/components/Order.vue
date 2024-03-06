@@ -523,6 +523,13 @@
                   }}</span
                 >
               </a>
+              <img
+                    src="../assets/img/copy.png"
+                    v-clipboard:copy="data.depositTxid"
+                    v-clipboard:success="onCopySuccess"
+                    v-clipboard:error="onCopyError"
+                    alt=""
+                  />
             </div>
           </div>
           <div class="rate">
@@ -535,6 +542,13 @@
               >
                 {{ data.transactionId ? cutAddress(data.transactionId) : '--' }}
               </a>
+              <img
+                    src="../assets/img/copy.png"
+                    v-clipboard:copy="data.transactionId"
+                    v-clipboard:success="onCopySuccess"
+                    v-clipboard:error="onCopyError"
+                    alt=""
+                  />
             </div>
             <div
               class="right"
@@ -557,6 +571,13 @@
                     : '--'
                 }}
               </a>
+              <img
+                    src="../assets/img/copy.png"
+                    v-clipboard:copy="data.refundDepositTxid"
+                    v-clipboard:success="onCopySuccess"
+                    v-clipboard:error="onCopyError"
+                    alt=""
+                  />
             </div>
             <div
               class="right"
@@ -591,6 +612,13 @@
                     : '--'
                 }}
               </a>
+              <img
+                    src="../assets/img/copy.png"
+                    v-clipboard:copy="data.refundDepositTxid"
+                    v-clipboard:success="onCopySuccess"
+                    v-clipboard:error="onCopyError"
+                    alt=""
+                  />
             </div>
             <div
               class="right"

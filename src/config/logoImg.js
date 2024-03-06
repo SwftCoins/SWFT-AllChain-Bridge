@@ -55,9 +55,12 @@ import PEPEM from '../assets/img/logo/PEPEM.png'
 import burndex from '../assets/img/logo/BURN.png'
 import DYP from '../assets/img/logo/DYP.png'
 import VIRAL from '../assets/img/logo/VIRAL.jpg'
+import KITTY from '../assets/img/logo/KITTY.jpg'
+import ARIX from '../assets/img/logo/ARIX.png'
+import DCE from '../assets/img/logo/DCE.png'
 const logoImg = {
   widget: {
-    logo: widgetLogo,
+    logo: bridgers,
   },
   BabyBNB: {
     logo: babyBnbLogo,
@@ -227,5 +230,14 @@ const logoImg = {
   VIRAL: {
     logo: VIRAL,
   },
+  KITTY: {
+    logo: KITTY,
+  },
+  ARIX: {
+    logo: ARIX,
+  },
+  DCE: {
+    logo: DCE,
+  }
 }
 export default logoImg

@@ -165,8 +165,9 @@ export default {
 
 <style scoped lang="scss">
 .headermax{
+  margin-top: 18px;
   // display: grid;
-  ::v-deep.van-swipe__indicators {
+  :deep(.van-swipe__indicators) {
     bottom: 2px !important;
   }
 }

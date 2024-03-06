@@ -284,6 +284,12 @@ export default {
           mainNetwork = window.patex.ethereum;
         }  else if (this.connectType === "EchoooWallet") {
           mainNetwork = window.echoooEth;
+        }else if(this.connectType === "JoyIDWallet"){
+          const fee = await joyIdMethids.getMaxFees()
+          max = this.$store.state.balance - fee
+          max = max > 0 ? Number(max).toFixed(6, BigNumber.ROUND_DOWN) : 0;
+          this.$store.commit("setFromNumber", max);
+          return
         } else {
           mainNetwork = ethereum;
         }
@@ -440,7 +446,12 @@ export default {
         this.$store.state.chainId === "1333"
       ) {
         max = max = Number(this.$store.state.balance) - 0.15;
-      } else {
+      } else if (
+        this.$store.state.fromToken.coinCode === "AELF" &&
+        this.$store.state.chainId === "520520"
+      ) {
+        max = Number(this.$store.state.balance) - 0.004;
+      }  else {
         max = this.$store.state.balance;
       }
       max = max > 0 ? Number(max).toFixed(6, BigNumber.ROUND_DOWN) : 0;
@@ -462,7 +473,7 @@ export default {
     }
     .token-box {
       margin-left: 0.25rem;
-      ::v-deep.el-button {
+      :deep(.el-button) {
         width: 3rem;
         height: 0.88rem;
         background: #f7f8fa;
@@ -525,7 +536,7 @@ export default {
         padding: 0 0.2rem;
       }
       .chain-box {
-        ::v-deep.el-button {
+        :deep(.el-button) {
           width: 2.8rem;
           height: 0.5555rem;
           background: #f7f8fa;

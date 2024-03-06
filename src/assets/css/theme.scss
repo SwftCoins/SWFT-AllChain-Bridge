@@ -108,7 +108,12 @@ $DYP: #312f69;
 $DYPDeep: #221352;
 $VIRAL: #AE40EB;
 $VIRALDeep: #8A23C2;
-
+$KITTY: #221352;
+$KITTYDeep: #4a4ca0;
+$ARIX: #3C296D;
+$ARIXDeep: #DD4195;
+$DCE: #020203;
+$DCEDeep: #a2a2a3;
 .themeBg {
   background: $default !important;
 }
@@ -1040,4 +1045,57 @@ $VIRALDeep: #8A23C2;
       border-radius: 20px;
     }
   }
+}
+
+.KITTY {
+  .themeBg {
+    background: $KITTY !important;
+  }
+
+  .themeDeep {
+    background: $KITTYDeep !important;
+  }
+
+  .logo {
+    img {
+      width: 40px !important;
+      margin-top: 11px;
+      border-radius: 20px;
+    }
+  }
+}
+
+.ARIX {
+  .themeBg {
+    background: $ARIX !important;
+  }
+  .themeDeep {
+    background: $ARIXDeep !important;
+  }
+  .logo {
+    img {
+      width: 40px !important;
+      margin-top: 11px;
+      border-radius: 20px;
+    }
+  }
+  
+}
+
+.DCE {
+  .themeBg {
+    background: $DCE !important;
+  }
+  .themeDeep {
+    background: $DCEDeep !important;
+  }
+  .logo {
+    img {
+      width: 70px !important;
+      margin-top: 11px;
+      border-radius: 20px;
+    }
+  }
+
+  
 }

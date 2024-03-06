@@ -356,5 +356,24 @@ export default {
   time: '시간',
   '1055': '잠긴 금액이 요구 사항을 충족하지 않습니다.',
   '50023': '최소 인출 수익 미달 시 인출 불가능합니다.',
-  
+  moreNetwork: '더 많은 네트워크',
+  searchNetwork: '검색 네트워크',
+  interceptAddress: '주소:',
+  highrisk: '고위험',
+  theaddress: '해당 주소',
+  riskscore: '위험 점수',
+  riskscoreHigh: '너무 높아서 SWAP 기능을 사용할 수 없습니다!',
+  Anyquestions: '"질문 있나요',
+
+  automaticrenewal: '자동 갱신',
+  automaticrenewalTips: '자동 갱신 주기를 선택한 후 제품이 만료되면 자동으로 갱신됩니다. 만료까지 남은 기간이 14일 이상인 경우 언제든지 자동 갱신 기능을 취소할 수 있습니다.',
+  autoTime: '{num}일 동안 자동 갱신이 활성화됨',
+  autoClose: '자동 갱신 해제',
+  selectSetItem: '조작할 옵션을 선택하십시오',
+  upDateSuccess: '업데이트 성공',
+  '50024': '기간이 14일 미만이므로 갱신할 수 없습니다',
+  '50025': '갱신 실패',
+  daysTips:'{num} 일',
+  Confirm: '확인',
+
 }

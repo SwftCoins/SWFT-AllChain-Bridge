@@ -11,12 +11,17 @@ import axios from 'axios'
 import 'lib-flexible'
 import './assets/css/index.scss'
 import 'element-ui/lib/theme-chalk/index.css'
-import { Tooltip, Select, Button, Popover } from 'element-ui'
+import { Tooltip, Select, Button, Popover, Message } from 'element-ui'
 import vueBus from 'vue-bus'
 import './utils/getWindowSourceFlag'
 import './assets/font/iconfont.js'
 import './utils/getBtcBalance.js'
-
+import { initConfig } from "@joyid/evm"
+initConfig({
+  name: "JoyID",
+  logo: "https://fav.farm/🆔",
+  joyidAppURL: "https://app.joy.id",
+})
 Vue.use(vueBus)
 Vue.use(Tooltip)
 Vue.use(Select)
@@ -54,6 +59,8 @@ let isPC = window.matchMedia('(min-width: 500px)').matches
 Vue.prototype.isPC = isPC
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
+Vue.prototype.$message = Message;
+
 Vue.prototype.$formatNumber = function formatNumber(num) {
   if(!num){
     return 0

@@ -1,11 +1,17 @@
 <template>
   <div>
-    <Dialog :width="isPC ? '500px' : '90%'" ref="dialogConfirm" v-if="fromToken && toToken" @close="closeOrderDialog" @open="openOrderDilog">
+    <Dialog
+      :width="isPC ? '500px' : '90%'"
+      ref="dialogConfirm"
+      v-if="fromToken && toToken"
+      @close="closeOrderDialog"
+      @open="openOrderDilog"
+    >
       <div class="centerDiv">
         <div class="free-gas" v-if="info && info.dex == 'SWFT' && isFreeGas">
           <div class="free-text">
             <img class="sd" src="../assets/img/sd1.svg" alt="" />
-            <span> {{ $t('usenogas') }}</span>
+            <span> {{ $t("usenogas") }}</span>
           </div>
           <div class="free-icon" @click.stop="windowOpen">></div>
         </div>
@@ -15,15 +21,24 @@
         <div :class="isPC ? 'pc' : ''" class="content">
           <div class="valDiv">
             <div class="top">
-              <img :src="`https://transfer.swft.pro/swft-v3/images/coins/${fromToken.coinCode}.png`" />
+              <img
+                :src="`https://transfer.swft.pro/swft-v3/images/coins/${fromToken.coinCode}.png`"
+              />
               <div class="info">
                 <div class="tip">
-                  <span class="span12">{{ $t('transferOut') }}</span>
-                  <span class="span16"> {{ fromNumber }} </span><span class="span14">{{ fromToken.coinCodeShow }}</span>
+                  <span class="span12">{{ $t("transferOut") }}</span>
+                  <span class="span16"> {{ fromNumber }} </span
+                  ><span class="span14">{{ fromToken.coinCodeShow }}</span>
                 </div>
                 <div class="addr">
-                  <span class="addrCut">{{ cutAddress('from') }}</span>
-                  <img src="../assets/img/copy.png" v-clipboard:copy="addrCopy('from')" v-clipboard:success="onCopySuccess" v-clipboard:error="onCopyError" alt="" />
+                  <span class="addrCut">{{ cutAddress("from") }}</span>
+                  <img
+                    src="../assets/img/copy.png"
+                    v-clipboard:copy="addrCopy('from')"
+                    v-clipboard:success="onCopySuccess"
+                    v-clipboard:error="onCopyError"
+                    alt=""
+                  />
                 </div>
               </div>
             </div>
@@ -31,40 +46,60 @@
               <div class="line"></div>
             </div>
             <div class="bottom">
-              <img :src="`https://transfer.swft.pro/swft-v3/images/coins/${toToken.coinCode}.png`" />
+              <img
+                :src="`https://transfer.swft.pro/swft-v3/images/coins/${toToken.coinCode}.png`"
+              />
               <div class="info">
                 <div class="tip">
-                  <span class="span12">{{ $t('expectedText') }}</span><span class="span16"> {{ toNumber - 0 }} </span><span class="span14">{{ toToken.coinCodeShow }}</span>
+                  <span class="span12">{{ $t("expectedText") }}</span
+                  ><span class="span16"> {{ toNumber - 0 }} </span
+                  ><span class="span14">{{ toToken.coinCodeShow }}</span>
                 </div>
                 <div class="addr">
-                  <span class="addrCut" v-if="spaceIdDomain != ''">{{ spaceIdDomain }} ({{ cutAddress('to') }})</span>
-                  <span class="addrCut" v-if="FIODomain != ''">{{ FIODomain }} ({{ cutAddress('to') }})</span>
-                  <span class="addrCut" v-else>{{ cutAddress('to') }}</span>
-                  <img src="../assets/img/copy.png" v-clipboard:copy="$store.state.address" v-clipboard:success="onCopySuccess" v-clipboard:error="onCopyError" alt="" />
+                  <span class="addrCut" v-if="spaceIdDomain != ''"
+                    >{{ spaceIdDomain }} ({{ cutAddress("to") }})</span
+                  >
+                  <span class="addrCut" v-if="FIODomain != ''"
+                    >{{ FIODomain }} ({{ cutAddress("to") }})</span
+                  >
+                  <span class="addrCut" v-else>{{ cutAddress("to") }}</span>
+                  <img
+                    src="../assets/img/copy.png"
+                    v-clipboard:copy="$store.state.address"
+                    v-clipboard:success="onCopySuccess"
+                    v-clipboard:error="onCopyError"
+                    alt=""
+                  />
                 </div>
               </div>
             </div>
           </div>
           <div class="divider"></div>
-          <div class="rate" v-if="sourceFlag != 'HN' && sourceFlag != 'burndex'">
-            <div class="left">{{ $t('bridge') }}</div>
+          <div
+            class="rate"
+            v-if="sourceFlag != 'HN' && sourceFlag != 'burndex'"
+          >
+            <div class="left">{{ $t("bridge") }}</div>
             <div class="right" v-if="info">
               <div class="bridge">
-                <img :src="
+                <img
+                  :src="
                     twFlag == 'miningtw' &&
                     (info.dex == 'bridgers1' || info.dex == 'SWFT')
                       ? 'https://images.swft.pro/dex/miningTW.png'
                       : info.logoUrl
-                  " alt="" />&nbsp;<span>
+                  "
+                  alt=""
+                />&nbsp;<span>
                   {{
-                    twFlag != 'miningtw'
-                      ? info.dex == 'bridgers1'
-                        ? 'Bridgers'
+                    twFlag != "miningtw"
+                      ? info.dex == "bridgers1"
+                        ? "Bridgers"
                         : info.dex
-                      : info.dex == 'bridgers1'
-                      ? 'MiningTW Bridge'
-                      : info.dex == 'SWFT'
-                      ? 'MiningTW'
+                      : info.dex == "bridgers1"
+                      ? "MiningTW Bridge"
+                      : info.dex == "SWFT"
+                      ? "MiningTW"
                       : info.dex
                   }}
                 </span>
@@ -72,7 +107,7 @@
             </div>
           </div>
           <div class="rate">
-            <div class="left">{{ $t('rate') }}</div>
+            <div class="left">{{ $t("rate") }}</div>
             <div class="right" v-if="info">
               1 {{ fromToken.coinCodeShow }} ≈
               {{ Number(info.instantRate).toFixed(8) - 0 }}
@@ -84,84 +119,114 @@
             <div class="left">
               {{
                 info &&
-                info.dex !== 'SWFT' &&
-                info.dex !== 'bridgers1' &&
-                info.dex !== 'Aggregator' &&
-                info.dex !== 'bridgers2'
-                  ? $t('pathfee')
-                  : $t('fee')
+                info.dex !== "SWFT" &&
+                info.dex !== "bridgers1" &&
+                info.dex !== "Aggregator" &&
+                info.dex !== "bridgers2"
+                  ? $t("pathfee")
+                  : $t("fee")
               }}
-              <img @mouseover="tipOpen" @click="tipOpen" src="../assets/img/tip.png" id="tips" />
-              <Popover v-model="showPopover" theme="dark" trigger="click" placement="bottom-start" :offset="[-10, 8]" :get-container="getContainer">
+              <img
+                @mouseover="tipOpen"
+                @click="tipOpen"
+                src="../assets/img/tip.png"
+                id="tips"
+              />
+              <Popover
+                v-model="showPopover"
+                theme="dark"
+                trigger="click"
+                placement="bottom-start"
+                :offset="[-10, 8]"
+                :get-container="getContainer"
+              >
                 <div class="tip-content" v-if="info && info.dex === 'SWFT'">
-                  {{ $t('feeTip') }}
+                  {{ $t("feeTip") }}
                 </div>
-                <div class="tip-content" v-if="
+                <div
+                  class="tip-content"
+                  v-if="
                     info &&
                     info.dex === 'bridgers1' &&
                     info.dex === 'bridgers2' &&
                     info.dex === 'Aggregator'
-                  ">
-                  {{ $t('sSwapfeeTip') }}
+                  "
+                >
+                  {{ $t("sSwapfeeTip") }}
                 </div>
-                <div class="tip-content" v-if="
+                <div
+                  class="tip-content"
+                  v-if="
                     info &&
                     info.dex !== 'SWFT' &&
                     info.dex !== 'bridgers1' &&
                     info.dex !== 'Aggregator' &&
                     info.dex !== 'bridgers2'
-                  ">
-                  {{ $t('pathfeeTip') }}
+                  "
+                >
+                  {{ $t("pathfeeTip") }}
                 </div>
               </Popover>
             </div>
             <div class="right">
               <span v-if="info">
-                <span v-if="
+                <span
+                  v-if="
                     info.dex === 'SWFT' ||
                     info.dex === 'bridgers1' ||
                     info.dex === 'Aggregator' ||
                     info.dex === 'bridgers2'
-                  " :class="info && info.isDiscount === 'Y' ? 'fee-span' : ''">{{ info ? getFeeRate(info.depositCoinFeeRate) : '' }} %</span>
-                <span v-if="
+                  "
+                  :class="info && info.isDiscount === 'Y' ? 'fee-span' : ''"
+                  >{{ info ? getFeeRate(info.depositCoinFeeRate) : "" }} %</span
+                >
+                <span
+                  v-if="
                     info.dex === 'bridgers1' ||
                     info.dex === 'bridgers2' ||
                     info.dex === 'Aggregator'
-                  "></span>
+                  "
+                ></span>
                 <span v-else>
                   {{
-                    sourceFlag === 'kfi'
-                      ? ''
+                    sourceFlag === "kfi"
+                      ? ""
                       : sendGas
-                      ? (info.dex === 'SWFT' ? ' + ' : '') +
+                      ? (info.dex === "SWFT" ? " + " : "") +
                         sendGas[0] +
-                        ' ' +
+                        " " +
                         sendGas[1]
-                      : ''
+                      : ""
                   }}
                 </span>
               </span>
             </div>
           </div>
-          <div class="rate" v-if="info && info.dex === 'SWFT' && info.burnRate != 0">
-            <div class="left">{{ $t('burnRate') }}</div>
+          <div
+            class="rate"
+            v-if="info && info.dex === 'SWFT' && info.burnRate != 0"
+          >
+            <div class="left">{{ $t("burnRate") }}</div>
             <div class="right">
-              {{ info.burnRate * 100 + '% ' + toToken.coinCode }}
+              {{ info.burnRate * 100 + "% " + toToken.coinCode }}
             </div>
           </div>
-          <div class="rate" v-if="
+          <div
+            class="rate"
+            v-if="
               info &&
               info.dex === 'bridgers1' &&
               info.dex === 'bridgers2' &&
               info.dex === 'Aggregator'
-            ">
-            <div class="left">{{ $t('relayerGasfee') }}</div>
+            "
+          >
+            <div class="left">{{ $t("relayerGasfee") }}</div>
             <div class="right" v-if="info">
-              {{ sendGas[0] + ' ' + sendGas[1] }}
+              {{ sendGas[0] + " " + sendGas[1] }}
             </div>
           </div>
           <div class="received">
-            <div class="left">{{ $t('expected') }}</div>
+            <div class="left">{{ $t("expected") }}</div>
             <div class="right" v-if="info">
               <!-- <template v-if="info.dex === 'SWFT'">
                 {{
@@ -176,29 +241,38 @@
               {{ toToken.coinCodeShow }}
             </div>
           </div>
-          <div class="rate" v-if="
+          <div
+            class="rate"
+            v-if="
               info &&
               (info.dex === 'bridgers1' ||
                 info.dex === 'bridgers2' ||
                 info.dex === 'Aggregator')
-            ">
+            "
+          >
             <div class="left">
-              <span class="title"> {{ $t('estimatedTime') }}</span>
+              <span class="title"> {{ $t("estimatedTime") }}</span>
             </div>
             <div class="right" v-if="info">
               <span>
                 {{
                   info.estimatedTime == 1
-                    ? $t('estimatedTime1')
+                    ? $t("estimatedTime1")
                     : info.estimatedTime == 2
-                    ? $t('estimatedTime2')
-                    : $t('estimatedTime3')
+                    ? $t("estimatedTime2")
+                    : $t("estimatedTime3")
                 }}
               </span>
             </div>
           </div>
           <div class="buttonDiv">
-            <Button class="themeBg" @click="exchange" :loading="submitStatus" :loading-text="$t('confirm')">{{ $t('confirm') }}</Button>
+            <Button
+              class="themeBg"
+              @click="exchange"
+              :loading="submitStatus"
+              :loading-text="$t('confirm')"
+              >{{ $t("confirm") }}</Button
+            >
             <!-- <button @click="exchange" :disabled="submitStatus">{{ $t("confirm") }}</button> -->
           </div>
         </div>
@@ -209,6 +283,7 @@
     </Dialog>
     <xummDialog ref="qrcode" />
     <Approve ref="approve" @approve="approve" />
+    <InterceptDialog ref="InterceptDialog" :interceptData="interceptData" />
   </div>
 </template>
 <script>
@@ -217,6 +292,7 @@ const Dialog = () => import("./common/dialog");
 
 //import Approve from './Approve'
 const Approve = () => import("./Approve");
+const InterceptDialog = () => import("../components/InterceptDialog");
 
 import baseApi from "../api/baseApi";
 import { ethers } from "ethers";
@@ -252,6 +328,9 @@ import suiOKXWalletMethods from "../utils/suiOKXWalletConnect";
 import { EthereumProvider } from "@walletconnect/ethereum-provider";
 import { getSigningClient, COMPASS_WALLET } from "@sei-js/core";
 import { calculateFee, GasPrice } from "@cosmjs/stargate";
+import joyIdMethids from "../utils/joyID/swapMethods";
+import PortkeyMethods from "@/utils/PortkeyMethods";
+
 import {
   IconService,
   IcxTransactionBuilder,
@@ -268,6 +347,7 @@ export default {
     Popover,
     Approve,
     xummDialog,
+    InterceptDialog,
   },
   props: {
     sendGas: { type: Array, default: null },
@@ -283,12 +363,28 @@ export default {
       transactionReceiptTimer: null, // 轮训请求哈希结果的计时器
       twFlag: localStorage.getItem("twFlag"),
       utmSource: localStorage.getItem("utm_source"),
+      interceptData: null,
     };
   },
   created() {
     //Notify({ type: 'success', message: '通知内容' });
   },
   computed: {
+    walletAddress() {
+      if (this.$store.state.chainId == "000") {
+        return this.$store.state.walletPolkadot.addrSS58;
+      }
+      if (this.$store.state.chainId == "222") {
+        return this.$store.state.walletPolkadot.addrSS58CRU;
+      }
+      if (this.$store.state.chainId == "333") {
+        return this.$store.state.walletPolkadot.addrSS58DBC;
+      } else if (this.$store.state.chainId == "0") {
+        return this.$store.state.walletTRON;
+      } else {
+        return this.$store.state.wallet.address;
+      }
+    },
     inscriptionId() {
       return this.$store.state.inscriptionId;
     },
@@ -439,8 +535,7 @@ export default {
     onCopySuccess(val) {
       Toast.success(this.$t("copy_success"));
     },
-    onCopyError(val) {
-    },
+    onCopyError(val) {},
     show() {
       this.$refs.dialogConfirm.show = true;
     },
@@ -448,7 +543,60 @@ export default {
     getFeeRate(val) {
       return new BigNumber(val).multipliedBy(100);
     },
-    exchange() {
+    async exchange() {
+      this.submitStatus = true;
+      const checkFromAddress = this.walletAddress;
+      const checkToAddress = this.$store.state.address;
+      //同链同地址，请求一次
+      if (
+        this.fromToken.mainNetwork == this.toToken.mainNetwork &&
+        checkFromAddress == checkToAddress
+      ) {
+        const balckListCheck = await baseApi.queryBlackList({
+          content: checkFromAddress, // this.$store.state.address
+          coinCode: this.fromToken.coinCode,
+        });
+        if (
+          balckListCheck.resCode == "800" &&
+          balckListCheck.data.score == "0"
+        ) {
+          this.interceptData = {
+            address: checkFromAddress,
+            mainNetwork: this.fromToken.mainNetwork,
+          };
+          this.$refs.InterceptDialog.$refs.dialog.show = true;
+          return;
+        }
+      } else {
+        const balckListCheck1 = await baseApi.queryBlackList({
+          content: checkFromAddress, // this.$store.state.address
+          coinCode: this.fromToken.coinCode,
+        });
+        const balckListCheck2 = await baseApi.queryBlackList({
+          content: checkToAddress, // this.$store.state.address
+          coinCode: this.toToken.coinCode,
+        });
+        if (
+          (balckListCheck1.resCode == "800" &&
+            balckListCheck1.data.score == "0") ||
+          (balckListCheck2.resCode == "800" &&
+            balckListCheck2.data.score == "0")
+        ) {
+          if (balckListCheck1.data.score == "0") {
+            this.interceptData = {
+              address: checkFromAddress,
+              mainNetwork: this.fromToken.mainNetwork,
+            };
+          } else {
+            this.interceptData = {
+              address: checkToAddress,
+              mainNetwork: this.toToken.mainNetwork,
+            };
+          }
+          this.$refs.InterceptDialog.$refs.dialog.show = true;
+          return;
+        }
+      }
       //兑换 非 SWFT平台拦截
       if (this.info.dex !== "SWFT") {
         this.submitStatus = true;
@@ -534,7 +682,7 @@ export default {
                 mainNetwork = window.bitkeep.ethereum;
               } else if (this.connectType === "FoxWallet") {
                 mainNetwork = window.foxwallet.ethereum;
-              }  else if (this.connectType === "EchoooWallet") {
+              } else if (this.connectType === "EchoooWallet") {
                 mainNetwork = window.echoooEth;
               } else {
                 if (
@@ -682,7 +830,13 @@ export default {
             //EchoooWallet 兑换
             if (this.connectType === "EchoooWallet") {
               // this.OpenBlockExchange(platformAddr, fromNumber, res);
-              this.EchoooWalletExchange(platformAddr, fromNumber, res)
+              this.EchoooWalletExchange(platformAddr, fromNumber, res);
+              return;
+            }
+            //JoyIDWallet 兑换
+            if (this.connectType === "JoyIDWallet") {
+              // this.OpenBlockExchange(platformAddr, fromNumber, res);
+              this.JoyIDExchange(platformAddr, fromNumber, res);
               return;
             }
             //ONTOWallet 兑换
@@ -809,6 +963,12 @@ export default {
             ) {
               this.HAVAHExchangeHandle(platformAddr, fromNumber, res);
             }
+            // PortKey 兑换
+            if (
+              this.connectType === "Portkey"
+            ) {
+              this.PortkeyExchange(platformAddr, fromNumber, res);
+            }
           } else {
             this.submitStatus = false;
             if (res.resCode == "50016") {
@@ -855,6 +1015,29 @@ export default {
     closeWebSocket() {
       if (webSocket) {
         webSocket.close();
+      }
+    },
+    async PortkeyExchange(platformAddr, fromNumber, res){
+      const fromToken = this.fromToken;
+      const result = await PortkeyMethods.sendELFToken(platformAddr, fromNumber, fromToken)
+      if(result){
+        const data = {
+          from: this.$store.state.wallet.address,
+          hash: result.transactionId,
+        };
+        this.submitStatus = false;
+        this.$refs.dialogConfirm.show = false;
+        this.closeOrderDialog();
+        this.modifyTxId(data, res.data.orderId, res);
+      }else{
+        this.submitStatus = false;
+        this.$refs.dialogConfirm.show = false;
+        this.closeOrderDialog();
+        Notify({
+          message: this.$t("rejectExchange"),
+          color: "#ad0000",
+          background: "#ffe1e1",
+        });
       }
     },
     async EOSExchangeHandle(res, fromNumber) {
@@ -1221,9 +1404,17 @@ export default {
     async SuiWalletExchange(platformAddr, fromNumber, res, connectType) {
       let hash;
       if (connectType == "OKExWalletSui") {
-        hash = await suiOKXWalletMethods.transfer(platformAddr, fromNumber,this.fromToken);
+        hash = await suiOKXWalletMethods.transfer(
+          platformAddr,
+          fromNumber,
+          this.fromToken
+        );
       } else {
-        hash = await suiWalletMethods.transfer(platformAddr, fromNumber,this.fromToken);
+        hash = await suiWalletMethods.transfer(
+          platformAddr,
+          fromNumber,
+          this.fromToken
+        );
       }
       if (hash) {
         const params = {
@@ -1383,6 +1574,54 @@ export default {
             background: "#ffe1e1",
           });
         });
+    },
+    //JoyIDExchange 发币
+    async JoyIDExchange(platformAddr, fromNumber, res) {
+      let params = null;
+      const fromToken = this.fromToken;
+      if (fromToken.contact === "") {
+        //主币
+        params = {
+          to: platformAddr,
+          from: this.$store.state.wallet.address,
+          value: `0x${new BigNumber(fromNumber)
+            .multipliedBy(new BigNumber(10 ** fromToken.coinDecimal))
+            .toString(16)}`,
+        };
+      } else {
+        // 代币
+        params = {
+          to: fromToken.contact,
+          from: this.$store.state.wallet.address,
+          value: "0",
+          data: joyIdMethids.buildERC20Data(
+            platformAddr,
+            `0x${new BigNumber(fromNumber)
+              .multipliedBy(new BigNumber(10 ** fromToken.coinDecimal))
+              .toString(16)}`
+          ),
+        };
+      }
+      const result = await joyIdMethids.send(params);
+      if (result) {
+        const Obj = {
+          from: this.$store.state.wallet.address,
+          hash: result.hash,
+        };
+        this.submitStatus = false;
+        this.$refs.dialogConfirm.show = false;
+        this.closeOrderDialog();
+        this.modifyTxId(Obj, res.data.orderId, res);
+      } else {
+        this.submitStatus = false;
+        this.$refs.dialogConfirm.show = false;
+        this.closeOrderDialog();
+        Notify({
+          message: this.$t("rejectExchange"),
+          color: "#ad0000",
+          background: "#ffe1e1",
+        });
+      }
     },
     //ONTO发币
     async ONTOExchange(platformAddr, fromNumber, res) {
@@ -2741,6 +2980,10 @@ export default {
       this.$store.commit("setSwapConfirm", true);
     },
     async approve() {
+      const approveNumber =
+        "0x" +
+        (this.fromNumber * 10 ** this.fromToken.coinDecimal).toString(16);
+
       this.pathBridgeExchangeStatus = false;
       if (this.info.dex === "ClassZZ") {
         approveActions(
@@ -2762,6 +3005,23 @@ export default {
             this.submitLoading = false;
             this.$AlertError(this.$t("rejected"));
           });
+      } else if (this.connectType == "JoyIDWallet") {
+        let self = this;
+        const result = await joyIdMethids.approve(this.txData.data.txData.to);
+        if (result) {
+          self.transactionReceiptTimer = setInterval(() => {
+            self.getTransactionReceipt(result);
+          }, 2000);
+        } else {
+          Notify({
+            message: self.$t("rejected"),
+            color: "#ad0000",
+            background: "#ffe1e1",
+          });
+          self.$refs.approve.loading = false;
+          self.submitStatus = false;
+        }
+        return;
       } else if (
         this.connectType === "TronLink" ||
         (this.connectType == "imToken" && window.tronWeb) ||
@@ -2778,7 +3038,7 @@ export default {
           contract = await tronWeb.contract().at(this.fromToken.contact);
         }
         contract
-          .approve(resData.data.txData.to, ethers.constants.MaxUint256)
+          .approve(resData.data.txData.to, approveNumber)
           .send()
           .then((hash) => {
             tronWeb.trx.getTransaction(hash).then((result) => {
@@ -2814,7 +3074,7 @@ export default {
           provider = new ethers.providers.Web3Provider(okexchain, "any");
         } else if (this.connectType === "OpenBlock") {
           provider = new ethers.providers.Web3Provider(window.openblock, "any");
-        }  else if (this.connectType === "EchoooWallet") {
+        } else if (this.connectType === "EchoooWallet") {
           provider = new ethers.providers.Web3Provider(window.echoooEth, "any");
         } else if (this.connectType === "Nabox") {
           provider = new ethers.providers.Web3Provider(NaboxWallet, "any");
@@ -2897,7 +3157,7 @@ export default {
             from: this.$store.state.wallet.address,
             to: this.fromToken.contact,
             data: ethErc20Contract.methods
-              .approve(resData.data.txData.to, amount)
+              .approve(resData.data.txData.to, approveNumber)
               .encodeABI(),
           };
           // 使用 Provider 发送交易
@@ -2928,88 +3188,64 @@ export default {
               self.$refs.approve.loading = false;
               self.submitStatus = false;
             });
-
-          // const data = await ethErc20Contract.methods
-          //   .approve(resData.data.txData.to, ethers.constants.MaxUint256)
-          //   .encodeABI()
-
-          // let transactionParameters = {
-          //   to: this.fromToken.contact, // Required except during contract publications.
-          //   from: this.$store.state.wallet.address, // must match user's active address.
-          //   data: data,
-          //   value: '0',
-          //   //gasPrice: 5000000000, // 6 gwei
-          //   //gas: new BigNumber(1000000), // 1000000
-          // }
-          // signer
-          //   .sendTransaction(transactionParameters)
-          //   .then((res) => {
-          //     const self = this
-          //     self.transactionReceiptTimer = setInterval(() => {
-          //       self.getTransactionReceipt(res)
-          //     }, 2000)
-          //     // let filter =  contract.allowance(this.$store.state.wallet.address, resData.data.txData.to)
-          //     // contract.on(filter, (from, to, amount, event) => {
-          //     //   if (!this.pathBridgeExchangeStatus) {
-          //     //     this.submitStatus = false
-          //     //     this.$refs.approve.loading = false
-          //     //     this.$refs.approve.$refs.dialog.show = false
-          //     //     //pathBridgeMethods.exchange(resData)
-          //     //     this.pathBridgeExchangeStatus = true
-          //     //   }
-          //     // })
-          //   })
-          //   .catch((error) => {
-          //     Notify({
-          //       message: this.$t('rejected'),
-          //       color: '#ad0000',
-          //       background: '#ffe1e1',
-          //     })
-          //     this.$refs.approve.loading = false
-          //     this.submitStatus = false
-          //   })
           return;
         }
-        contract.estimateGas
-          .approve(resData.data.txData.to, ethers.constants.MaxUint256, {
+        const module = await import("web3");
+          const Web3 = module.default;
+          const web3 = new Web3(provider);
+          const ethErc20Contract = new web3.eth.Contract(
+            ETH_erc20,
+            this.fromToken.contact
+          );
+          // 构造授权交易对象
+          const approveTx = {
             from: this.$store.state.wallet.address,
-          })
-          .then((res) => {
-            const a = contract
-              .connect(signer)
-              .approve(resData.data.txData.to, ethers.constants.MaxUint256, {
-                from: this.$store.state.wallet.address,
-              })
-              .then((data) => {
-                let self = this;
-                self.transactionReceiptTimer = setInterval(() => {
-                  self.getTransactionReceipt(data.hash);
-                }, 2000);
-              })
-              .catch((error) => {
-                Notify({
+            to: this.fromToken.contact,
+            data: ethErc20Contract.methods
+              .approve(resData.data.txData.to, approveNumber)
+              .encodeABI(),
+            gasLimit: '80000'
+          };
+          signer.sendTransaction(approveTx).then((data) => {
+            let self = this;
+            self.transactionReceiptTimer = setInterval(() => {
+              self.getTransactionReceipt(data.hash);
+            }, 2000);
+          }).catch((error) => {
+            Notify({
                   message: this.$t("rejected"),
                   color: "#ad0000",
                   background: "#ffe1e1",
                 });
                 this.$refs.approve.loading = false;
                 this.submitStatus = false;
-              });
-            // let filter = contract.filters.Approval(
-            //   this.$store.state.wallet.address,
-            //   resData.data.txData.to,
-            //   null,
-            // )
-            // contract.on(filter, (from, to, amount, event) => {
-            //   if (!this.pathBridgeExchangeStatus) {
-            //     this.submitStatus = false
-            //     this.$refs.approve.loading = false
-            //     this.$refs.approve.$refs.dialog.show = false
-            //     //pathBridgeMethods.exchange(resData)
-            //     this.pathBridgeExchangeStatus = true
-            //   }
-            // })
-          });
+          })
+        // contract.estimateGas
+        //   .approve(resData.data.txData.to, approveNumber, {
+        //     from: this.$store.state.wallet.address,
+        //   })
+        //   .then((res) => {
+        //     const a = contract
+        //       .connect(signer)
+        //       .approve(resData.data.txData.to, approveNumber, {
+        //         from: this.$store.state.wallet.address,
+        //       })
+        //       .then((data) => {
+        //         let self = this;
+        //         self.transactionReceiptTimer = setInterval(() => {
+        //           self.getTransactionReceipt(data.hash);
+        //         }, 2000);
+        //       })
+        //       .catch((error) => {
+        //         Notify({
+        //           message: this.$t("rejected"),
+        //           color: "#ad0000",
+        //           background: "#ffe1e1",
+        //         });
+        //         this.$refs.approve.loading = false;
+        //         this.submitStatus = false;
+        //       });
+        //   });
       }
     },
     async getTransactionReceipt(hash) {

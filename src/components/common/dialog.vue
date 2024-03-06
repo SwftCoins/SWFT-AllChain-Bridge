@@ -33,9 +33,11 @@ export default {
   },
   methods: {
     closeDialog(e) {
+      const className = e.target.className.toString()
+
       if (
-        e.target.className === 'dialog-box' ||
-        e.target.className.indexOf('close-dialog') !== -1
+        className === 'dialog-box' ||
+        className.indexOf('close-dialog') !== -1
       ) {
         this.show = false
         this.$emit('close')

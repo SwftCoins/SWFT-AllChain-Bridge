@@ -91,6 +91,13 @@
                     : item.dex
                 }}
               </div>
+              <!-- <div
+                class="item item3"
+                v-if="item.diff == 'BEST'"
+                :class="index === 0 ? 'best' : 'err'"
+              >
+                {{ $t('recommended') }}
+              </div> -->
               <div class="item item3" v-if="!isFreeGas">
                 <div
                   v-if="item.diff.indexOf('BEST') > -1"
@@ -368,7 +375,7 @@ export default {
   .select-box {
     // margin-left: 0.25rem;
     font-size: 0.2rem;
-    ::v-deep.el-button {
+    :deep(.el-button) {
       // width: 3rem;
       height: 0.64rem;
       border-radius: 0.32rem;

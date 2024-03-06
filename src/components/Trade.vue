@@ -49,17 +49,12 @@ const HNAddLiquidity = () => import("./HNAddLiquidity");
 const BridgeTrade = () => import("./BridgeTrade");
 const GasTrade = () => import("./GasTrade");
 const noServe = () => import("./noServe");
-// const Info = () => import("./Info")
 const Preference = () => import("./Preference");
 
 // 组件
 import TradeBox from "../components/TradeBox";
-// import SwapConfirm from './SwapConfirm'
-// import ReceivingAddress from './ReceivingAddress'
-// import HNAddLiquidity from './HNAddLiquidity'
-// import noServe from './noServe'
+
 import Info from "./Info";
-// import Preference from './Preference'
 // 插件
 import { Notify, Dialog } from "vant";
 import { ethers } from "ethers";
@@ -89,6 +84,7 @@ import suiWalletMethods from "../utils/suiWalletConnect";
 import getFILBalance from "../utils/getFILBalance";
 import seiWalletConnect from "../utils/seiWalletConnect";
 import havahWalletConnect from "../utils/havahWalletConnect";
+import PortkeyMethods from "@/utils/PortkeyMethods";
 
 let tp = null;
 let isTP = false;
@@ -661,7 +657,13 @@ export default {
         }
         return;
       }
-
+      // ELF获取余额
+      if (coin.mainNetwork === "AELF") {
+        if (this.connectType != "Portkey") return;
+        const balance = await PortkeyMethods.getBalance(coin)
+        this.setBalance(coin, balance);
+        return;
+      }
       //HVH获取余额
       if (coin.mainNetwork === "HVH") {
         if (this.connectType != "HAVAH") return;
@@ -720,7 +722,13 @@ export default {
         coin.mainNetwork === "zkEVM" ||
         coin.mainNetwork === "SCROLL" ||
         coin.mainNetwork === "MNT" ||
-        coin.mainNetwork === "BASE"
+        coin.mainNetwork === "BASE" ||
+        coin.mainNetwork === "Metis" ||
+        coin.mainNetwork === "Moonriver" ||
+        coin.mainNetwork === "Manta" ||
+        coin.mainNetwork === "CMEMO" ||
+        coin.mainNetwork === "Blast" ||
+        coin.mainNetwork === "Moonbeam"
       ) {
         if (
           this.connectType == "LeafWallet" ||
@@ -770,6 +778,7 @@ export default {
         (this.$store.state.chainId == "1200" && coin.mainNetwork == "FIL") ||
         (this.$store.state.chainId == "1333" && coin.mainNetwork == "SEI") ||
         (this.$store.state.chainId == "6000" && coin.mainNetwork == "HVH") ||
+        (this.$store.state.chainId == "520520" && coin.mainNetwork == "AELF") ||
         (this.$store.state.chainId == "1994" && coin.mainNetwork == "BRC20")
       ) {
         const list = this.$store.state.coinList;
@@ -853,7 +862,7 @@ export default {
       const activeNetwork = supportNetWork.filter(
         (item) => item.netWork == mainNetWorrk
       )[0];
-      if (activeNetwork.chainId != this.chainId) {
+      if (activeNetwork.chainId != this.chainId && this.connectType != "JoyIDWallet") {
         return await this.chechNetwork(val);
       }
       // 余额判断

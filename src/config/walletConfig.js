@@ -141,16 +141,16 @@ const walletList = [
     address: '',
     type: 'SOL',
   },
-  {
-    name: 'TerraStation',
-    address: '',
-    type: 'LUNA',
-  },
-  {
-    name: 'LiqualityWallet',
-    address: '',
-    type: 'BTC',
-  },
+  // {
+  //   name: 'TerraStation',
+  //   address: '',
+  //   type: 'LUNA',
+  // },
+  // {
+  //   name: 'LiqualityWallet',
+  //   address: '',
+  //   type: 'BTC',
+  // },
   {
     name: 'TrustWallet',
     address: '',
@@ -290,6 +290,27 @@ const walletList = [
     bridgersWallet: true,
     type: 'EVM',
   },
+  {
+    name: 'JoyIDWallet',
+    address: '',
+    isEVM: true,
+    bridgersWallet: true,
+    type: 'EVM',
+  },
+  {
+    name: 'Portkey',
+    address: '',
+    isEVM: false,
+    bridgersWallet: false,
+    type: 'AELF',
+  },
+  // {
+  //   name: 'PlenaWallet',
+  //   address: '',
+  //   isEVM: true,
+  //   bridgersWallet: true,
+  //   type: 'EVM',
+  // },
 
 ]
 export default walletList

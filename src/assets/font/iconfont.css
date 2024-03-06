@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2590469 */
-  src: url('iconfont.woff2?t=1701829549675') format('woff2'),
-       url('iconfont.woff?t=1701829549675') format('woff'),
-       url('iconfont.ttf?t=1701829549675') format('truetype');
+  src: url('iconfont.woff2?t=1707095613857') format('woff2'),
+       url('iconfont.woff?t=1707095613857') format('woff'),
+       url('iconfont.ttf?t=1707095613857') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,18 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-Portkey:before {
+  content: "\e62a";
+}
+
+.icon-Plena:before {
+  content: "\e629";
+}
+
+.icon-JoyIDWallet:before {
+  content: "\e628";
 }
 
 .icon-FoxWallet:before {

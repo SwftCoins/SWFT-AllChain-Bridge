@@ -2,6 +2,36 @@
   <div>
     <div v-if="fromToken && toToken && tabActive != 'NFT'" class="infoCont">
       <div class="info" v-if="sourceFlag != 'HN' && sourceFlag != 'burndex'">
+        <!-- <div class="info-rate">
+          <span class="title">{{ $t('bridge') }}</span>
+          <span class="cont" v-if="info">
+            <div class="bridge bg" @click="showPriceList">
+              <img
+                :src="
+                  twFlag == 'miningtw' &&
+                  (info.dex == 'bridgers1' || info.dex == 'SWFT')
+                    ? 'https://images.swft.pro/dex/miningTW.png'
+                    : info.logoUrl
+                "
+                alt=""
+              />&nbsp;<span>
+                {{
+                  twFlag != 'miningtw'
+                    ? info.dex == 'bridgers1'
+                      ? 'Bridgers'
+                      : info.dex
+                    : info.dex == 'bridgers1'
+                    ? 'MiningTW Bridge'
+                    : info.dex == 'SWFT'
+                    ? 'MiningTW'
+                    : info.dex
+                }}
+                >
+              </span>
+            </div>
+          </span>
+          <span v-else>-</span>
+        </div> -->
         <div class="info-rate">
           <span class="title">{{ $t('selectExchangePath') }}</span>
           <div class="morePriceText" @click="showPriceList">
@@ -319,6 +349,7 @@ export default {
       AggregatorChain: ["ETH", "BSC", "HECO", "POLYGON", "OKExChain", "FTM"], // Aggregator支持的链
       twFlag: localStorage.getItem("twFlag"),
       pathType: 0,
+      timeoutID: null,
     };
   },
   computed: {
@@ -458,7 +489,15 @@ export default {
     },
     fromNumber(val) {
       this.$store.commit("setToNumber", "");
-      this.initHandle();
+      // 如果存在之前的定时器，则先清除
+      if (this.timeoutID) {
+        clearTimeout(this.timeoutID);
+      }
+      // 设置新的定时器
+      this.timeoutID = setTimeout(() => {
+        this.initHandle()
+      }, 200)
+      // this.initHandle();
     },
     info(data) {
       //监听渠道变化
@@ -838,7 +877,7 @@ export default {
           return errorCode(res.resCode, this);
         }
 
-        if (res.data.instantRate == "0") {
+        if (res.data.instantRateOriginal == "0") {
           Toast({
             message: this.$t("support_Advanced"),
             position: "top",

@@ -53,6 +53,9 @@
                 <path d="M374.7328 431.9744l129.8944 172.16a9.1392 9.1392 0 0 0 14.6688 0l129.9456-172.16c4.8128-6.4 0.512-15.7952-7.296-15.7952h-259.84c-7.7824 0-12.1856 9.3952-7.3728 15.7952z" fill="#2c2c2c" p-id="1193"></path>
               </svg>
             </el-button>
+            <!-- <DropdownMenu slot="dropdown">
+                            <DropdownItem v-for="(item,index) in bridgeFromNetList" :key="index" :command="item">{{item.mainNetwork}}</DropdownItem>
+                        </DropdownMenu> -->
           </div>
         </div>
       </div>
@@ -426,6 +429,13 @@ export default {
             this.walletAddress,
             this.bridgeFromTokenchain.contact
           );
+          // const account = await window.solana.connect()
+          // const tokenPublic = new solanaWeb3.PublicKey(coin.contact) //9pBLiojTZMxbAPcsCWs8TQEiuCedRudzEFFakJFRCAoS
+          // const tokenAccount = await connection.getParsedTokenAccountsByOwner(
+          //   window.solana.publicKey,
+          //   { mint: tokenPublic },
+          // )
+          // const value = tokenAccount.value
           if (balance > 0) {
             this.bridgeChooseToken.balance = balance;
           } else {
@@ -500,7 +510,13 @@ export default {
           this.bridgeFromTokenchain.mainNetwork === "zkEVM" ||
           this.bridgeFromTokenchain.mainNetwork === "SCROLL" ||
           this.bridgeFromTokenchain.mainNetwork === "MNT" ||
-          this.bridgeFromTokenchain.mainNetwork === "BASE") &&
+          this.bridgeFromTokenchain.mainNetwork === "BASE" ||
+          this.bridgeFromTokenchain.mainNetwork === "Metis" ||
+          this.bridgeFromTokenchain.mainNetwork === "Moonriver" ||
+          this.bridgeFromTokenchain.mainNetwork === "Manta" ||
+          this.bridgeFromTokenchain.mainNetwork === "CMEMO" ||
+          this.bridgeFromTokenchain.mainNetwork === "Blast" ||
+          this.bridgeFromTokenchain.mainNetwork === "Moonbeam") &&
         this.connectType != "LeafWallet" &&
         this.connectType != "LiqualityWallet" &&
         this.connectType != "TokenPocketBTC" &&
@@ -624,6 +640,13 @@ export default {
             this.walletAddress,
             this.bridgeToTokenchain.contact
           );
+          // const account = await window.solana.connect()
+          // const tokenPublic = new solanaWeb3.PublicKey(coin.contact) //9pBLiojTZMxbAPcsCWs8TQEiuCedRudzEFFakJFRCAoS
+          // const tokenAccount = await connection.getParsedTokenAccountsByOwner(
+          //   window.solana.publicKey,
+          //   { mint: tokenPublic },
+          // )
+          // const value = tokenAccount.value
           if (balance > 0) {
             this.bridgeChooseToken.toBalance = balance;
           } else {
@@ -701,7 +724,13 @@ export default {
           this.bridgeToTokenchain.mainNetwork === "zkEVM" ||
           this.bridgeToTokenchain.mainNetwork === "SCROLL" ||
           this.bridgeToTokenchain.mainNetwork === "MNT" ||
-          this.bridgeToTokenchain.mainNetwork === "BASE") &&
+          this.bridgeToTokenchain.mainNetwork === "BASE" ||
+          this.bridgeToTokenchain.mainNetwork === "Metis" ||
+          this.bridgeToTokenchain.mainNetwork === "Moonriver" ||
+          this.bridgeToTokenchain.mainNetwork === "Manta" ||
+          this.bridgeToTokenchain.mainNetwork === "CMEMO" ||
+          this.bridgeToTokenchain.mainNetwork === "Blast" ||
+          this.bridgeToTokenchain.mainNetwork === "Moonbeam") &&
         this.connectType != "LeafWallet" &&
         this.connectType != "LiqualityWallet" &&
         this.connectType != "TokenPocketBTC" &&
@@ -750,7 +779,7 @@ export default {
     }
     .token-box {
       margin-left: 0.25rem;
-      ::v-deep.el-button {
+      :deep(.el-button) {
         width: 3rem;
         height: 0.88rem;
         background: #f7f8fa;
@@ -811,7 +840,7 @@ export default {
         padding: 0 0.2rem;
       }
       .chain-box {
-        ::v-deep.el-button {
+        :deep(.el-button) {
           width: 2.8rem;
           height: 0.5555rem;
           background: #f7f8fa;

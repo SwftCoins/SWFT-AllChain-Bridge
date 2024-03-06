@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "39202577",
+      "name": "Portkey",
+      "font_class": "Portkey",
+      "unicode": "e62a",
+      "unicode_decimal": 58922
+    },
+    {
+      "icon_id": "39081033",
+      "name": "plena",
+      "font_class": "Plena",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "38926512",
+      "name": "JoyIDWallet",
+      "font_class": "JoyIDWallet",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
       "icon_id": "38441370",
       "name": "FoxWallet",
       "font_class": "FoxWallet",

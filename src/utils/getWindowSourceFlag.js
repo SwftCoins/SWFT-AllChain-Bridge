@@ -142,7 +142,7 @@ if (utm_source === undefined || utm_source === '' || utm_source === null) {
     document.getElementsByTagName('head')[0].appendChild(meta)
   } else {
     localStorage.setItem('twFlag', '')
-    document.title = 'SWFT AllChain Bridge'
+    document.title = 'AllChain Bridge'
     //动态修改网站图标
     var faviconurl = 'favicon.png' //这里可以是动态的获取的favicon的地址
     var link =

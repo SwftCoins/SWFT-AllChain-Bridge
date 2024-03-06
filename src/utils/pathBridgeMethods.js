@@ -14,6 +14,8 @@ import { MsafeWallet } from 'msafe-wallet'
 import suiWalletMethods from '../utils/suiWalletConnect'
 import suiOKXWalletMethods from '../utils/suiOKXWalletConnect'
 import { EthereumProvider } from '@walletconnect/ethereum-provider'
+import joyIdMethids from '../utils/joyID/swapMethods'
+
 // import Web3 from 'web3'
 import ETH_erc20 from './eth-erc20'
 import md5Handle from './hexmd5'
@@ -514,7 +516,7 @@ async function BinanceBridgeExchange(res) {
 }
 // 交易
 async function exchange(response) {
-
+  console.log(response)
   if (state.isWalletConnect) {
     let transactionParameters = {
       to: response.data.txData.to, // Required except during contract publications.
@@ -817,6 +819,26 @@ async function exchange(response) {
     value: response.data.txData.value,
     //gasPrice: 5000000000, // 6 gwei
     //gas: new BigNumber(1000000), // 1000000
+  }
+  if(state.wallet.connectType === 'JoyIDWallet' && state.info.dex === 'bridgers1'){
+    const result = await joyIdMethids.send(transactionParameters)
+    if(result){
+      scope.submitStatus = false
+      const hashResult = {
+        hash: result.hash,
+      }
+      console.log(hashResult)
+      addsSwapTransData(hashResult, response.data.txData.orderId)
+    }else{
+      scope.submitStatus = false
+      Notify({
+        message: scope.$t('rejectExchange'),
+        color: '#ad0000',
+        background: '#ffe1e1',
+      })
+      return
+    }
+    return 
   }
   if (response.data.txData.gas && response.data.txData.gas != '') {
     transactionParameters.gasLimit = response.data.txData.gas
@@ -1482,6 +1504,17 @@ async function isApproved(res) {
     }
     if (stateFromToken.mainNetwork === 'APT') {
       exchange(res)
+      return
+    }
+    if(state.wallet.connectType == 'JoyIDWallet'){
+      const result = await joyIdMethids.isApprove(res.data.txData.to)
+      if(result){
+        exchange(res)
+      }else{
+        scope.txData = res
+        scope.$refs.approve.$refs.dialog.show = true
+      }
+      console.log(result)
       return
     }
     let contract

@@ -278,7 +278,13 @@ export default {
           item.mainNetwork === "BASE" ||
           item.mainNetwork === "zkEVM" ||
           item.mainNetwork === "SCROLL" ||
-          item.mainNetwork === "PulseChain") &&
+          item.mainNetwork === "PulseChain"|| 
+          item.mainNetwork === "Metis"|| 
+          item.mainNetwork === "Moonriver"|| 
+          item.mainNetwork === "Manta"|| 
+          item.mainNetwork === "CMEMO"|| 
+          item.mainNetwork === "Blast"|| 
+          item.mainNetwork === "Moonbeam") &&
         this.connectType != "LeafWallet" &&
         this.connectType != "LiqualityWallet" &&
         this.connectType != "TokenPocketBTC" &&

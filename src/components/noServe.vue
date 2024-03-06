@@ -9,7 +9,7 @@
           alt=""
         />
         <p>
-          SWFT AllChain Bridge current is not available in the country you are in
+          AllChain Bridge current is not available in the country you are in
           Follow us to be notified when we add support for your country.
         </p>
       </div>

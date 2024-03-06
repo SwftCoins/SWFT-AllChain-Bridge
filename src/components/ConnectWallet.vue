@@ -78,6 +78,9 @@ import havahWalletConnect from "@/utils/havahWalletConnect";
 import imtokenConnect from "./imtokenConnect.vue";
 import FoxWalletConnect from "@/utils/FoxWalletConnect";
 import EthoooEthConnect from "@/utils/EthoooEthConnect";
+import JoyIDConnect from "@/utils/JoyIDConnect";
+import PortkeyMethods from "@/utils/PortkeyMethods";
+
 // import { supportNetWork } from '../../config'
 // const tp = require('tp-js-sdk')
 let currentChain = "";
@@ -168,7 +171,6 @@ export default {
           arr.push(e.type);
         }
       });
-
       return arr;
     },
   },
@@ -365,6 +367,12 @@ export default {
           break;
         case "EchoooWallet":
           EthoooEthConnect(this);
+          break;
+        case "JoyIDWallet":
+          JoyIDConnect(this);
+          break;
+        case "Portkey":
+          PortkeyMethods.connectWallet(this)
           break;
         default:
           this.getMetaMask(wallet);

@@ -240,7 +240,13 @@ export default {
         mainNetwork === "BRC20" ||
         mainNetwork === "SUI" ||
         mainNetwork === "MNT" ||
-        mainNetwork === "BASE"
+        mainNetwork === "BASE" ||
+        mainNetwork === "Metis" ||
+        mainNetwork === "Moonriver" ||
+        mainNetwork === "Manta" ||
+        mainNetwork === "CMEMO" ||
+        mainNetwork === "Blast" ||
+        mainNetwork === "Moonbeam"
       ) {
         if (
           this.chainId === "1" ||
@@ -294,8 +300,15 @@ export default {
           this.chainId === "1994" ||
           this.chainId === "7299" ||
           this.chainId === "5000" ||
+          this.chainId === "1088" ||
+          this.chainId === "1285" ||
+          this.chainId === "1284" ||
+          this.chainId === "169" ||
+          this.chainId === "985" ||
+          this.chainId === "81457" ||
           this.chainId === "20201022"
         ) {
+          console.log(this.fromToken.mainNetwork,this.toToken.mainNetwork)
           if (
             this.$store.state.walletPolkadot !== null &&
             this.toToken.mainNetwork === "DOT"

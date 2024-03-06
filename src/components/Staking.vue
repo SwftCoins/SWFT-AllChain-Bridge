@@ -167,6 +167,9 @@
                                         <div class="left">{{ $t('AvailableEarnings') }}</div>
                                         <div class="right">{{ $formatNumber(item.unreceivedRevenue) }} TRX</div>
                                     </div>
+                                    <div class="list" v-if="item.isRenewal == 'Y'">
+                                       <MyprojectList  :item="item" :autoList="autoList" @upDateSuccess="upDateSuccess"/>
+                                    </div>
                                 </div>
                                 <div class="btn-group">
                                     <Button class="btnleft" :loading="loading && unlockItem.orderId == item.orderId" @click="unlockHandle(item)" :class="getDays(item.ransomTime) > 0 || item.status != 'wait_receive_send' ? 'disabled' : ''">{{ $t('UnlockPrincipal') }}</Button>
@@ -183,7 +186,7 @@
            </div>
     </div>   
     <Footer :text="false"/>
-    <DialogStaking @stakingSuccess="stakingSuccess" @stakingFail="stakingFail" :stakingDialogStatus="stakingDialogStatus" @closetDialogStatus="closetDialogStatus" :stakingItem="stakingItem"/>
+    <DialogStaking @stakingSuccess="stakingSuccess" @stakingFail="stakingFail" :stakingDialogStatus="stakingDialogStatus" @closetDialogStatus="closetDialogStatus" :stakingItem="stakingItem" :autoList="autoList"/>
     <DialogStakingWithdrawRecord :stakingWithdrawRecordStatus="stakingWithdrawRecordStatus" @closetDialogStatus="closetDialogStatus" :unlockItem="unlockItem"/>
     <Dialog
          class="staking"
@@ -227,6 +230,8 @@ import Header from './Header.vue'
 const Footer = () => import('./Footer.vue')
 const DialogStaking = () => import('./DialogStaking.vue')
 const DialogStakingWithdrawRecord = () => import('./DialogStakingWithdrawRecord.vue')
+const MyprojectList = () => import('./MyprojectList.vue')
+
 import baseApi from '../api/baseApi'
 import { Notify } from "vant";
 
@@ -242,6 +247,7 @@ export default {
            stakingWithdrawStatus: false, //解锁本金
            stakingWithdrawRecordStatus: false, // 提取记录
            projectList: [], // 项目列表
+           autoList: [],  // 项目列表的天数
            positionListVos: [], // 我的项目
            totalLockPosition: '--', // 总锁仓量
            totalRevenue: '--', // 总收益
@@ -265,7 +271,8 @@ export default {
         DialogStaking,
         DialogStakingWithdrawRecord,
         Dialog,
-        Button
+        Button,
+        MyprojectList
     },
     computed:{
         statusText(){
@@ -306,6 +313,9 @@ export default {
        
     },
     methods: {
+        upDateSuccess(){
+            this.queryPositionList()
+        },
         goHash(){
             window.open('https://tronscan.org/#/transaction/'+ this.depositHash)
         },
@@ -522,6 +532,13 @@ export default {
                     this.projectList = res.data.projectList
                     this.totalLockPosition = res.data.totalLockPosition
                     this.totalRevenue = res.data.totalRevenue
+                    const list = []
+                    this.projectList.forEach( item => {
+                        if(Number(item.lockPosition) > 0){
+                            list.push(item.redemptionDays)
+                        }
+                    })
+                    this.autoList =  list
                 }
             })
         },

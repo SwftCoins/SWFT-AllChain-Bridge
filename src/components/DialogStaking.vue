@@ -56,6 +56,31 @@
                     <div class="tip" v-if="showTips">{{ $t('sellNum',{min: item.minDepositAmt,max: item.maxDepositAmt}) }}</div>
                 </div>
                 <div class="list-info">
+                    <div class="auto-box">
+                        <div class="auto">
+                            <div class="left-info-text">
+                                {{ $t('automaticrenewal') }}
+                                <Tooltip popper-class="popper-item" style="cursor: pointer;" effect="dark" :content="$t('automaticrenewalTips')" placement="top-start">
+                                    <i class="el-icon-warning-outline"></i>
+                                </Tooltip>
+                            </div>
+                            <div class="right-icon">
+                                <el-switch v-model="showAuto" active-color="#0075FF">
+                                </el-switch>
+                            </div>
+                        </div>
+                        <div class="auto-info" v-if="showAuto">
+                            <div class="auto-list">
+                                <div class="list" v-for="(m,n) in autoList" :key="n" :class="activeDays == m ? 'active' : ''" @click="chooseDays(m)">
+                                    {{ $t('daysTips',{
+                                        num: m
+                                    }) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-info">
                     <Button :loading="loading" class="button" @click="submit">
                         {{ $t('Deposit') }}
                     </Button>
@@ -66,7 +91,7 @@
 </template>
 
 <script>
-import { Dialog, Button, Input } from 'element-ui'
+import { Dialog, Button, Input, Tooltip,Switch } from 'element-ui'
 import baseApi from '../api/baseApi'
 
 import BigNumber from 'bignumber.js'
@@ -74,7 +99,7 @@ import { Notify } from "vant";
 
 export default {
     name: 'TronLeaseWebSellDialog',
-    props:['stakingDialogStatus','stakingItem'],
+    props:['stakingDialogStatus','stakingItem','autoList'],
     data() {
         return {
             show: this.stakingDialogStatus,
@@ -82,10 +107,13 @@ export default {
             item: null,
             tronInfo: null,
             loading: false,
+            showAuto: false, // 展示自动续存
+            activeDays: '',
         };
     },
     components:{
-        Dialog,Button,Input
+        Dialog,Button,Input,Tooltip,
+        'el-switch': Switch
     },
     watch:{
         'stakingDialogStatus'(a){
@@ -93,6 +121,13 @@ export default {
             this.number = ''
             this.item = this.stakingItem
             this.getTronInfo()
+        },
+        'showAuto'(val){
+            if(val){
+                if(this.activeDays == ''){
+                    this.activeDays = this.autoList[0]
+                }
+            }
         }
     },
     computed:{
@@ -118,6 +153,10 @@ export default {
     },
 
     methods: {
+         //选择续存天数
+         chooseDays(days){
+            this.activeDays = days
+        },
         //获取最大值
         getMaxNumber(){
             if(Number(this.getBalance) > Number(this.item.maxDepositAmt)){
@@ -152,6 +191,7 @@ export default {
                 "depositCoinAmt": this.number*1000000,
                 "depositCoinCode":this.item.coinCode,
                 "configId":this.item.id,
+                "renewalDays": this.showAuto ? this.activeDays : 0,
             }).then( res => {
                 if(res.resCode == '800'){
                     this.signTron(res.data)
@@ -377,6 +417,75 @@ export default {
             cursor: pointer;
             &:hover{
                 background: #3682dd;
+            }
+        }
+        .auto-box{
+            flex: 1;
+            background: #FFF2F2;
+            border-radius: .2rem;
+            opacity: 1;
+            border: 1px solid rgba(221,65,67,0.07);
+            padding: 15px;
+            color: #000000;
+            font-size: .259rem;
+            user-select: none;
+            .auto-info{
+                padding:  15px  0 0 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                .auto-list{
+                    display: flex;
+                    .list{
+                        margin-right: .2rem;
+                        font-size: .259rem;
+                        font-weight: 400;
+                        color: #73787B;
+                        background: #FFFFFF;
+                        border-radius: .1rem;
+                        padding: .1rem .2rem;
+                        cursor: pointer;
+                        border: 1px solid #FFFFFF;
+                        &.active{
+                            border: 1px solid #FF2D0F;
+                            color: #FF2D0F;
+                        }
+                    }
+                }
+                .submit-btn{
+                    .btn{
+                        background: #000000;
+                        border-radius: .12rem;
+                        color: #FFFFFF;
+                        font-size: .259rem;
+                        padding: .15rem .3rem;
+                        cursor: pointer;
+                    }
+                   
+                }
+            }
+        }
+        .auto{
+           
+            display: flex;
+            justify-content: space-between;
+            .left-info-text{
+                display: flex;
+                align-items: center;
+            }
+            .right-icon{
+                .icon-box{
+                    padding: .05rem;
+                    background: #000000;
+                    border-radius: 1rem;
+                    opacity: 1;
+                    border: 1px solid #000000;
+                    cursor: pointer;
+                    .icon-color{
+                        color: #FFFFFF!important;
+                        font-size: .3rem;
+                    }
+                }
             }
         }
     }

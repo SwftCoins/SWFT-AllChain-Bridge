@@ -85,6 +85,7 @@ import { Toast } from "vant";
 import baseApi from "../api/baseApi";
 import { Option, Select } from "element-ui";
 import { EthereumProvider } from "@walletconnect/ethereum-provider";
+import joyIdMethids from '../utils/joyID/swapMethods'
 let WalletConnectProvider = null;
 let provider;
 let flagThrottle = null;
@@ -315,9 +316,10 @@ export default {
   methods: {
     inputNumber($event) {
       if (this.type === "from") {
-        this.throttle(() => {
-          this.$store.commit("setFromNumber", $event.target.value);
-        }, 100);
+        this.$store.commit("setFromNumber", $event.target.value);
+        // this.throttle(() => {
+        //   this.$store.commit("setFromNumber", $event.target.value);
+        // }, 100);
       }
     },
     throttle(fn, delay) {
@@ -373,11 +375,11 @@ export default {
         this.$store.state.fromToken.coinCode === "MNT(MNT)" ||
         this.$store.state.fromToken.coinCode === "BNB(opBNB)"
       ) {
+        
         let mainNetwork;
         if (this.connectType === "OKExWallet") {
           mainNetwork = okexchain;
-        }
-        if (this.connectType === "OpenBlock") {
+        }else if (this.connectType === "OpenBlock") {
           mainNetwork = window.openblock;
         } else if (this.connectType === "EchoooWallet") {
           mainNetwork = window.echoooEth;
@@ -397,6 +399,12 @@ export default {
           mainNetwork = window.bitkeep.ethereum;
         } else if (this.connectType === "Patex") {
           mainNetwork = window.patex.ethereum;
+        }else if(this.connectType === "JoyIDWallet"){
+          const fee = await joyIdMethids.getMaxFees()
+          max = this.$store.state.balance - fee
+          max = max > 0 ? Number(max).toFixed(6, BigNumber.ROUND_DOWN) : 0;
+          this.$store.commit("setFromNumber", max);
+          return
         } else {
           mainNetwork = ethereum;
         }
@@ -517,6 +525,11 @@ export default {
       ) {
         max = Number(this.$store.state.balance) - 0.03;
       } else if (
+        this.$store.state.fromToken.coinCode === "AELF" &&
+        this.$store.state.chainId === "520520"
+      ) {
+        max = Number(this.$store.state.balance) - 0.004;
+      } else if (
         this.$store.state.fromToken.coinCode === "BTT(BTTC)" &&
         this.$store.state.chainId === "199"
       ) {
@@ -601,7 +614,7 @@ export default {
       const res = await baseApi.getBaseInfo(data);
       if (res.resCode == "800") {
         if (this.type === "from") {
-          this.depositUSDTRate = res.data.instantRate;
+          this.depositUSDTRate = res.data.instantRateOriginal;
           if (this.number != "") {
             this.depositUsdtAmt = new BigNumber(this.depositUSDTRate)
               .multipliedBy(BigNumber(this.number))
@@ -609,7 +622,7 @@ export default {
           }
         }
         if (this.type === "to") {
-          this.receiveUSDTRate = res.data.instantRate;
+          this.receiveUSDTRate = res.data.instantRateOriginal;
           if (this.number != "") {
             this.receiveUsdtAmt = new BigNumber(this.receiveUSDTRate)
               .multipliedBy(BigNumber(this.number))
@@ -734,7 +747,7 @@ export default {
           font-size: 18px;
           font-family: Poppins;
           background: #f7f8fa;
-          ::v-deep.el-input {
+          :deep(.el-input) {
             .el-input__inner {
               height: 25px;
               line-height: 25px;

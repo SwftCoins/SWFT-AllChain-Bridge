@@ -61,7 +61,7 @@ async function transferToken(fromWallet, toWallet, tokenAddress, connection, fro
 			associatedDestinationTokenAddr,
 			fromWallet.publicKey,
 			[],
-			fromNumber,
+			BigInt(fromNumber),
 		  )
 	)
 	const transaction = new solanaWeb3.Transaction().add(

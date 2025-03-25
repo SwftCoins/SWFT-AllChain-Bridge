@@ -6,7 +6,6 @@
       <span class="more" @click="showRecord">{{ $t('more') }}></span>
     </div>
     <RecordTab v-if="bridgersFlag !== 'bridgers'" />
-    <!-- <BridgersRecordTab v-if="sourceFlag == 'bridgers'" /> -->
     <div
       class="box"
       v-for="(item, index) in list"
@@ -147,7 +146,7 @@ export default {
       detailinfoTimer: null,
       sourceFlag: localStorage.getItem('sourceFlag'),
       bridgersFlag: localStorage.getItem('bridgersFlag'),
-      isFirst: false, // 根据钱包地址记录来塞 兑换币种， 逻辑判断， 钱包改变第一次请求记录
+      isFirst: false,
       tokenData: null
     }
   },

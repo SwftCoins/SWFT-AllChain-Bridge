@@ -186,7 +186,7 @@ export default {
         mainNetwork === "BSC" ||
         mainNetwork === "HECO" ||
         mainNetwork === "POLYGON" ||
-        mainNetwork === "DIS" ||
+        mainNetwork === "ETHF" ||
         mainNetwork === "ETHW" ||
         mainNetwork === "Optimism" ||
         mainNetwork === "OKExChain" ||

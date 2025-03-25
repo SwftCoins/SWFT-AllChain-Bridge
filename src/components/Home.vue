@@ -5,12 +5,7 @@
       <HeaderInfo />
       <div class="home-cont" v-if="showTradeBox">
         <div class="home-cont-trade" :class="isPC ? 'pc' : ''">
-          <Tab
-            v-if="
-              bridgersFlag !== 'bridgers' &&
-              sourceFlag != ('msafedapp' || 'msafeb')
-            "
-          />
+          <Tab />
           <Trade
             v-if="
               tabActive == 'swap' ||
@@ -24,20 +19,6 @@
       <Record v-show="showTradeBox && tabActive != 'addLiquidity'" />
       <Records v-if="!showTradeBox" />
       <Order ref="order" />
-      <!-- <div
-        v-if="lang == 'zh' || lang == 'zht' || sourceFlag == 'widget-defi'"
-        class="online-service"
-        :class="sourceFlag == 'SquidGrow' ? 'themeBg' : 'defaultBg'"
-        @click="linkContact()"
-      >
-        <div class="img-service">
-          <img src="../assets/img/service.svg" alt="" />
-        </div>
-        <div class="service-text">
-          {{ $t('support') }}
-        </div>
-      </div> -->
-      <!-- bot 客服 对话框 -->
       <div class="online-service" @click="openServiceDialog('icon')">
         <img src="../assets/img/service.svg" alt="" />
         <div class="service-text" v-if="isPC">{{ $t('support') }}</div>
@@ -59,9 +40,7 @@
       ></AdvertiseAlert>
     </div>
     <NoServePage v-if="!isServe" />
-    <Footer v-if="isServe && twFlag != 'miningtw' && twFlag != 'burndex'" />
-    <Footer_Miningtw v-if="isServe && twFlag == 'miningtw'"></Footer_Miningtw>
-    <Footer_Burn v-if="isServe && twFlag == 'burndex'"></Footer_Burn>
+    <Footer v-if="isServe" />
   </div>
 </template>
 
@@ -70,13 +49,11 @@ const Record = () => import('./Record')
 const Records = () => import('./Records')
 const Order = () => import('./Order')
 const Footer = () => import('./Footer')
-const Footer_Miningtw = () => import('./Footer_Miningtw')
 const AdvertiseAlert = () => import('./advertiseAlert')
 const Tab = () => import('./Tab')
 const NoServePage = () => import('./NoServePage')
 const ServiceDialog = () => import('../components/common/ServiceDialog')
 const ServiceDialogAi = () => import('../components/common/ServiceDialogAi')
-const Footer_Burn = () => import('./Footer_burn')
 import Header from './Header'
 import Trade from './Trade'
 import HeaderInfo from './HeaderInfo'
@@ -95,10 +72,8 @@ export default {
     AdvertiseAlert,
     Tab,
     NoServePage,
-    Footer_Miningtw,
     ServiceDialog,
     ServiceDialogAi,
-    Footer_Burn,
   },
   data() {
     return {
@@ -149,10 +124,6 @@ export default {
     if (this.isPC) {
       this.className = 'home-pc'
     }
-    // if (this.lang == 'en' && sourceFlag != 'widget-defi') {
-    //   this.customerService()
-    // }
-
     this.sourceFlag = localStorage.getItem('sourceFlag')
     this.bridgersFlag = localStorage.getItem('bridgersFlag')
     this.initEnter()
@@ -192,7 +163,7 @@ export default {
             this.isServe = true
           } else {
             localStorage.setItem('isLimit', '0')
-            if (window.location.href.indexOf('swft.elabank.net') == -1) {
+            if (window.location.href.indexOf('http://localhost') == -1) {
               if (this.sourceFlag != 'HN') {
                 // location.href = 'https://www.swftc.info/swft-v3/noServe.html'
                 this.isServe = false

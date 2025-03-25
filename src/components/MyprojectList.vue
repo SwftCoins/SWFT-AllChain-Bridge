@@ -102,7 +102,7 @@ export default {
                 "orderId": this.item.orderId,
                 "signMessage": signature,
                 "renewalDays": this.showAuto ? this.activeDays : 120,
-                "type": this.item.renewalDays == 0 ?'add' : this.activeDays > 0 ? 'modify' : 'delete'   //" delete(取消续约) add(添加续约) modify(修改续约) 三个里面传一个"
+                "type": this.item.renewalDays == 0 ?'add' : this.activeDays > 0 ? 'modify' : 'delete'  
             })
             if(res.resCode == '800'){
                 this.$message({

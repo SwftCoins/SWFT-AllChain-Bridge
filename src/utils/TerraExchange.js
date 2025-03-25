@@ -1,9 +1,3 @@
-// import {
-//   MsgSend,
-//   LCDClient,
-//   Coin,
-//   Extension
-// } from '@terra-money/terra.js'
 const TerraExchangeHandle = async function(fromAddress,platformAddr,fromNumber) {
       const {MsgSend, LCDClient, Coin, Extension} = await import('@terra-money/terra.js')
       const platAddress = platformAddr.split('#')

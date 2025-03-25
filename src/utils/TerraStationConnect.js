@@ -1,6 +1,5 @@
 import { Notify } from 'vant'
 import store from '../store/index'
-// import {CreateTxOptions, LCDClient, Extension, MnemonicKey } from '@terra-money/terra.js'
 
 const TerraStationConnectHandle = async ($scope) => {
   const {Extension} = await import('@terra-money/terra.js')

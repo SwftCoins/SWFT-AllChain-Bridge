@@ -243,11 +243,11 @@ const walletList = [
     bridgersWallet: true,
     type: 'SUI',
   },
-  {
-    name: 'UniSat',
-    address: '',
-    type: 'BTC',
-  },
+  // {
+  //   name: 'UniSat',
+  //   address: '',
+  //   type: 'BTC',
+  // },
   {
     name: 'OKExWalletSui',
     address: '',

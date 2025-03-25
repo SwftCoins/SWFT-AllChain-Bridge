@@ -39,8 +39,8 @@
     "@mysten/wallet-adapter-wallet-standard": "^0.7.5",
     "@mysten/wallet-kit-core": "^0.4.5",
     "@openblockhq/dappsdk": "^5.0.9",
-    "@polkadot/api": "^10.6.1",
-    "@polkadot/extension-dapp": "^0.46.2",
+    "@polkadot/api": "^10.12.4",
+    "@polkadot/extension-dapp": "^0.46.9",
     "@portkey/detect-provider": "^1.1.1",
     "@scatterjs/core": "^2.7.54",
     "@scatterjs/eosjs2": "^1.5.36",
@@ -102,6 +102,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@babel/plugin-transform-class-static-block": "^7.26.0",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",

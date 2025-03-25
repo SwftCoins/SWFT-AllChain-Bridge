@@ -6,17 +6,7 @@
       </a>
       <img v-else ref="logo" :src="logo" alt="" />
     </div>
-    <div class="link-tab" v-if="isPC">
-      <div class="tab-list">
-        <router-link :class="$route.name == 'Home' ? 'router-link-active-link' : ''" to="/">{{ $t('tabSwap') }}</router-link>
-      </div>
-      <div class="tab-list">
-        <router-link :class="$route.name == 'staking' ? 'router-link-active-link' : ''" to="/staking">{{ $t('staking') }}</router-link>
-      </div>
-      <div class="tab-list">
-        <a @click="openSDEX">SDEX</a>
-      </div>
-    </div>
+    
     <div class="app-header-right">
       <!-- 已连接 -->
       <el-popover placement="bottom-end" trigger="click" v-model="showPopover" :popper-class="isPC ? 'wallet-popper' : 'wallet-popper mb'" :offset="isPC ? -50 : []">
@@ -128,24 +118,6 @@
           </ul>
         </div>
       </div>
-      <div v-if="!isPC" class="mb-menu" @click="changeLink">
-        <svg t="1702111099621" style="height: 20px; width: 20px;margin-left: 4px;" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6712" width="200" height="200">
-          <path d="M128 192h768v128H128V192z m0 256h768v128H128v-128z m0 256h768v128H128v-128z" fill="#FFFFFF" p-id="6713"></path>
-        </svg>
-        <div class="lang-list" v-if="showLinkList">
-          <ul>
-            <li>
-              <router-link to="/">{{ $t('tabSwap') }}</router-link>
-            </li>
-            <li>
-              <router-link to="/staking">{{ $t('staking') }}</router-link>
-            </li>
-            <li>
-              <a @click="openSDEX">SDEX</a>
-            </li>
-          </ul>
-        </div>
-      </div>
     </div>
     <div class="bg">
       <div class="bg-box themeBg"></div>
@@ -175,25 +147,7 @@ export default {
     };
   },
   mounted() {
-    //获取标识
-    const sourceFlag = localStorage.getItem("sourceFlag");
-    const bridgersFlag = localStorage.getItem("bridgersFlag");
-    const twFlag = localStorage.getItem("twFlag");
-    let logodata = logoImg["widget"];
-    if (logoImg[sourceFlag]) {
-      logodata = logoImg[sourceFlag];
-    }
-    this.logo = logodata.logo;
-    if (bridgersFlag == "bridgers") {
-      this.logo = logoImg["bridgers"].logo;
-      this.$refs.logo.style.width = "100px";
-    }
-    if (twFlag == "miningtw") {
-      this.logo = logoImg["miningtw"].logo;
-    }
-    if (sourceFlag == "HN") {
-      this.websiteUrl = "http://hncoin.cc/inde.html";
-    }
+    this.logo = logoImg["allchain"].logo;
   },
   computed: {
     walletName() {
@@ -295,7 +249,7 @@ export default {
         this.$store.getters.getChainIdName === "BSC" ||
         this.$store.getters.getChainIdName === "ETH" ||
         this.$store.getters.getChainIdName === "POLYGON" ||
-        this.$store.getters.getChainIdName === "DIS" ||
+        this.$store.getters.getChainIdName === "ETHF" ||
         this.$store.getters.getChainIdName === "ETHW" ||
         this.$store.getters.getChainIdName === "ARB" ||
         this.$store.getters.getChainIdName === "AVAXC" ||

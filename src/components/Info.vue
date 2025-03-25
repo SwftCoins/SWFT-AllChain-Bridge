@@ -2,36 +2,6 @@
   <div>
     <div v-if="fromToken && toToken && tabActive != 'NFT'" class="infoCont">
       <div class="info" v-if="sourceFlag != 'HN' && sourceFlag != 'burndex'">
-        <!-- <div class="info-rate">
-          <span class="title">{{ $t('bridge') }}</span>
-          <span class="cont" v-if="info">
-            <div class="bridge bg" @click="showPriceList">
-              <img
-                :src="
-                  twFlag == 'miningtw' &&
-                  (info.dex == 'bridgers1' || info.dex == 'SWFT')
-                    ? 'https://images.swft.pro/dex/miningTW.png'
-                    : info.logoUrl
-                "
-                alt=""
-              />&nbsp;<span>
-                {{
-                  twFlag != 'miningtw'
-                    ? info.dex == 'bridgers1'
-                      ? 'Bridgers'
-                      : info.dex
-                    : info.dex == 'bridgers1'
-                    ? 'MiningTW Bridge'
-                    : info.dex == 'SWFT'
-                    ? 'MiningTW'
-                    : info.dex
-                }}
-                >
-              </span>
-            </div>
-          </span>
-          <span v-else>-</span>
-        </div> -->
         <div class="info-rate">
           <span class="title">{{ $t('selectExchangePath') }}</span>
           <div class="morePriceText" @click="showPriceList">
@@ -322,8 +292,6 @@ import baseApi from "../api/baseApi";
 import bus from "../eventBus";
 import errorCode from "../utils/language.js";
 import BigNumber from "bignumber.js";
-// import PriceList from '@/components/common/priceList'
-// import SlidingPoint from '@/components/common/SlidingPoint'
 const PriceList = () => import("@/components/common/priceList");
 const SlidingPoint = () => import("@/components/common/SlidingPoint");
 import { supportNetWork } from "../config/index";

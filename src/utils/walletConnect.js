@@ -1,5 +1,3 @@
-import WalletConnect from '@walletconnect/client'
-import QRCodeModal from '@walletconnect/qrcode-modal'
 import store from '../store/index'
 import { EthereumProvider } from '@walletconnect/ethereum-provider'
 const walletConnectHandle = async ($scope, auto, name) => {
@@ -67,61 +65,5 @@ const walletConnectHandle = async ($scope, auto, name) => {
     store.commit('setIsWalletConnect', false)
     // Delete connector
   })
-  //////////////////////////////////////////////////
-  //connector.killSession(); 断开连接
-  // Create a connector
-  // const connector = new WalletConnect({
-  //   bridge: 'https://bridge.walletconnect.org', // Required
-  //   qrcodeModal: QRCodeModal,
-  // })
-  // // Check if connection is already established
-  // if (!connector.connected) {
-  //   if (auto === 'auto') return
-  //   // 连接
-  //   await connector.createSession()
-  // } else {
-  //   //connector.killSession()
-  //   //已连接
-  //   const { accounts, chainId, peerMeta } = connector.session
-  //   store.commit('setWalletAddress', accounts[0])
-  //   store.commit('setWalletName', name)
-  //   store.commit('setWalletConnectType', 'walletConnect')
-  //   store.commit('setChainId', chainId.toString())
-  //   store.commit('setIsWalletConnect', true)
-  //   //存储钱包已连接
-  //   localStorage.setItem('connectorId', name)
-  //   $scope.wallet = name
-  // }
-  // // Subscribe to connection events
-  // connector.on('connect', (error, payload) => {
-  //   if (error) {
-  //     throw error
-  //   }
-  //   // Get provided accounts and chainId
-  //   const { accounts, chainId, peerMeta } = payload.params[0]
-  //   store.commit('setWalletAddress', accounts[0])
-  //   store.commit('setWalletName', name)
-  //   store.commit('setWalletConnectType', 'walletConnect')
-  //   store.commit('setChainId', chainId.toString())
-  //   store.commit('setIsWalletConnect', true)
-  //   $scope.wallet = name
-  //   //存储钱包已连接
-  //   localStorage.setItem('connectorId', name)
-  // })
-  // connector.on('session_update', (error, payload) => {
-  //   if (error) {
-  //     throw error
-  //   }
-  //   // Get updated accounts and chainId
-  //   const { accounts, chainId } = payload.params[0]
-  // })
-  // //断开连接
-  // connector.on('disconnect', (error, payload) => {
-  //   if (error) {
-  //     throw error
-  //   }
-  //   $scope.$bus.emit('disConnect')
-  //   store.commit('setIsWalletConnect', false)
-  // })
 }
 export default walletConnectHandle

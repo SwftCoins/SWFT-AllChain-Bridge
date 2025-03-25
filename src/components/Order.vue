@@ -33,20 +33,6 @@
             alt=""
           />
           <img v-else src="@/assets/img/swapConfirm.gif" alt="" />
-          <!-- <div
-            class="status"
-            :style="{
-              color: data.orderdetailStatus
-                ? data.orderdetailStatus[1]
-                : '#707B9E',
-            }"
-          >
-            {{
-              data.orderdetailStatus
-                ? data.orderdetailStatus[0]
-                : $t('wait_deposit_send')
-            }}
-          </div> -->
         </div>
         <div class="stepsBox" v-if="data.orderdetailStatus">
           <div class="steps">
@@ -79,7 +65,6 @@
                   "
                 >
                   <div class="step loading">
-                    <!-- <img class="loading-animation" src="../assets/img/progresing.svg" alt=""> -->
                     <div class="loading-animation"></div>
                   </div>
                 </div>
@@ -126,7 +111,6 @@
                   "
                 >
                   <div class="step loading">
-                    <!-- <img class="loading-animation" src="../assets/img/progresing.svg" alt=""> -->
                     <div class="loading-animation"></div>
                   </div>
                 </div>
@@ -173,7 +157,6 @@
                   "
                 >
                   <div class="step loading">
-                    <!-- <img class="loading-animation" src="../assets/img/progresing.svg" alt=""> -->
                     <div class="loading-animation"></div>
                   </div>
                 </div>
@@ -220,7 +203,6 @@
                   "
                 >
                   <div class="step loading">
-                    <!-- <img class="loading-animation" src="../assets/img/progresing.svg" alt=""> -->
                     <div class="loading-animation"></div>
                   </div>
                 </div>
@@ -486,8 +468,6 @@
                     ? ''
                     : ' + ' + data.chainFee + ' ' + data.receiveCoinCode
                 }}
-                <!--  + {{ data.chainFee }}
-                {{ data.receiveCoinCode }} -->
               </span>
             </div>
           </div>

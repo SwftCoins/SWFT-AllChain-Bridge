@@ -1,15 +1,6 @@
 import axios from 'axios'
 import store from '../store'
 const getSolTokenBalance = async (address, tokenAddress) => {
-    // const result = await axios.get('https://api.solscan.io/v2/account/v2/tokens?address=' + address + '&cluster=')
-    // const balanceList = result.data
-    // const list = balanceList.filter(item => item.tokenAddress.toLowerCase() == tokenAddress.toLowerCase())
-    // if (list.length > 0) {
-    //     return (list[0].amount / 10 ** list[0].decimals).toFixed(6) - 0
-    // } else {
-    //     return 0
-    // }
-
 
     const params = {
         "jsonrpc": "2.0",

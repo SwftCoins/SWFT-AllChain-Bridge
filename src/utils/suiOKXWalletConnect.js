@@ -12,10 +12,8 @@ const event = new CustomEvent('wallet-standard:app-ready', { detail: GlobalWalle
 window.dispatchEvent(event);
 
 const suiWallet = GlobalWallet.suiMainnet
-// 链接账户
 const suiOKXWalletConnectHandle = async ($scope) =>{
     if(!suiWallet){
-      // 未安装
       return Notify({
           color: '#ad0000',
           background: '#ffe1e1',
@@ -35,13 +33,7 @@ const suiOKXWalletConnectHandle = async ($scope) =>{
     })
     .catch((err) => {
       if (err.code === 4001) {
-        // return Notify({
-        //     color: '#ad0000',
-        //     background: '#ffe1e1',
-        //     message: $scope.$t('notInstallMetamask', {
-        //         wallet: 'OKX Wallet',
-        //     }),
-        // })
+       
       } else {
         console.error(err);
       }
@@ -116,30 +108,8 @@ const bridgersTransfer = async (tx) =>{
     }
 }
 
-//获取余额
-// const getSuiBalance = async () => {
-//   try{
-//       const result = await axios.post('https://explorer-rpc.mainnet.sui.io/',
-//           {
-//           "jsonrpc": "2.0",
-//           "id": 1,
-//           "method": "suix_getBalance",
-//           "params": [
-//               store.state.wallet.address,
-//               "0x2::sui::SUI"
-//           ]
-//           }
-//       )
-//       const balance = result.result.totalBalance || 0
-//       return balance
-//   }catch(error){
-//       return 0
-//   }
-// }
-
 export default {
   suiOKXWalletConnectHandle,
-  // getSuiBalance,
   transfer,
   bridgersTransfer,
 }

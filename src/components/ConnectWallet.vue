@@ -165,7 +165,7 @@ export default {
   },
   computed: {
     chainType() {
-      const arr = ["ALL", "EVM", "TRON", "BTC", "SUI"];
+      const arr = ["ALL", "EVM", "TRON", "SUI"];
       walletList.some((e) => {
         if (!e.isEVM && arr.indexOf(e.type) == -1) {
           arr.push(e.type);

@@ -8,10 +8,9 @@ if (!development) {
 }
 const pathApi = 'https://api-swap.paths.finance'
 const newSwftApi = 'https://www.swftc.info/gt'
-const sSwapApi = 'https://sswap.swft.pro'
-const swftApi = 'https://transfer.swft.pro'
+const sSwapApi = 'https://api.bridgers.xyz'
+const swftApi = 'https://www.swftc.info'
 
-// 增加axios拦截
 axios.interceptors.response.use(
   (suc) => {
     if (suc.status == '200') {
@@ -65,7 +64,6 @@ class BaseApi {
     })
   }
   newBaseRequestData() {
-    //从浏览器地址取出sourceFlag
     let sourceFlag = localStorage.getItem('sourceFlag')
     let utmSource = localStorage.getItem('utm_source')
     let equipmentNo
@@ -78,9 +76,6 @@ class BaseApi {
       sessionStorage.setItem('equipmentNo', json)
     }
     let address = ''
-    // if (store.state.chainId == '0' || store.state.walletTRON !== null) {
-    //   address = store.state.walletTRON
-    // } else
     if (
       (store.state.chainId == '000' ||
         store.state.chainId == '222' ||
@@ -210,7 +205,6 @@ class BaseApi {
       'path',
     )
   }
-  // 免gas兑换
   noGasSwap(data) {
     return this.createRpcToken(
       newSwftApi + '/swap/v1/noGasSwap',
@@ -255,7 +249,6 @@ class BaseApi {
       'path',
     )
   }
-  // 失败保存记录
   failureExchange(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -306,7 +299,6 @@ class BaseApi {
       'path',
     )
   }
-  //  手续费五折的广告是否展示
   swftFeeAdvertising(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -314,7 +306,6 @@ class BaseApi {
     }
     return this.createRpcToken('/api/v3/init', obj)
   }
-  // 弹窗图控制接口
   widgetNotification(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -327,7 +318,6 @@ class BaseApi {
       'swft',
     )
   }
-  // banner图控制接口
   widgetBannerImg(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -340,7 +330,6 @@ class BaseApi {
       'swft',
     )
   }
-  //获取rpc 接口
   publicNode(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -353,7 +342,6 @@ class BaseApi {
       'swft',
     )
   }
-  // Path兑换
   commonSwap(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -361,7 +349,6 @@ class BaseApi {
     }
     return this.createRpcToken(pathApi + '/api/commonSwap', obj, 'post', 'path')
   }
-  //生成兑换记录
   addTransData(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -374,11 +361,9 @@ class BaseApi {
       'path',
     )
   }
-  //
   makerTransferOut(data) {
     return this.createRpcToken(pathApi + '/api/cBridge/makerTransferOut', data)
   }
-  //插入path 交易兑换记录接口
   uploadPathRecord(data) {
     return this.createRpcToken(
       swftApi + '/bridge/uploadRecord',
@@ -387,7 +372,6 @@ class BaseApi {
       'path',
     )
   }
-  //登录XUMM 钱包
   payload(data) {
     return this.createRpcToken(
       newSwftApi + '/swap/v1/payload',
@@ -426,7 +410,6 @@ class BaseApi {
       'path',
     )
   }
-  //bridgers1 询价
   getSswapBridgeTradeData(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -439,7 +422,6 @@ class BaseApi {
       'path',
     )
   }
-  //bridgers1 发起兑换
   sSwapswap(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -452,7 +434,6 @@ class BaseApi {
       'path',
     )
   }
-  //更新bridgers1 交易哈希
   updateDataAndStatus(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -465,7 +446,6 @@ class BaseApi {
       'path',
     )
   }
-  //获取 bridgers1 交易记录
   getTransData(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -478,7 +458,6 @@ class BaseApi {
       'path',
     )
   }
-  //查询bridgers1交易记录详情
   getTransDataById(data) {
     return this.createRpcToken(
       sSwapApi + '/api/exchangeRecord/getTransDataById',
@@ -502,7 +481,6 @@ class BaseApi {
     )
   }
 
-  //获取币种列表顺序 接口
   queryChainByConfig(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -515,7 +493,6 @@ class BaseApi {
       'path',
     )
   }
-  // spaceId域名获取地址
   accountapiSpaceId(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -540,7 +517,6 @@ class BaseApi {
       'swft',
     )
   }
-  // fio域名获取地址
   transapiFioAddress(data) {
     const obj = {
       ...this.newBaseRequestData(),
@@ -553,7 +529,6 @@ class BaseApi {
       'swft',
     )
   }
-  // 获取brc-20 代币余额
   queryBRC20(data) {
     return this.createRpcToken(
       newSwftApi + '/swap/v1/queryBRC20',
@@ -562,7 +537,6 @@ class BaseApi {
       'swft',
     )
   }
-  // 查询收益列表
   queryRewardList = async (data) => {
     const obj = {
       ...this.newBaseRequestData(),
@@ -576,7 +550,6 @@ class BaseApi {
     )
   };
 
-  // 查询项目
   queryProjectList = async (data) => {
     const obj = {
       ...this.newBaseRequestData(),
@@ -590,7 +563,6 @@ class BaseApi {
     )
   };
 
-  // 查询我的持仓
   queryPositionList = async (data) => {
     const obj = {
       ...this.newBaseRequestData(),
@@ -604,7 +576,6 @@ class BaseApi {
     )
   };
 
-  // 提取本金
   withdrawFund = async (data) => {
     const obj = {
       ...this.newBaseRequestData(),
@@ -618,7 +589,6 @@ class BaseApi {
     )
   };
 
-  // 提取收益
   transferRevenue = async (data) => {
     const obj = {
       ...this.newBaseRequestData(),
@@ -632,7 +602,6 @@ class BaseApi {
     )
   };
 
-  // 上传订单
   addOrder = async (data) => {
     const obj = {
       ...this.newBaseRequestData(),
@@ -646,7 +615,6 @@ class BaseApi {
     )
   };
 
-  // 质押接口
   pledge = async (data) => {
     const obj = {
       ...this.newBaseRequestData(),
@@ -659,7 +627,6 @@ class BaseApi {
       'swft',
     )
   };
-  // 获取tron 链详情
   getTronInfo = async (data) => {
     return this.createRpcToken(
       'https://apilist.tronscanapi.com/api/accountv2',

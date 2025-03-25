@@ -143,11 +143,11 @@ export const supportNetWork = [
     chainId: '1993',
     blockExplorerUrls: 'https://terra.stake.id/#',
   },
-  {
-    netWork: 'BTC',
-    chainId: '1994',
-    blockExplorerUrls: 'https://btc.com/btc',
-  },
+  // {
+  //   netWork: 'BTC',
+  //   chainId: '1994',
+  //   blockExplorerUrls: 'https://btc.com/btc',
+  // },
   {
     netWork: 'CRU',
     chainId: '222',
@@ -292,7 +292,7 @@ export const supportNetWork = [
     blockExplorerUrls: 'https://xrpscan.com',
   },
   {
-    netWork: 'DIS',
+    netWork: 'ETHF',
     chainId: '513100',
     symbol: 'ETHF',
     decimals: 18,
@@ -381,7 +381,6 @@ export const supportNetWork = [
     netWork: 'DBC',
     chainId: '333',
     blockExplorerUrls: 'https://dbc.subscan.io',
-    // wss://info.dbcwallet.io
   },
   {
     netWork: 'CORE',
@@ -596,11 +595,11 @@ export const supportNetWork = [
     symbol: 'HVH',
     blockExplorerUrls: 'https://scan.havah.io/address/',
   },
-  {
-    netWork: 'BRC20',
-    chainId: '1994',
-    blockExplorerUrls: 'https://btc.com/btc',
-  },
+  // {
+  //   netWork: 'BRC20',
+  //   chainId: '1994',
+  //   blockExplorerUrls: 'https://btc.com/btc',
+  // },
   {
     netWork: 'MNT',
     chainId: '5000',

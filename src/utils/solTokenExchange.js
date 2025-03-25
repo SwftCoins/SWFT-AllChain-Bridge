@@ -70,7 +70,7 @@ async function transferToken(fromWallet, toWallet, tokenAddress, connection, fro
   transaction.feePayer = fromWallet.publicKey
   const anyTransaction = transaction
   anyTransaction.recentBlockhash = (
-	await connection.getRecentBlockhash()
+	await connection.getLatestBlockhash()
   ).blockhash
   try{
 	if(localStorage.getItem('utm_source') !== 'tokenpocket'){

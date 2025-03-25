@@ -4,9 +4,6 @@
       <img :src="tokenImg" alt="" />
       <div class="coin-info">
         <div class="name">
-          <!-- <div class="coin-name">
-            {{ token ? token.coinCode : $t('select') }}
-          </div> -->
           <input v-if="token" class="coin-name" readonly type="text" v-model="token.coinCodeShow" />
           <input v-else class="coin-name" readonly type="text" :placeholder="$t('select')" />
           <svg t="1623379978208" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1190">
@@ -23,7 +20,6 @@
       ">
       <div class="bottomInner">
         <div class="tip">
-          <!-- <div class="type">{{ type }}</div> -->
           <div class="type" v-if="type === 'from'">
             {{ $t('balance') }}{{ this.balance }}
           </div>
@@ -72,11 +68,7 @@
   </div>
 </template>
 <script>
-//import CoinList from './common/coinList.vue'
 const CoinList = () => import("./common/coinList.vue");
-
-import bus from "../eventBus";
-import { supportNetWork } from "../config";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import activeAcct from "./common/activeAcct";
@@ -114,7 +106,6 @@ export default {
       balanceSelect: null,
     };
   },
-  // 生命周期 - 创建完成（可以访问当前this实例）
   created() {
     this.$bus.on("openAcct", (val) => {
       this.openAcct(val);
@@ -129,7 +120,7 @@ export default {
   beforeDestroy() {
     this.$bus.off("openAcct", this.openAcct);
     this.$bus.on("checkPolkadot");
-  }, // 生命周期 - 销毁之前
+  },
   watch: {
     balanceSelect(val) {
       const list = this.balanceOptions.filter(
@@ -139,9 +130,6 @@ export default {
       this.$store.commit("setinscriptionId", list[0].inscriptionId);
     },
     number(val, old) {
-      // if (this.isFocus) {
-      //   this.$emit('changeVal', val);
-      // }
       if (this.type === "from") {
         if (this.token && this.token.coinCode.indexOf("USDT") == -1) {
           if (val != "") {
@@ -171,15 +159,10 @@ export default {
     },
     info(val, old) {
       if (val === null) return;
-      //输入框改变来源
       const inputSource = this.$store.state.inputSource;
-      //兑换输入框
       const fromNumber = this.$store.state.fromNumber;
-      //目标输入框
       const toNumber = this.$store.state.toNumber;
-      //汇率
       const instantRate = this.info.instantRate || 1;
-      //手续费
       const depositCoinFeeRate = this.info.depositCoinFeeRate;
       if (inputSource === "from") {
         let number = fromNumber * instantRate * (1 - depositCoinFeeRate);
@@ -263,31 +246,6 @@ export default {
         } else {
           this.$store.commit("setToNumber", val);
         }
-        // if (!this.info) return
-        // //设置输入框改变来源
-        // this.$store.commit('setInputSource', this.type)
-        // let number
-        // const instantRate = this.info.instantRate
-        // //手续费
-        // const depositCoinFeeRate = this.info.depositCoinFeeRate
-        // if (this.type === 'from') {
-        //   this.$store.commit('setFromNumber', val)
-        //   number = val * instantRate * (1 - depositCoinFeeRate)
-        //   if (number < 0) number = 0
-        //   this.$store.commit(
-        //     'setToNumber',
-        //     number === 0 ? 0 : number.toFixed(6),
-        //   )
-        //   // 更改toNumber
-        // } else {
-        //   this.$store.commit('setToNumber', Number(val))
-        //   number = val / (instantRate * (1 - depositCoinFeeRate))
-        //   this.$store.commit(
-        //     'setFromNumber',
-        //     number === 0 ? 0 : number.toFixed(6),
-        //   )
-        //   // 更改fromNumber
-        // }
       },
     },
     token: {
@@ -317,9 +275,6 @@ export default {
     inputNumber($event) {
       if (this.type === "from") {
         this.$store.commit("setFromNumber", $event.target.value);
-        // this.throttle(() => {
-        //   this.$store.commit("setFromNumber", $event.target.value);
-        // }, 100);
       }
     },
     throttle(fn, delay) {
@@ -333,11 +288,8 @@ export default {
       }
     },
     async getMax() {
-      //if (!this.info) return
       this.$store.commit("setInputSource", "from");
-      //判断区间范围是否计算出
       let max;
-      // if (this.info !== null) {
       if (
         this.$store.state.fromToken.coinCode === "BNB(BSC)" ||
         this.$store.state.fromToken.coinCode === "ETH" ||
@@ -358,7 +310,7 @@ export default {
         this.$store.state.fromToken.coinCode === "KCC" ||
         this.$store.state.fromToken.coinCode === "BRISE" ||
         this.$store.state.fromToken.coinCode === "CRO" ||
-        this.$store.state.fromToken.coinCode === "DIS(DIS)" ||
+        this.$store.state.fromToken.coinCode === "ETHF" ||
         this.$store.state.fromToken.coinCode === "ETHW" ||
         this.$store.state.fromToken.coinCode === "ETH(Optimism)" ||
         this.$store.state.fromToken.coinCode === "DRAC" ||
@@ -456,10 +408,6 @@ export default {
         this.$store.state.chainId === "000"
       ) {
         max = (Number(this.$store.state.balance) - 0.025).toFixed(6);
-        // Number(this.info.depositMax) <
-        // (Number(this.$store.state.balance) - 0.02).toFixed(6)
-        //   ? this.info.depositMax
-        //   : (Number(this.$store.state.balance) - 0.02).toFixed(6)
       } else if (
         this.$store.state.fromToken.coinCode === "CRU" &&
         this.$store.state.chainId === "222"
@@ -475,27 +423,16 @@ export default {
         this.$store.state.chainId === "0"
       ) {
         max = Number(this.$store.state.balance) - 20;
-        // Number(this.info.depositMax) < Number(this.$store.state.balance) - 5
-        //   ? this.info.depositMax
-        //   : Number(this.$store.state.balance) - 5
       } else if (
         this.$store.state.fromToken.coinCode === "SOL" &&
         this.$store.state.chainId === "2021"
       ) {
         max = (Number(this.$store.state.balance) - 0.00001).toFixed(6);
-        // Number(this.info.depositMax) <
-        // (Number(this.$store.state.balance) - 0.000005).toFixed(6)
-        //   ? this.info.depositMax
-        //   : (Number(this.$store.state.balance) - 0.000005).toFixed(6)
       } else if (
         this.$store.state.fromToken.coinCode === "LUNA" &&
         this.$store.state.chainId === "1993"
       ) {
         max = (Number(this.$store.state.balance) - 0.003).toFixed(6);
-        // Number(this.info.depositMax) <
-        // (Number(this.$store.state.balance) - 0.003).toFixed(6)
-        //   ? this.info.depositMax
-        //   : (Number(this.$store.state.balance) - 0.003).toFixed(6)
       } else if (
         this.$store.state.fromToken.coinCode === "BTC" &&
         this.$store.state.chainId === "1994"
@@ -553,8 +490,6 @@ export default {
         this.$store.state.fromToken.coinCode === "SUI" &&
         this.$store.state.chainId === "7299"
       ) {
-        // const result = await suiWalletMethods.getReferenceGasPrice()
-        // const gas = ( result/(10**9)).toFixed(6, BigNumber.ROUND_DOWN)
         max = max = Number(this.$store.state.balance) - 0.008;
       } else if (
         this.$store.state.fromToken.coinCode === "FIL" &&

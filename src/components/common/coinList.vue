@@ -496,7 +496,7 @@ export default {
           this.getChainIdName === "BSC" ||
           this.getChainIdName === "HECO" ||
           this.getChainIdName === "POLYGON" ||
-          this.getChainIdName === "DIS" ||
+          this.getChainIdName === "ETHF" ||
           this.getChainIdName === "ETHW" ||
           this.getChainIdName === "Optimism" ||
           this.getChainIdName === "ARB" ||

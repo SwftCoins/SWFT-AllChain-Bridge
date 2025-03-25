@@ -48,7 +48,6 @@ export default {
     },
 
   },
-  // 监听属性 类似于data概念
   computed: {
     lang: {
       get() {
@@ -56,9 +55,7 @@ export default {
       },
     },
   },
-  // 监控data中的数据变化
   watch: {},
-  // 方法集合
   methods: {
     closeAlert() {
       this.$refs.advertiseAlert.show = false

@@ -243,7 +243,7 @@ export default {
         this.$store.state.fromToken.coinCode === "KCC" ||
         this.$store.state.fromToken.coinCode === "BRISE" ||
         this.$store.state.fromToken.coinCode === "CRO" ||
-        this.$store.state.fromToken.coinCode === "DIS(DIS)" ||
+        this.$store.state.fromToken.coinCode === "ETHF" ||
         this.$store.state.fromToken.coinCode === "ETHW" ||
         this.$store.state.fromToken.coinCode === "ETH(Optimism)" ||
         this.$store.state.fromToken.coinCode === "DRAC" ||

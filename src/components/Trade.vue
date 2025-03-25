@@ -4,9 +4,6 @@
         ? 'border'
         : ''
     ">
-    <!-- <div v-if="sourceFlag == 'HN'" class="tabTop">
-      <Tab />
-    </div> -->
     <div class="swap-content" v-if="tabActive == 'swap' || tabActive == 'bridge' || tabActive == 'gasSwap'">
       <div class="trade-boxs" v-if="tabActive == 'swap'">
         <TradeBox style="width: calc(50% - 18px)" ref="fromToken" type="from" @getMax="getMax" />
@@ -24,12 +21,8 @@
         <GasTrade />
       </div>
       <ReceivingAddress />
-      <!-- <Preference /> -->
       <Info />
       <div class="btns">
-        <!-- <div class="btn" @click="exchange">
-          {{ $t("swap") }} {{ !needApprove ? "approev" : "approve过了" }}
-        </div> -->
         <div class="btn themeBg" @click="exchange">
           {{ this.walletAddress ? showSwapBtn : this.$t('connectWallet') }}
         </div>
@@ -42,15 +35,12 @@
 </template>
 
 <script>
-// const TradeBox = () => import("../components/TradeBox")
 const SwapConfirm = () => import("./SwapConfirm");
 const ReceivingAddress = () => import("./ReceivingAddress");
 const HNAddLiquidity = () => import("./HNAddLiquidity");
 const BridgeTrade = () => import("./BridgeTrade");
 const GasTrade = () => import("./GasTrade");
 const noServe = () => import("./noServe");
-const Preference = () => import("./Preference");
-
 // 组件
 import TradeBox from "../components/TradeBox";
 
@@ -265,28 +255,24 @@ export default {
     clearInterval(this.timer);
   },
   mounted() {
-    // 页面初始化获取汇率
     this.ratio = new BigNumber(0);
     bus.$on("getSendGas", (res) => {
       this.sendGas = res;
     });
   },
   methods: {
-    // 查看当前选择链的代币是否有余额，没有换有余额的流行币
     async aiSetToken() {
       await this.getBalance();
       //余额不为0
       if (!this.fromToken || this.fromToken.balance != 0) {
         return;
       }
-      // 判断当前链 是否与钱包匹配
       let arr = supportNetWork.filter((item) => item.chainId == this.chainId);
       if (arr.length == 0) return;
       const netWork = arr[0];
       if (netWork.netWork != this.fromToken.mainNetwork || !netWork.isEvm) {
         return;
       }
-      // 计算当前链的有余额的代币
       let balanceList = [];
       const tokenList = this.coinList.filter(
         (item) => item.mainNetwork == netWork.netWork
@@ -334,7 +320,6 @@ export default {
         this.getBalance();
       }, 5000);
     },
-    // 监听链路变化
     changeFromToken(item) {
       this.fromToken = item;
       this.$refs.fromToken.number = this.fromToken.balance;
@@ -347,18 +332,13 @@ export default {
     changeToken(item) {
       this.ratio = 0;
       this.init();
-      // 获取兑换数额
       this.ratio = new BigNumber(0);
       this.getRatio();
     },
-    // 切换币种
     changeTokensBox() {
-      // 交换币种
       [this.fromToken, this.toToken] = [this.toToken, this.fromToken];
     },
-    // 获取最大余额
     getMax() {
-      //判断区间范围是否计算出
       let max;
       if (this.info !== null) {
         max =
@@ -451,22 +431,6 @@ export default {
               .shiftedBy(-(coin.coinDecimal != null ? coin.coinDecimal : 18))
               .toFixed(6, BigNumber.ROUND_DOWN);
             this.setBalance(coin, tronBalance > 0 ? tronBalance : 0);
-            // try{
-
-            //   const res = await tronApi.getTRC20TokenBalance(
-            //     tronWeb.address.toHex(coin.contact),
-            //     tronWeb.address.toHex(this.$store.state.walletTRON),
-            //   )
-            //   let bal = res.constant_result[0].replace(/\b(0+)/gi, '')
-            //   bal = bal === '' ? '0x0' : '0x' + bal
-            //   const balance = tronWeb
-            //     .BigNumber(bal)
-            //     .shiftedBy(-(coin.coinDecimal != null ? coin.coinDecimal : 18))
-            //     .toFixed(6, BigNumber.ROUND_DOWN)
-            //   coin.balance = balance > 0 ? balance : 0
-            //   this.setBalance(coin, balance)
-            // }catch(error){
-            // }
           } else {
             let assets = reslt.assetV2;
             if (assets && assets.length !== 0) {
@@ -517,13 +481,6 @@ export default {
             this.walletAddress,
             coin.contact
           );
-          // const account = await window.solana.connect()
-          // const tokenPublic = new solanaWeb3.PublicKey(coin.contact) //9pBLiojTZMxbAPcsCWs8TQEiuCedRudzEFFakJFRCAoS
-          // const tokenAccount = await connection.getParsedTokenAccountsByOwner(
-          //   window.solana.publicKey,
-          //   { mint: tokenPublic },
-          // )
-          // const value = tokenAccount.value
           if (balance > 0) {
             this.setBalance(coin, balance);
           } else {
@@ -677,7 +634,7 @@ export default {
         coin.mainNetwork === "ETH" ||
         coin.mainNetwork === "HECO" ||
         coin.mainNetwork === "POLYGON" ||
-        coin.mainNetwork === "DIS" ||
+        coin.mainNetwork === "ETHF" ||
         coin.mainNetwork === "ETHW" ||
         coin.mainNetwork === "Optimism" ||
         coin.mainNetwork === "OKExChain" ||
@@ -800,11 +757,6 @@ export default {
 
     // // 交易
     async exchange() {
-      //  const hash = await suiWalletMethods.transfer('0x18059ccdd404691d5d6953b83cde0d1387174f426c3adda9b2df4bf9033b1874', 6,
-      // //  {"coinAllCode":"SUI","coinCode":"SUI","mainNetwork":"SUI","contact":"0x2::sui::SUI","coinDecimal":9,"noSupportCoin":"MDS,XMR,SKM,GLM,DX,BUY,BTRST,RARI,MUSE,BSMV,SUI","isSupportAdvanced":"Y","isSupportMemo":"N","coinCodeShow":"SUI(SUI)","balance":2.573288}
-      //  {"coinAllCode":"SUI","coinCode":"SUI","mainNetwork":"SUI","contact":"0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN","coinDecimal":6,"noSupportCoin":"MDS,XMR,SKM,GLM,DX,BUY,BTRST,RARI,MUSE,BSMV,SUI","isSupportAdvanced":"Y","isSupportMemo":"N","coinCodeShow":"SUI(SUI)","balance":9.002683}
-      //  );
-      //  console.log(hash)
 
       if (
         this.$store.state.chainId !== "000" &&
@@ -1148,17 +1100,13 @@ export default {
 
       const toChainId = Number(arr[0].chainId);
       try {
-        // 调用切换链方法
         await WalletConnectProvider.request({
           method: "wallet_switchEthereumChain",
           params: [{ chainId: `0x${toChainId.toString(16)}` }],
         }).then((resltTo) => {
           this.$store.commit("setChainId", toChainId.toString());
-          // 切换链成功，可以执行后续操作
-          // this.exchange()
         });
       } catch (error) {
-        // 切换链失败，处理错误情况
         if (error.code == "-32601") {
           Dialog.alert({
             message: this.$t("wcWalletNotchain", { chain: val.netWork }),
@@ -1172,66 +1120,12 @@ export default {
       }
     },
     async chechNetwork(val) {
-      //walletConnect 连接拦截切换
       if (val && this.$store.state.isWalletConnect) {
         const network = this.$store.getters.getChainIdName;
         const activeNetWork = val.netWork;
         this.walletconnectchangeNet(val);
         return;
-        // if (network === activeNetWork) {
-        //   return
-        // } else {
-        //   //判断支持的链 ETH BSC HECO POLYGON OKExChain TT ARB AVAXC
-        //   if (
-        //     activeNetWork === 'ETH' ||
-        //     activeNetWork === 'BSC' ||
-        //     activeNetWork === 'HECO' ||
-        //     activeNetWork === 'POLYGON' ||
-        //     activeNetWork === 'OKExChain' ||
-        //     activeNetWork === 'TT' ||
-        //     activeNetWork === 'ARB' ||
-        //     activeNetWork === 'AVAXC' ||
-        //     activeNetWork === 'ORC' ||
-        //     activeNetWork === 'FTM'
-        //   ) {
-        //     let tip = ''
-        //     if (this.isPC) {
-        //       tip = this.$t('noChangeNetwork', {
-        //         network: activeNetWork,
-        //       })
-        //     } else {
-        //       tip = this.$t('mbnoChangeNetwork', {
-        //         network: activeNetWork,
-        //       })
-        //     }
-        //     Dialog.alert({
-        //       message: tip,
-        //       theme: 'round-button',
-        //       messageAlign: 'left',
-        //       confirmButtonColor: '#277ffa',
-        //       className: 'noChangeNetwork',
-        //     })
-        //   }
-        //   //不支持的 TRON Polkadot
-        //   else if (
-        //     activeNetWork === 'TRON' ||
-        //     activeNetWork === 'Polkadot' ||
-        //     activeNetWork === 'CRU' ||
-        //     activeNetWork === 'DBC' ||
-        //     activeNetWork === 'APT'
-        //   ) {
-        //     Dialog.alert({
-        //       message: this.$t('noUseNetwork'),
-        //       theme: 'round-button',
-        //       messageAlign: 'left',
-        //       confirmButtonColor: '#277ffa',
-        //       className: 'noChangeNetwork',
-        //     })
-        //   }
-        //   return
-        // }
       }
-      //doge链只能在tp app中使用，其他情况做一下拦截提示
       if (
         this.isPC &&
         (!isTP || localStorage.getItem("utm_source") !== "tokenpocket") &&
@@ -1248,7 +1142,6 @@ export default {
         });
         return;
       }
-      //FIL链只能在MathWallet app中使用，其他情况做一下拦截提示
       if (
         this.isPC &&
         this.connectType !== "MathWalletFIL" &&
@@ -1551,15 +1444,6 @@ export default {
                       );
                     }
                     this.exchange();
-                    // if (
-                    //   updateChainId !== this.$store.state.chainId &&
-                    //   window.location.href.indexOf('tokenpocket') != -1
-                    // ) {
-                    //   this.$store.commit(
-                    //     'setChainId',
-                    //     parseInt(updateChainId) + '',
-                    //   )
-                    // }
                   })
                   .catch((error) => {});
               }
@@ -1911,16 +1795,6 @@ export default {
                     window.patex.ethereum.on("chainChanged", (chainId) => {
                       this.$store.commit("setChainId", parseInt(chainId) + "");
                     });
-                    // const updateChainId = window.patex.ethereum.networkVersion
-                    // if (
-                    //   updateChainId !== this.$store.state.chainId &&
-                    //   window.location.href.indexOf('tokenpocket') != -1
-                    // ) {
-                    //   this.$store.commit(
-                    //     'setChainId',
-                    //     parseInt(updateChainId) + '',
-                    //   )
-                    // }
                   })
                   .catch((error) => {
                     Notify(
@@ -2015,7 +1889,6 @@ export default {
               this.$bus.emit("switchEVMNetWork");
             }
           }
-          //Notify({ type: "danger", message: this.$t("network",{network_old:network,network:val.netWork}) });
         });
       }
     },
@@ -2031,13 +1904,10 @@ export default {
       } else {
         if (val.netWork == "CRU") {
           this.$store.commit("setChainId", "222");
-          // this.$bus.emit('checkPolkadot', 'CRU')
         } else if (val.netWork == "DBC") {
           this.$store.commit("setChainId", "333");
-          // this.$bus.emit('checkPolkadot', 'DBC')
         } else {
           this.$store.commit("setChainId", "000");
-          // this.$bus.emit('checkPolkadot', 'DOT')
         }
         this.$store.commit("setWalletConnectType", "Polkadot");
       }
@@ -2062,58 +1932,6 @@ export default {
         return;
       }
       [this.fromToken, this.toToken] = [this.toToken, this.fromToken];
-      // if (this.fromToken && this.toToken) {
-      //   if (this.fromToken.mainNetwork === this.toToken.mainNetwork) {
-      //     ;[this.fromToken, this.toToken] = [this.toToken, this.fromToken]
-      //   } else if (
-      //     (this.fromToken.mainNetwork === 'NFT' &&
-      //       this.toToken.mainNetwork === 'ETH') ||
-      //     (this.fromToken.mainNetwork === 'ETH' &&
-      //       this.toToken.mainNetwork === 'NFT')
-      //   ) {
-      //     const from = this.fromToken
-      //     const to = this.toToken
-      //     if (to.mainNetwork === 'NFT') {
-      //       const asset = await getNFTAsset(to, 'from')
-      //       to.asset = asset
-      //     } else {
-      //       const asset = await getNFTAsset(from, 'to')
-      //       from.asset = asset
-      //     }
-      //     this.$store.commit('setFromToken', to)
-      //     this.$store.commit('setToToken', from)
-      //     if (this.fromToken.mainNetwork === 'NFT') {
-      //       this.$store.commit('setChainId', parseInt(10086) + '')
-      //     } else {
-      //       this.$store.commit('setChainId', parseInt(1) + '')
-      //     }
-      //   } else if (
-      //     this.fromToken &&
-      //     this.toToken &&
-      //     this.fromToken.mainNetwork !== this.toToken.mainNetwork
-      //   ) {
-      //     Notify({
-      //       color: '#ad0000',
-      //       background: '#ffe1e1',
-      //       message: this.$t('changeChainIdTip'),
-      //     })
-      //   }
-      // } else {
-      //   if (
-      //     !this.fromToken &&
-      //     this.getChainIdName === this.toToken.mainNetwork
-      //   ) {
-      //     ;
-      //   }
-      // }
-      //if (!this.fromToken || !this.toToken) return
-      // if (this.fromToken && this.toToken && this.fromToken.mainNetwork === this.toToken.mainNetwork) {
-      //   ;[this.fromToken, this.toToken] = [this.toToken, this.fromToken]
-      // } else if(this.fromToken && this.toToken && this.fromToken.mainNetwork !== this.toToken.mainNetwork) {
-      //   Notify({color: '#ad0000',background: '#ffe1e1', message: this.$t('changeChainIdTip') })
-      // } else if(){
-
-      // }
     },
     comfirm(_b) {
       this.$refs.order.show(_b);

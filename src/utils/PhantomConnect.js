@@ -1,7 +1,6 @@
 import { Notify } from 'vant'
 import store from '../store/index'
 const PhantomConnectHandle = ($scope) => {
-  //判断是否安装Phantom插件
   if (!window.solana) {
     return Notify({
       color: '#ad0000',
@@ -11,7 +10,6 @@ const PhantomConnectHandle = ($scope) => {
       }),
     })
   }
-  //创建链接
   if (store.state.wallet.connectType === 'Phantom') {
     return ($scope.$refs.dialog.show = false)
   }
@@ -37,20 +35,7 @@ async function connect($scope) {
     store.commit('setWalletName', 'Phantom')
     store.commit('setWalletConnectType', 'Phantom')
     $scope.$refs.dialog.show = false
-    //存储钱包已连接
     localStorage.setItem('connectorId', 'Phantom')
   }
-
-  // window.solana.connect()
-  // window.solana.on('connect', (res) => {
-  //   $scope.wallet = 'Phantom'
-  //   store.commit('setChainId', '2021')
-  //   store.commit('setWalletAddress', res.toBase58())
-  //   store.commit('setWalletName', 'Phantom')
-  //   store.commit('setWalletConnectType', 'Phantom')
-  //   $scope.$refs.dialog.show = false
-  //   //存储钱包已连接
-  //   localStorage.setItem('connectorId', 'Phantom')
-  // })
 }
 export default PhantomConnectHandle

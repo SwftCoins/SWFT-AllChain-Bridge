@@ -140,7 +140,7 @@ export default {
       timer: null, //获取余额计时器
       loadingBalance: false,
       loadingToBalance: false,
-      chainType: "from", // 网络选择弹窗类型 from to
+      chainType: "from", 
       chainList: [], // 网络列表数据
     };
   },
@@ -465,7 +465,7 @@ export default {
           this.bridgeFromTokenchain.mainNetwork === "ETH" ||
           this.bridgeFromTokenchain.mainNetwork === "HECO" ||
           this.bridgeFromTokenchain.mainNetwork === "POLYGON" ||
-          this.bridgeFromTokenchain.mainNetwork === "DIS" ||
+          this.bridgeFromTokenchain.mainNetwork === "ETHF" ||
           this.bridgeFromTokenchain.mainNetwork === "ETHW" ||
           this.bridgeFromTokenchain.mainNetwork === "Optimism" ||
           this.bridgeFromTokenchain.mainNetwork === "OKExChain" ||
@@ -679,7 +679,7 @@ export default {
           this.bridgeToTokenchain.mainNetwork === "ETH" ||
           this.bridgeToTokenchain.mainNetwork === "HECO" ||
           this.bridgeToTokenchain.mainNetwork === "POLYGON" ||
-          this.bridgeToTokenchain.mainNetwork === "DIS" ||
+          this.bridgeToTokenchain.mainNetwork === "ETHF" ||
           this.bridgeToTokenchain.mainNetwork === "ETHW" ||
           this.bridgeToTokenchain.mainNetwork === "Optimism" ||
           this.bridgeToTokenchain.mainNetwork === "OKExChain" ||

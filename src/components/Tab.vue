@@ -57,31 +57,7 @@
           alt=""
         />
         <span class="spanText">{{ $t('bridgers') }}</span>
-        <!-- <img class="imgNew" src="../assets/img/new.png" alt="" /> -->
       </li>
-      <!-- <li
-        :class="tabActive == 'NFT' ? 'active' : ''"
-        @click="changeModule('NFT')"
-      >
-        <img
-          class="imgR"
-          v-if="tabActive == 'NFT'"
-          src="../assets/img/tabRight.png"
-          alt=""
-        />
-        <span
-          class="spanText"
-          >NFT</span
-        >
-        <img
-          :style="{
-            left: '2rem',
-          }"
-          class="imgNew"
-          src="../assets/img/new.png"
-          alt=""
-        />
-      </li> -->
     </ul>
   </div>
 </template>

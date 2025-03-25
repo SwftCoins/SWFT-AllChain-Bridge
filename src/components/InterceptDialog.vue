@@ -111,7 +111,7 @@ export default {
                 net === "BSC" ||
                 net === "ETH" ||
                 net === "POLYGON" ||
-                net === "DIS" ||
+                net === "ETHF" ||
                 net === "ETHW" ||
                 net === "ARB" ||
                 net === "AVAXC" ||

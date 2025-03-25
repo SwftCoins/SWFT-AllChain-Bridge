@@ -19,7 +19,6 @@ const connectWallet = async ($scope) => {
       store.commit('setWalletName', 'Portkey')
       store.commit('setWalletConnectType', 'Portkey')
       $scope.$refs.dialog.show = false
-      //存储钱包已连接
       localStorage.setItem('connectorId', 'Portkey')
     }catch(error){
       console.log(error)

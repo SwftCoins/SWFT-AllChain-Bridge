@@ -228,13 +228,6 @@
           <div class="received">
             <div class="left">{{ $t("expected") }}</div>
             <div class="right" v-if="info">
-              <!-- <template v-if="info.dex === 'SWFT'">
-                {{
-                  toNumber - (sendGas ? sendGas[0] : 0) > 0
-                    ? minusHandle(toNumber, sendGas ? sendGas[0] : 0)
-                    : 0
-                }}
-              </template> -->
               <template>
                 {{ toNumber }}
               </template>
@@ -273,7 +266,6 @@
               :loading-text="$t('confirm')"
               >{{ $t("confirm") }}</Button
             >
-            <!-- <button @click="exchange" :disabled="submitStatus">{{ $t("confirm") }}</button> -->
           </div>
         </div>
         <div class="closeIcon">
@@ -287,10 +279,8 @@
   </div>
 </template>
 <script>
-//import Dialog from './common/dialog'
 const Dialog = () => import("./common/dialog");
 
-//import Approve from './Approve'
 const Approve = () => import("./Approve");
 const InterceptDialog = () => import("../components/InterceptDialog");
 
@@ -301,7 +291,6 @@ import erc20Abi from "../config/abis/erc20";
 import { Button } from "vant";
 import { Toast, Popover, Notify } from "vant";
 import errorCode from "../utils/language.js";
-//const errorCode = () => import("../utils/language.js")
 
 let provider, signer;
 if (window.ethereum) {
@@ -309,8 +298,6 @@ if (window.ethereum) {
   signer = provider.getSigner();
 }
 import BigNumber from "bignumber.js";
-import WalletConnect from "@walletconnect/client";
-import QRCodeModal from "@walletconnect/qrcode-modal";
 import ETH_erc20 from "../utils/eth-erc20";
 // path 发币逻辑代码封装
 import pathBridgeMethods from "../utils/pathBridgeMethods";
@@ -330,13 +317,6 @@ import { getSigningClient, COMPASS_WALLET } from "@sei-js/core";
 import { calculateFee, GasPrice } from "@cosmjs/stargate";
 import joyIdMethids from "../utils/joyID/swapMethods";
 import PortkeyMethods from "@/utils/PortkeyMethods";
-
-import {
-  IconService,
-  IcxTransactionBuilder,
-  SignedTransaction,
-  HttpProvider,
-} from "icon-sdk-js";
 let webSocket;
 let WalletConnectProvider = null;
 export default {
@@ -359,15 +339,14 @@ export default {
       tipTimer: null,
       sourceFlag: localStorage.getItem("sourceFlag"),
       txData: null, //兑换数据
-      pathBridgeExchangeStatus: false, //对合约授权之后监听是否只执行一次兑换
-      transactionReceiptTimer: null, // 轮训请求哈希结果的计时器
+      pathBridgeExchangeStatus: false, 
+      transactionReceiptTimer: null, 
       twFlag: localStorage.getItem("twFlag"),
       utmSource: localStorage.getItem("utm_source"),
       interceptData: null,
     };
   },
   created() {
-    //Notify({ type: 'success', message: '通知内容' });
   },
   computed: {
     walletAddress() {
@@ -553,7 +532,7 @@ export default {
         checkFromAddress == checkToAddress
       ) {
         const balckListCheck = await baseApi.queryBlackList({
-          content: checkFromAddress, // this.$store.state.address
+          content: checkFromAddress, 
           coinCode: this.fromToken.coinCode,
         });
         if (
@@ -569,11 +548,11 @@ export default {
         }
       } else {
         const balckListCheck1 = await baseApi.queryBlackList({
-          content: checkFromAddress, // this.$store.state.address
+          content: checkFromAddress, 
           coinCode: this.fromToken.coinCode,
         });
         const balckListCheck2 = await baseApi.queryBlackList({
-          content: checkToAddress, // this.$store.state.address
+          content: checkToAddress, 
           coinCode: this.toToken.coinCode,
         });
         if (
@@ -597,7 +576,6 @@ export default {
           return;
         }
       }
-      //兑换 非 SWFT平台拦截
       if (this.info.dex !== "SWFT") {
         this.submitStatus = true;
         pathBridgeMethods.pathBridgeExchange(this);
@@ -612,9 +590,6 @@ export default {
         refundAddr: this.$store.state.wallet.address, //退币地址
         isNoGas: this.isFreeGas,
         utmSource: this.utmSource,
-        // equipmentNo:this.$store.state.wallet.address, //设备编号
-        // sourceType:'H5', //设备来源
-        // sourceFlag:'widget',//订单创建来源
       };
       //DOT链
       if (
@@ -640,11 +615,6 @@ export default {
         params.refundAddr = this.$store.state.walletTRON;
       }
       this.submitStatus = true;
-      // const res = {"resCode":"800","resMsg":"成功","data":{"orderId":"5fa7657a-5c98-4022-baf0-b4ce41ce831f","depositCoinCode":"USDT(SOL)","receiveCoinCode":"SOL","depositCoinAmt":"32.943116","receiveCoinAmt":"2.34053","receiveSwftAmt":"28.9","depositCoinState":"wait_send","platformAddr":"DPUqWxhXi3bYzKDmZWCiSqX9F3282qFHZsRmAZR97gks","depositCoinFeeRate":"0.003","depositCoinFeeAmt":"0.098829","swftCoinFeeRate":"0.001","orderState":"wait_deposits","swftReceiveAddr":"","swftCoinState":"","refundCoinMinerFee":"","refundCoinAmt":"","refundSwftAmt":"","destinationAddr":"2tRf5hzvgGS7NaDvYhJKuFLn9YboMEPccFEDM6vknYKn","refundAddr":"2tRf5hzvgGS7NaDvYhJKuFLn9YboMEPccFEDM6vknYKn","swftRefundAddr":"","choiseFeeType":"3","detailState":"wait_deposit_send","changeType":"advanced","developerId":"","transactionId":"","refundDepositTxid":"","depositTxid":"","kycUrl":"","dealFinishTime":null,"createTime":"2022-12-16 15:17:31","chainFee":"0.008","depositFeeRate":"0.003","instantRate":"0.071047635475","isDiscount":"N","xrpInfo":null}}
-      // let platformAddr = res.data.platformAddr //系统收币地址
-      // const fromNumber = this.$store.state.fromNumber.toString()
-      // this.phantomExchange(platformAddr, fromNumber, res)
-      // return
       baseApi
         .accountExchange(params)
         .then(async (res) => {
@@ -745,7 +715,6 @@ export default {
                   if (res.resCode == "50016") {
                     const resMsg = res.resMsg;
                     const indexStr = resMsg.indexOf("[");
-                    // const reg = new RegExp('(?<=\\[)(.+?)(?=\\])', 'g')
                     const resMsg1 = resMsg.slice(
                       indexStr + 1,
                       resMsg.length - 1
@@ -829,13 +798,11 @@ export default {
             }
             //EchoooWallet 兑换
             if (this.connectType === "EchoooWallet") {
-              // this.OpenBlockExchange(platformAddr, fromNumber, res);
               this.EchoooWalletExchange(platformAddr, fromNumber, res);
               return;
             }
             //JoyIDWallet 兑换
             if (this.connectType === "JoyIDWallet") {
-              // this.OpenBlockExchange(platformAddr, fromNumber, res);
               this.JoyIDExchange(platformAddr, fromNumber, res);
               return;
             }
@@ -855,7 +822,6 @@ export default {
               return;
             }
             //metamask 兑换
-
             if (
               this.connectType === "MetaMask" ||
               this.connectType === "Halo" ||
@@ -974,7 +940,6 @@ export default {
             if (res.resCode == "50016") {
               const resMsg = res.resMsg;
               const indexStr = resMsg.indexOf("[");
-              // const reg = new RegExp('(?<=\\[)(.+?)(?=\\])', 'g')
               const resMsg1 = resMsg.slice(indexStr + 1, resMsg.length - 1);
               const arr = resMsg1.split(",");
               Notify({
@@ -1149,13 +1114,11 @@ export default {
             .toString(),
         ],
       };
-      // each field of option is optional.
       const option = {
         sender: this.$store.state.wallet.address,
         sequence_number: "1",
         max_gas_amount: "4000",
         gas_unit_price: "100",
-        // Unix timestamp, in seconds + 30 days
         expiration_timestamp_secs: (
           Math.floor(Date.now() / 1000) +
           30 * 24 * 3600
@@ -1369,12 +1332,8 @@ export default {
         };
       }
       WalletConnectProvider.request({
-        // topic: this.$store.state.topic,
-        // chainId: 'eip155:' + this.$store.state.chainId + '',
-        // request: {
         method: "eth_sendTransaction",
         params: [tx],
-        // },
       })
         .then((data) => {
           // Returns transaction id (hash)
@@ -1542,8 +1501,6 @@ export default {
             from: this.$store.state.wallet.address, // Required
             to: fromToken.contact, // Required (for non contract deployments)
             data: data, // Required
-            // gasPrice: "0x02540be400", // Optional
-            // gas: "0x9c40", // Optional
           },
         ];
       }
@@ -1730,8 +1687,6 @@ export default {
             from: this.$store.state.wallet.address, // Required
             to: fromToken.contact, // Required (for non contract deployments)
             data: data, // Required
-            // gasPrice: "0x02540be400", // Optional
-            // gas: "0x9c40", // Optional
           },
         ];
       }
@@ -1871,9 +1826,6 @@ export default {
             from: this.$store.state.wallet.address, // Required
             to: fromToken.contact, // Required (for non contract deployments)
             data: data, // Required
-            // gasPrice: "0x02540be400", // Optional
-            // gas: "0x9c40", // Optional
-            //value: `0x`, // Optional
           },
         ];
       }
@@ -2089,15 +2041,8 @@ export default {
           from: this.$store.state.wallet.address, // Required
           to: fromToken.contact, // Required (for non contract deployments)
           data: data, // Required
-          // gasPrice: "0x02540be400", // Optional
-          // gas: "0x9c40", // Optional
-          //value: `0x`, // Optional
         };
       }
-      // window.bitkeep.ethereum.request({
-      //   method: "eth_sendTransaction",
-      //   params,
-      // });
       signer
         .sendTransaction(params)
         .then((data) => {
@@ -2429,23 +2374,6 @@ export default {
       }
 
       const injector = await web3FromSource(account.source);
-
-      //判断手续费是否充足
-      // const info = await api.tx.balances.transfer(res.data.platformAddr, num).paymentInfo(
-      //     this.fromToken.mainNetwork === 'CRU'
-      //       ? account.addrSS58CRU
-      //       : account.addrSS58,
-      //   )
-      // if (
-      //   this.$store.state.balance - this.$store.state.fromNumber <
-      //   info.partialFee.toString() / DOTandCRUDecimal
-      // ) {
-      //   return Notify({
-      //     color: '#ad0000',
-      //     background: '#ffe1e1',
-      //     message: this.$t('dotInsufficient'),
-      //   })
-      // }
       if (
         this.fromToken.mainNetwork === "DOT" &&
         this.fromToken.contact == "1984"
@@ -2458,8 +2386,6 @@ export default {
         const api = await ApiPromise.create({ provider });
         const recipient = res.data.platformAddr; // Replace with the recipient's address
         const amount = num; // Amount of USDT to transfer (in smallest unit)
-        // const transfer =
-        // const hash = await transfer
         api.tx.assets
           .transfer(this.fromToken.contact, recipient, amount)
           .signAndSend(netAccount, {
@@ -2482,8 +2408,6 @@ export default {
             this.submitStatus = false;
             this.$refs.dialogConfirm.show = false;
             this.closeOrderDialog();
-            //基础手续费不够。
-            // RPC-CORE: submitAndWatchExtrinsic(extrinsic: Extrinsic): ExtrinsicStatus:: 1010: Invalid Transaction:
             if (e.message === "Cancelled") {
               Notify({
                 color: "#ad0000",
@@ -2525,8 +2449,6 @@ export default {
             this.submitStatus = false;
             this.$refs.dialogConfirm.show = false;
             this.closeOrderDialog();
-            //基础手续费不够。
-            // RPC-CORE: submitAndWatchExtrinsic(extrinsic: Extrinsic): ExtrinsicStatus:: 1010: Invalid Transaction:
             if (e.message === "Cancelled") {
               Notify({
                 color: "#ad0000",
@@ -2564,7 +2486,7 @@ export default {
       transaction.feePayer = addressPublicKey;
       const anyTransaction = transaction;
       anyTransaction.recentBlockhash = (
-        await connection.getRecentBlockhash()
+        await connection.getLatestBlockhash()
       ).blockhash;
       return transaction;
     },
@@ -2717,9 +2639,6 @@ export default {
 
       let transaction = {
         from: this.$store.state.wallet.address,
-        // gasPremium: '10000', //可选
-        // gasFeeCap: '10000', //可选
-        // gasLimit: 2200000,
         nonce: nonceResult.result, //可选
         to: platformAddr,
         value: (fromNumber * 10 ** 18).toString(), // 精度18
@@ -2778,7 +2697,6 @@ export default {
         fee,
         platformAddrArr[1]
       );
-      // const sendResponse = await signingClient.sendIbcTokens(this.$store.state.wallet.address, platformAddr, amount, 'transfer', 'channel-8', undefined, timeoutTimestamp, fee)
 
       if (sendResponse.code === 0) {
         //发币
@@ -2812,14 +2730,9 @@ export default {
       let params = null;
       if (fromToken.contact === "") {
         params = {
-          // from: this.$store.state.wallet.address,
+         
           to: platformAddr,
           value: ethers.utils.parseEther(fromNumber),
-          //gas: '0x76c0', // 30400
-          //gasPrice: '0x9184e72a000', // 10000000000000
-          // value: `0x${new BigNumber(fromNumber)
-          //   .multipliedBy(new BigNumber(10 ** fromToken.coinDecimal))
-          //   .toString(16)}`, // 2441406250
         };
       } else {
         web3 = new Web3();
@@ -2840,16 +2753,8 @@ export default {
           from: this.$store.state.wallet.address, // Required
           to: fromToken.contact, // Required (for non contract deployments)
           data: data, // Required
-          // gasPrice: "0x02540be400", // Optional
-          // gas: "0x9c40", // Optional
-          //value: `0x`, // Optional
         };
       }
-      // window.patex.ethereum
-      //   .request({
-      //     method: 'eth_sendTransaction',
-      //     params,
-      //   })
       signer
         .sendTransaction(params)
         .then((data) => {
@@ -2933,17 +2838,14 @@ export default {
     modifyTRXTxId(txid, orderId, order) {
       const self = this;
       const params = {
-        orderId: orderId, //   订单号
-        depositAddress: this.$store.state.walletTRON, //  用户地址
-        targetAddress: this.$store.state.address, //  用户存币的地址
-        depositTxid: txid, //  用户存币哈希
+        orderId: orderId,
+        depositAddress: this.$store.state.walletTRON,
+        targetAddress: this.$store.state.address,
+        depositTxid: txid,
       };
       baseApi.modifyTxId(params).then((res) => {
         if (res.resCode == "800") {
-          //发币成功发送订单号成功成功
-          //打开兑换详情页
           self.confirmHandle(order);
-          //调取兑换记录
           self.$bus.emit("queryAllTradeHandle");
         } else {
           errorCode(res.resCode, this);
@@ -2955,9 +2857,7 @@ export default {
       this.$bus.emit("showOrderHandle", true);
       this.$bus.emit("isShowStatus");
       this.$store.commit("setSwapConfirm", false);
-      //this.$store.commit('setInfo', null)
       this.$bus.emit("clearAddress");
-      //this.$store.commit('setFromNumber', '')
     },
     tipOpen() {
       const self = this;
@@ -2975,7 +2875,6 @@ export default {
       this.$refs.dialogConfirm.show = false;
       this.submitStatus = false;
     },
-    //打开兑换窗口
     openOrderDilog() {
       this.$store.commit("setSwapConfirm", true);
     },
@@ -3046,7 +2945,6 @@ export default {
                 this.submitStatus = false;
                 this.$refs.approve.loading = false;
                 this.$refs.approve.$refs.dialog.show = false;
-                //pathBridgeMethods.exchange(resData)
                 this.pathBridgeExchangeStatus = true;
               }
             });
@@ -3113,10 +3011,6 @@ export default {
           }
         }
         if (this.$store.state.isWalletConnect) {
-          // signer = new WalletConnect({
-          //   bridge: 'https://bridge.walletconnect.org', // Required
-          //   qrcodeModal: QRCodeModal,
-          // })
         } else {
           signer = provider ? provider.getSigner() : null;
         }
@@ -3141,9 +3035,6 @@ export default {
           const netWork = supportNetWork.find((e) => {
             return e.netWork === tokenChain;
           });
-          // const web3Provider = new Web3.providers.HttpProvider(
-          //   this.$store.state.rpcObject[tokenChain][0] || netWork.rpcUrl,
-          // )
           const fromNumber = this.$store.state.fromNumber.toString();
           const web3 = new Web3(WalletConnectProvider);
           const ethErc20Contract = new web3.eth.Contract(
@@ -3160,18 +3051,10 @@ export default {
               .approve(resData.data.txData.to, approveNumber)
               .encodeABI(),
           };
-          // 使用 Provider 发送交易
-
-          // web3.eth
-          //   .sendTransaction(approveTx)
           const self = this;
           WalletConnectProvider.request({
-            // topic: self.$store.state.topic,
-            // chainId: 'eip155:' + self.$store.state.chainId + '',
-            // request: {
             method: "eth_sendTransaction",
             params: [approveTx],
-            // },
           })
             .then((tx) => {
               self.transactionReceiptTimer = setInterval(() => {
@@ -3220,32 +3103,6 @@ export default {
                 this.$refs.approve.loading = false;
                 this.submitStatus = false;
           })
-        // contract.estimateGas
-        //   .approve(resData.data.txData.to, approveNumber, {
-        //     from: this.$store.state.wallet.address,
-        //   })
-        //   .then((res) => {
-        //     const a = contract
-        //       .connect(signer)
-        //       .approve(resData.data.txData.to, approveNumber, {
-        //         from: this.$store.state.wallet.address,
-        //       })
-        //       .then((data) => {
-        //         let self = this;
-        //         self.transactionReceiptTimer = setInterval(() => {
-        //           self.getTransactionReceipt(data.hash);
-        //         }, 2000);
-        //       })
-        //       .catch((error) => {
-        //         Notify({
-        //           message: this.$t("rejected"),
-        //           color: "#ad0000",
-        //           background: "#ffe1e1",
-        //         });
-        //         this.$refs.approve.loading = false;
-        //         this.submitStatus = false;
-        //       });
-        //   });
       }
     },
     async getTransactionReceipt(hash) {

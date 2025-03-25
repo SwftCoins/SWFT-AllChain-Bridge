@@ -6,15 +6,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    // 默认 钱包为 MataMask
     wallet: {
       address: '',
       name: '',
-      connectType: '', //钱包连接方式  MetaMask Nabox WalletConnect
+      connectType: '',
     },
     walletPolkadot: null,
     walletTRON: null,
-    //存入polkadot  【0】addr是substrate格式 【1】addrSS58 是polkadot 格式，两种格式用于不同的事件请求
     chainId: null,
     fromToken:
       JSON.parse(localStorage.getItem('localFromToken')) == '' ||
@@ -22,10 +20,9 @@ export default new Vuex.Store({
         null
         ? null
         : JSON.parse(localStorage.getItem('localFromToken')),
-    toToken: null, //JSON.parse(localStorage.getItem('localToToken'))== '' || !JSON.parse(localStorage.getItem('localToToken')) || null ? null : JSON.parse(localStorage.getItem('localToToken')),
+    toToken: null, 
     NFTToToken: null,
     NFTFromToken: null,
-    // totoken的钱包地址
     address: '', // toToken需要填入的地址
     receiveAddressNFT: '', // NFT 收币地址
     balance: 0, // fromToken的余额
@@ -35,9 +32,7 @@ export default new Vuex.Store({
     coinListChain: [], // 按照链筛选出来的币种列表
     lang: '', //语言标识
     info: null, // 交易对的基础信息
-    // exchangeData: null, // 当前查询的订单详情信息
     showTradeBox: true, // 切换交易界面或交易记录界面
-    // loading: false,
     order: null, // 当前查询的订单详情信息
     inputSource: '', // 输入框改变来源 form 兑换输入框  to 目标输入框
     trcKeyDex: 0, //轮询key调用trc API
@@ -64,7 +59,7 @@ export default new Vuex.Store({
       'BSC',
       'HECO',
       'POLYGON',
-      'DIS',
+      'ETHF',
       'ETHW',
       'Optimism',
       'OKExChain',

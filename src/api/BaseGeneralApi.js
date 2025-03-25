@@ -22,7 +22,6 @@ class GeneralApi {
      */
     createRpcRequest(url, data, headers, method) {
         method = method || 'post';
-        // responseType = responseType || 'application/json';
         if (method.toLowerCase() === 'get') {
             let params = '';
             Object.keys(data).forEach(
@@ -50,8 +49,6 @@ class GeneralApi {
         });
     }
     
-    // 一下为请求列表-----------------------------------------------------------
-   
     //trx&trc10  
     getTRC10TokenAccount(data) {
         let dex = store.state.trcKeyDex;

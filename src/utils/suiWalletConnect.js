@@ -4,7 +4,6 @@ import { TransactionBlock,JsonRpcProvider,Connection } from "@mysten/sui.js";
 import {
     createWalletKitCore
 } from "@mysten/wallet-kit-core";
-//链接钱包
 import { WalletStandardAdapterProvider } from "@mysten/wallet-adapter-wallet-standard";
 import axios from 'axios'
 import BigNumber from 'bignumber.js';
@@ -14,7 +13,6 @@ const suiWalletConnectHandle = async ($scope) => {
     await walletKitRef.connect('Sui Wallet')
     const state = await walletKitRef.getState()
     if (!state.isConnected && !state.currentAccount) {
-        // 未安装
         return Notify({
             color: '#ad0000',
             background: '#ffe1e1',
@@ -50,8 +48,6 @@ const getSuiBalance = async (contact) => {
     }
     
 }
-//  use sui:: object:: { Self, ID, UID };
-//     use sui:: prover;
 
 const transfer = async (platformAddr, fromNumber,fromToken) => {
     const walletKitRef = await WalletKitProvider()

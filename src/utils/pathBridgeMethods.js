@@ -16,7 +16,6 @@ import suiOKXWalletMethods from '../utils/suiOKXWalletConnect'
 import { EthereumProvider } from '@walletconnect/ethereum-provider'
 import joyIdMethids from '../utils/joyID/swapMethods'
 
-// import Web3 from 'web3'
 import ETH_erc20 from './eth-erc20'
 import md5Handle from './hexmd5'
 let state, provider, signer, scope, stateToToken, stateFromToken, mainNetwork //全局state
@@ -669,7 +668,7 @@ async function exchange(response) {
     })
     anyTransaction.instructions = instructions
     anyTransaction.recentBlockhash = (
-      await connection.getRecentBlockhash()
+      await connection.getLatestBlockhash()
     ).blockhash
     const wallet = new PhantomWalletAdapter()
     wallet.connect()

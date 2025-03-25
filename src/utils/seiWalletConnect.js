@@ -4,7 +4,6 @@ import { COMPASS_WALLET,getQueryClient } from "@sei-js/core"
 const chainIdSEI = 'pacific-1'
 const seiConnectHandle =async($scope) => {
   
-//   //判断是否安装compass插件
   if (!window.compass) {
     return Notify({
       color: '#ad0000',
@@ -17,7 +16,6 @@ const seiConnectHandle =async($scope) => {
   
   const connectReslut =   await COMPASS_WALLET.connect(chainIdSEI);
 
-  // const offlineSigner = await COMPASS_WALLET.getOfflineSigner(chainIdSEI);
   const accounts = await COMPASS_WALLET.getAccounts(chainIdSEI);
     if(accounts.length>0){
       $scope.wallet = 'Compass'
@@ -26,7 +24,6 @@ const seiConnectHandle =async($scope) => {
       store.commit('setWalletName', 'Compass')
       store.commit('setWalletConnectType', 'Compass')
       $scope.$refs.dialog.show = false
-      //存储钱包已连接
       localStorage.setItem('connectorId', 'Compass')
     }
 }

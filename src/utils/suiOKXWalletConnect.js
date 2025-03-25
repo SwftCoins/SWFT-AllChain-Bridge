@@ -43,7 +43,7 @@ const suiOKXWalletConnectHandle = async ($scope) =>{
 // 转账
 const transfer = async (platformAddr, fromNumber,fromToken) => {
       const connection = new Connection({
-          fullnode: 'https://sui-mainnet-rpc.nodereal.io',
+          fullnode: 'https://sui-mainnet.nodeinfra.com/',
           faucet: '',
       });
       const provider = new JsonRpcProvider(connection);

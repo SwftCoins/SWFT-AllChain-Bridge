@@ -524,58 +524,58 @@ export default {
     },
     async exchange() {
       this.submitStatus = true;
-      const checkFromAddress = this.walletAddress;
-      const checkToAddress = this.$store.state.address;
-      //同链同地址，请求一次
-      if (
-        this.fromToken.mainNetwork == this.toToken.mainNetwork &&
-        checkFromAddress == checkToAddress
-      ) {
-        const balckListCheck = await baseApi.queryBlackList({
-          content: checkFromAddress, 
-          coinCode: this.fromToken.coinCode,
-        });
-        if (
-          balckListCheck.resCode == "800" &&
-          balckListCheck.data.score == "0"
-        ) {
-          this.interceptData = {
-            address: checkFromAddress,
-            mainNetwork: this.fromToken.mainNetwork,
-          };
-          this.$refs.InterceptDialog.$refs.dialog.show = true;
-          return;
-        }
-      } else {
-        const balckListCheck1 = await baseApi.queryBlackList({
-          content: checkFromAddress, 
-          coinCode: this.fromToken.coinCode,
-        });
-        const balckListCheck2 = await baseApi.queryBlackList({
-          content: checkToAddress, 
-          coinCode: this.toToken.coinCode,
-        });
-        if (
-          (balckListCheck1.resCode == "800" &&
-            balckListCheck1.data.score == "0") ||
-          (balckListCheck2.resCode == "800" &&
-            balckListCheck2.data.score == "0")
-        ) {
-          if (balckListCheck1.data.score == "0") {
-            this.interceptData = {
-              address: checkFromAddress,
-              mainNetwork: this.fromToken.mainNetwork,
-            };
-          } else {
-            this.interceptData = {
-              address: checkToAddress,
-              mainNetwork: this.toToken.mainNetwork,
-            };
-          }
-          this.$refs.InterceptDialog.$refs.dialog.show = true;
-          return;
-        }
-      }
+      // const checkFromAddress = this.walletAddress;
+      // const checkToAddress = this.$store.state.address;
+      // //同链同地址，请求一次
+      // if (
+      //   this.fromToken.mainNetwork == this.toToken.mainNetwork &&
+      //   checkFromAddress == checkToAddress
+      // ) {
+      //   const balckListCheck = await baseApi.queryBlackList({
+      //     content: checkFromAddress, 
+      //     coinCode: this.fromToken.coinCode,
+      //   });
+      //   if (
+      //     balckListCheck.resCode == "800" &&
+      //     balckListCheck.data.score == "0"
+      //   ) {
+      //     this.interceptData = {
+      //       address: checkFromAddress,
+      //       mainNetwork: this.fromToken.mainNetwork,
+      //     };
+      //     this.$refs.InterceptDialog.$refs.dialog.show = true;
+      //     return;
+      //   }
+      // } else {
+      //   const balckListCheck1 = await baseApi.queryBlackList({
+      //     content: checkFromAddress, 
+      //     coinCode: this.fromToken.coinCode,
+      //   });
+      //   const balckListCheck2 = await baseApi.queryBlackList({
+      //     content: checkToAddress, 
+      //     coinCode: this.toToken.coinCode,
+      //   });
+      //   if (
+      //     (balckListCheck1.resCode == "800" &&
+      //       balckListCheck1.data.score == "0") ||
+      //     (balckListCheck2.resCode == "800" &&
+      //       balckListCheck2.data.score == "0")
+      //   ) {
+      //     if (balckListCheck1.data.score == "0") {
+      //       this.interceptData = {
+      //         address: checkFromAddress,
+      //         mainNetwork: this.fromToken.mainNetwork,
+      //       };
+      //     } else {
+      //       this.interceptData = {
+      //         address: checkToAddress,
+      //         mainNetwork: this.toToken.mainNetwork,
+      //       };
+      //     }
+      //     this.$refs.InterceptDialog.$refs.dialog.show = true;
+      //     return;
+      //   }
+      // }
       if (this.info.dex !== "SWFT") {
         this.submitStatus = true;
         pathBridgeMethods.pathBridgeExchange(this);
@@ -2538,11 +2538,11 @@ export default {
       );
       if (transaction) {
         try {
-          let signed = await window.solana.signTransaction(transaction);
-          let signature = await connection.sendRawTransaction(
-            signed.serialize()
-          );
-          await connection.confirmTransaction(signature);
+          let { signature } = await window.solana.signAndSendTransaction(transaction);
+          // let signature = await connection.sendRawTransaction(
+          //   signed.serialize()
+          // );
+          connection.confirmTransaction(signature, "confirmed");
           const dataHash = {
             from: this.$store.state.wallet.address,
             hash: signature,

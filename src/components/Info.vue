@@ -1322,6 +1322,7 @@ export default {
       img {
         width: 0.63rem;
         height: 0.63rem;
+        border-radius: 1rem;
       }
     }
     .part1 {

@@ -1547,6 +1547,7 @@ export default {
           width: 0.4rem;
           height: 0.4rem;
           margin-right: 5px;
+          border-radius: 1rem;
         }
       }
     }

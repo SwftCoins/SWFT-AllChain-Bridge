@@ -367,14 +367,14 @@ export default {
     }
   }
   .logo {
-    width: 100px;
     height: 80px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     cursor: pointer;
     img {
-      width: 100px;
+      margin-top: 6px;
+      width:4.3rem!important
     }
   }
   .app-header-right {

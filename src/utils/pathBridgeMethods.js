@@ -645,14 +645,13 @@ async function exchange(response) {
       scope.$store.state.rpcObject.SOL[0] || 'https://rpc.ankr.com/solana',
       'confirmed',
     )
-    const account = await window.solana.connect()
-
+    const account = scope.connectType == "Phantom" ? await window.solana.connect() : await window.safepal.connect()
     let transaction = new solanaWeb3.Transaction()
     transaction.feePayer = account.publicKey
     let anyTransaction = transaction
     // anyTransaction.instructions = []
     let signers = []
-    if (stateFromToken.coinCode == 'SOL') {
+    if (stateFromToken.coinCode == 'SOL' && response.data.txData.signer != '') {
       signers = [
         solanaWeb3.Keypair.fromSecretKey(
           new Uint8Array(response.data.txData.signer.split(',').map(Number)),
@@ -671,18 +670,34 @@ async function exchange(response) {
       await connection.getLatestBlockhash()
     ).blockhash
     const wallet = new PhantomWalletAdapter()
+    wallet._readyState = 'Installed'
     wallet.connect()
     try {
-      const txid = await wallet.sendTransaction(anyTransaction, connection, {
-        signers,
-        skipPreflight: true,
-        preflightCommitment: 'confirmed',
-      })
-      scope.submitStatus = false
-      scope.dex = 'SWFT'
-      addsSwapTransData({ hash: txid })
-      //store.commit('setFromNumber', '')
+      if (scope.connectType == "Phantom") {
+
+        if (stateFromToken.coinCode == 'SOL') {
+          // let signature = await wallet.sendTransaction(anyTransaction, connection, {
+          //   signers,
+          //   skipPreflight: true,
+          //   preflightCommitment: 'confirmed',
+          // })
+          let { signature } = await window.solana.signAndSendTransaction(anyTransaction)
+          scope.submitStatus = false
+          addsSwapTransData({ hash: signature })
+        } else {
+          let { signature } = await window.solana.signAndSendTransaction(anyTransaction)
+          scope.submitStatus = false
+          addsSwapTransData({ hash: signature })
+        }
+        return
+      } else if (scope.connectType == 'SafePal(SOL)') {
+        let { signature } = await window.safepal.signAndSendTransaction(anyTransaction);
+        scope.submitStatus = false
+        scope.dex = 'SWFT'
+        addsSwapTransData({ hash: signature })
+      }
     } catch (err) {
+      console.log(err)
       scope.submitStatus = false
       Notify({
         message: scope.$t('rejectExchange'),

@@ -32,7 +32,7 @@ export const supportNetWork = [
   {
     netWork: 'POLYGON',
     chainId: '137',
-    symbol: 'MATIC',
+    symbol: 'POL',
     decimals: 18,
     gasLimit: 400000,
     rpcUrl: 'https://rpc-mainnet.maticvigil.com/',

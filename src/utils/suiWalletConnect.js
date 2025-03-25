@@ -30,7 +30,7 @@ const suiWalletConnectHandle = async ($scope) => {
 //获取余额
 const getSuiBalance = async (contact) => {
     try{
-        const result = await axios.post('https://explorer-rpc.mainnet.sui.io/',
+        const result = await axios.post('https://sui-mainnet.nodeinfra.com/',
             {
             "jsonrpc": "2.0",
             "id": 1,
@@ -103,7 +103,7 @@ const transfer = async (platformAddr, fromNumber,fromToken) => {
 }
 const getReferenceGasPrice = async () => {
     try {
-        const result = await axios.post('https://explorer-rpc.mainnet.sui.io/',
+        const result = await axios.post('https://sui-mainnet.nodeinfra.com/',
             {
                 "jsonrpc": "2.0",
                 "id": 1,

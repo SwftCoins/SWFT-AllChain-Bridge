@@ -47,6 +47,7 @@
     "@sei-js/core": "^3.0.2",
     "@sei-js/proto": "^3.0.1",
     "@solana/spl-token": "^0.1.8",
+    "@solana/spl-token-v0.4.9": "npm:@solana/spl-token@0.4.9",
     "@solana/wallet-adapter-phantom": "^0.9.22",
     "@solana/web3.js": "^1.87.6",
     "@terra-money/terra.js": "^3.1.8",

@@ -13,13 +13,13 @@ module.exports = defineConfig({
   outputDir: 'dist',
   assetsDir: '',
   devServer: {
-    hot: true, // 启用热模块替换（HMR）
-    port: 8080, // 更改开发服务器的端口
-    open: true, // 自动打开浏览器
-    compress: true, // 启用gzip压缩
+    hot: true, 
+    port: 8080,
+    open: true, 
+    compress: true, 
     proxy: {
       '/api/*': {
-        target: 'https://transfer.swft.pro', //API服务器的地址
+        target: 'https://transfer.swft.pro',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/api',
@@ -31,14 +31,12 @@ module.exports = defineConfig({
     if (process.env.NODE_ENV === 'production'){
       return{
         resolve: {
-          extensions: ['.js', '.vue', '.json'], // 自动解析确定的扩展名，使我们在引入模块时不需要写扩展名
+          extensions: ['.js', '.vue', '.json'], 
            alias: {
-             // 创建别名，简化导入路径
              '@': path.resolve(__dirname, 'src'),
              "stream": "stream-browserify",
            },
            fallback: {
-             // 使用 crypto-browserify 替代 Node.js 的 crypto 模块
              "stream": require.resolve('stream-browserify'),
              "crypto": require.resolve("crypto-browserify"),
            },
@@ -49,13 +47,13 @@ module.exports = defineConfig({
              chunks: 'async',
              maxInitialRequests: Infinity,
              minSize: 200000,
-             maxSize: 600000, //会尝试根据这个大小进行代码分割
-             minChunks: 1, //制定用了几次才进行代码分割
+             maxSize: 600000, 
+             minChunks: 1, 
              cacheGroups: {
                default: {
-                 minChunks: 2, //被引用两次就提取出来
+                 minChunks: 2, 
                  priority: -20,
-                 reuseExistingChunk: true, //检查之前是否被引用过有的话就不被打包了
+                 reuseExistingChunk: true, 
                },
              }
            }
@@ -65,9 +63,9 @@ module.exports = defineConfig({
              Buffer: ['buffer', 'Buffer'],
            }),
            new CompressionPlugin({
-             test: /\.(js|css)(\?.*)?$/i, //需要压缩的文件正则
-             threshold: 10240, //文件大小大于这个值时启用压缩
-             deleteOriginalAssets: false, //压缩后保留原文件
+             test: /\.(js|css)(\?.*)?$/i, 
+             threshold: 10240, 
+             deleteOriginalAssets: false, 
            }),
            new BundleAnalyzerPlugin()
          ]
@@ -75,14 +73,12 @@ module.exports = defineConfig({
     }else{
       return{
         resolve: {
-          extensions: ['.js', '.vue', '.json'], // 自动解析确定的扩展名，使我们在引入模块时不需要写扩展名
+          extensions: ['.js', '.vue', '.json'], 
            alias: {
-             // 创建别名，简化导入路径
              '@': path.resolve(__dirname, 'src'),
              "stream": "stream-browserify"
            },
            fallback: {
-             // 使用 crypto-browserify 替代 Node.js 的 crypto 模块
              "stream": require.resolve('stream-browserify'),
              "crypto": require.resolve("crypto-browserify"),
            },

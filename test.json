@@ -13,11 +13,6 @@
     "uglifyjs-webpack-plugin": "^2.2.0",=
     "webpack": "^4.46.0",=
     "webpack-bundle-analyzer": "^4.5.0"=
-
-
-
-
-
     "@crustio/type-definitions": "^1.2.0", 
     "@ethersproject/address": "^5.2.0",
     "@ethersproject/contracts": "^5.2.0",
